@@ -1,0 +1,126 @@
+
+<article class="markup">
+    <h2>Example</h2>
+    <pre><code class="language-utkrisht"># A program to print prime numbers between a user defined range
+is-prime num:
+    when num !> 1
+        exit wrong
+    else num = 2
+        exit right
+    else (remainder num, 2) = 0
+        exit wrong
+
+    loop 3_(power num, 0.5)_2 with i
+        when (remainder num, i) = 0
+            exit wrong
+
+    exit right
+
+
+print-primes num-1, num-2: 
+    write "Prime numbers from |num-1| to |num-2| are:"
+    
+    loop num-1_num-2 with num
+        when is-prime num
+            write num-1_num-2
+
+
+num-1: to-number prompt "What is your 1st number" 
+num-2: to-number prompt "What is your 2nd number"
+
+print-primes num-1, num-2</code></pre>
+    <h2>Hello world</h2>
+    <pre><code class="language-utkrisht">write "Hello World"</code></pre>
+    <p><code class="inline language-utkrisht">write</code> is a function and not a statement. Function calls do not require parentheses.</p>
+    
+    <h2>Comments</h2>
+    <pre><code class="language-utkrisht"># This is a comment</code></pre>
+    <p>Only single line comments are supported.</p>
+    
+    <pre><code class="language-utkrisht"># This is a documentation comment
+# which continues here and all lines 
+# before the container assignment 
+number: 100</code></pre>
+    
+    
+    <h2>Data types</h2>
+    
+    <p>
+        Utkrisht have 4 kinds of data types
+        <ol>
+            <li>Primitive data types
+                <ul>
+                    <li>String</li>
+                    <li>Number</li>
+                    <li>Boolean</li>
+                </ul>
+            </li>
+            <li>Procedural data types</li>
+            <li>Structural data types
+                <ul>
+                    <li>Object</li>
+                    <li>Array</li>
+                </ul>
+            </li>
+            <li>Nullish data types
+                <ul>
+                    <li>null</li>
+                    <li>undefined</li>
+                </ul>
+            </li>
+        </ol>
+    </p>
+    
+    <pre><code class="language-utkrisht"># String 
+"I program in Utkrisht 😼"
+
+# Number 
+-10.56
+
+# Boolean 
+right
+wrong 
+
+# Procedure 
+{write "Hello World"}
+
+# Array 
+[1, 2, 3]
+
+# Object 
+[name: "uki", age: 1]
+
+# Javascript null 
+js-null
+
+# Javascript undefined 
+js-undefined
+</code></pre>
+    
+    
+    <h2>Container</h2>
+    <p>Containers are identifiers which store data.</p>
+    <pre><code class="language-utkrisht">number: 5</code></pre>
+    
+    <p>Types of containers
+        <ol>
+            <li><strong>Variable:</strong> Container that stores a primitive</li>
+            <li><strong>Function:</strong> Container that stores a procedure</li>
+            <li><strong>Reference:</strong> Container that stores a structure</li>
+            <li><strong>Nullable:</strong> Container that stores nullables</li>
+        </ol>
+    </p>
+</article>
+
+<style>
+    pre {
+        font-family: "JetBrains Mono";
+        background: green;
+    }
+    
+</style>
+
+
+
+
+
