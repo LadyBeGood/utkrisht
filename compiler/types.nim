@@ -225,3 +225,110 @@ type
         Loop
         Try
 
+
+    # JavaScript expressions
+    JavaScriptExpression* = ref object of RootObj
+
+    JavaScriptIdentifier* = ref object of JavaScriptExpression
+        identifier*: string
+        arguments*: seq[JavaScriptArgument]
+
+    JavaScriptArgument* = ref object
+        identifier*: string
+        value*: JavaScriptExpression
+
+    JavaScriptLiteralExpression* = ref object of JavaScriptExpression
+        value*: JavaScriptLiteral
+
+    JavaScriptUnaryExpression* = ref object of JavaScriptExpression
+        operator*: string
+        right*: JavaScriptExpression
+
+    JavaScriptBinaryExpression* = ref object of JavaScriptExpression
+        left*: JavaScriptExpression
+        operator*: string
+        right*: Expression
+
+    JavaScriptGroupingExpression* = ref object of JavaScriptExpression
+        expression*: JavaScriptExpression
+
+
+
+    # JavaScript literals
+    JavaScriptLiteral* = ref object of RootObj
+
+    JavaScriptNumericLiteral* = ref object of JavaScriptLiteral
+        value*: float
+
+    JavaScriptStringLiteral* = ref object of JavaScriptLiteral
+        value*: string
+
+    JavaScriptBooleanLiteral* = ref object of JavaScriptLiteral
+        value*: bool
+
+
+    # JavaScript statements
+    JavaScriptStatement* = ref object of RootObj
+
+    JavaScriptExpressionStatement* = ref object of JavaScriptStatement
+        expression*: Expression
+
+    JavaScriptVariableDeclaration* = ref object of JavaScriptStatement
+        identifier*: string
+        expression*: Expression
+
+    JavaScriptForStatement* = ref object of JavaScriptStatement
+        initialisation*: Statement
+        condition*: Expression
+        update*: Statement
+
+    JavaScriptIfStatement* = ref object of JavaScriptStatement
+
+
+
+    JavaScriptFunctionDeclarationStatement* = ref object of JavaScriptStatement
+        identifier*: string
+        parameters*: seq[JavaScriptParameter]
+        expression*: JavaScriptExpression
+
+    JavaScriptParameter* = ref object
+        identifier*: string
+        defaultValue*: JavaScriptExpression
+
+    JavaScriptVariableReassignmentStatement* = ref object of JavaScriptStatement
+        identifier*: string
+        expression*: JavaScriptExpression
+
+    JavaScriptIfStatement* = ref object of JavaScriptStatement
+        JavaScriptIfSubStatements*: seq[JavaScriptIfSubStatement]
+
+    JavaScriptIfSubStatement* = ref object
+        condition*: JavaScriptExpression
+        `block`*: JavaScriptBlockStatement
+
+    JavaScriptBlockStatement* = ref object of JavaScriptStatement
+        statements*: seq[JavaScriptStatement]
+
+
+    JavaScriptTryStatement* = ref object of JavaScriptStatement
+        tryBlock*: JavaScriptBlockStatement
+        fixStatements*: seq[JavaScriptFixStatement]
+
+    JavaScriptFixStatement* = ref object
+        identifier*: string
+        fixBlock*: JavaScriptBlockStatement
+
+    JavaScriptReturnStatement* = ref object of JavaScriptStatement
+        expression*: JavaScriptExpression
+
+    JavaScriptContinueStatement* = ref object of JavaScriptStatement
+        counter*: string
+
+    JavaScriptBreakStatement* = ref object of JavaScriptStatement
+        counter*: string
+
+
+
+
+
+

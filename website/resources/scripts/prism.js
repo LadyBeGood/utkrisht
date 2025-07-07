@@ -28,7 +28,7 @@ Prism.languages.utkrisht = {
         pattern: /\b[a-z](?:[a-z0-9-]*[a-z0-9])?\b/,
         greedy: true
     },
-    'operator': /!>|=|_|!>|<|>|!|!=|&/,
+    'operator': /!>|=|_|!>|<|>|!|\?|!=|&/,
     'punctuation': /[{}[\]();.,:]/
 };
 

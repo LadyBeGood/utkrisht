@@ -1,4 +1,4 @@
-import lexer, parser, analyser, transformer, generators
+import lexer, parser, analyser, transformer, generator
 import os, osproc, strutils, sequtils
 
 proc tokensCompiler(input: string): string =
@@ -7,7 +7,7 @@ proc tokensCompiler(input: string): string =
 proc abstractSyntaxTreeCompiler(input: string): string =
     abstractSyntaxTreeGenerator parser lexer input
 
-proc javascriptCompiler(input: string): string =
+proc compiler(input: string): string =
     generator transformer analyser parser lexer input
 
 
@@ -31,14 +31,13 @@ proc main() =
     let output =
         if "--tokens" in mode: tokensCompiler(input)
         elif "--ast" in mode: abstractSyntaxTreeCompiler(input)
-        else: javascriptCompiler(input)
+        else: compiler(input)
 
+    writeFile(outputPath, output)
+    
     if "--run" in mode:
-        let tmp = "uki_temp_run.js"
-        writeFile(tmp, output)
         discard execProcess("node " & tmp)
-    else:
-        writeFile(outputPath, output)
+
 
 main()
 

@@ -3,6 +3,13 @@
     word-wrap: break-word;
 }
 
+.markup .spacer {
+    margin: 5rem 0;
+}
+
+.markup .spacer-small {
+    margin: 2.5rem 0;
+}
 
 .markup details,
 .markup figcaption,
@@ -174,12 +181,12 @@
 }
 
 .markup h1,
-.markup h2,
+.markup h2 ,
 .markup h3,
 .markup h4,
 .markup h5,
 .markup h6 {
-    margin-top: 50px;
+    margin-top: 1.5rem;
     margin-bottom: 1rem;
     font-weight: 600;
     line-height: 1.25;
@@ -670,8 +677,6 @@
 .markup>*:first-child>.heading-element:first-child {
     margin-top: 0 !important;
 }
-
-
 
 
 

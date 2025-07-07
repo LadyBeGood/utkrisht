@@ -1,5 +1,10 @@
 
 <article class="markup">
+    
+    <p class="markup markup-alert markup-alert-warning">
+        Syntax highlighting on this site is regex-based and may occasionally highlight code incorrectly.
+    </p>
+    
     <h2>Example</h2>
     <pre><code class="language-utkrisht"># A program to print prime numbers between a user defined range
 is-prime num:
@@ -29,25 +34,26 @@ num-1: to-number prompt "What is your 1st number"
 num-2: to-number prompt "What is your 2nd number"
 
 print-primes num-1, num-2</code></pre>
+
+    <div class="spacer"></div>
+    
     <h2>Hello world</h2>
     <pre><code class="language-utkrisht">write "Hello World"</code></pre>
-    <p><code class="inline language-utkrisht">write</code> is a function and not a statement. Function calls do not require parentheses.</p>
+    <p><code class="inline language-">write</code> is a function and not a statement. Function calls do not require parentheses.</p>
+    
+    <div class="spacer"></div>
     
     <h2>Comments</h2>
     <pre><code class="language-utkrisht"># This is a comment</code></pre>
-    <p>Only single line comments are supported.</p>
+    <p>Only single line comments are allowed.</p>
     
-    <pre><code class="language-utkrisht"># This is a documentation comment
-# which continues here and all lines 
-# before the container assignment 
-number: 100</code></pre>
-    
+    <div class="spacer"></div>
     
     <h2>Data types</h2>
-    
     <p>
-        Utkrisht have 4 kinds of data types
-        <ol>
+        Utkrisht have 3 kinds of data types
+    </p>
+    <ol>
             <li>Primitive data types
                 <ul>
                     <li>String</li>
@@ -55,22 +61,14 @@ number: 100</code></pre>
                     <li>Boolean</li>
                 </ul>
             </li>
-            <li>Procedural data types</li>
+            <li>Procedural data type <ul><li>Procedure</li></ul></li>
             <li>Structural data types
                 <ul>
                     <li>Object</li>
                     <li>Array</li>
                 </ul>
             </li>
-            <li>Nullish data types
-                <ul>
-                    <li>null</li>
-                    <li>undefined</li>
-                </ul>
-            </li>
         </ol>
-    </p>
-    
     <pre><code class="language-utkrisht"># String 
 "I program in Utkrisht 😼"
 
@@ -88,28 +86,245 @@ wrong
 [1, 2, 3]
 
 # Object 
-[name: "uki", age: 1]
-
-# Javascript null 
-js-null
-
-# Javascript undefined 
-js-undefined
-</code></pre>
+[name: "uki", age: 1]</code></pre>
     
+    <div class="spacer"></div>
     
     <h2>Container</h2>
     <p>Containers are identifiers which store data.</p>
-    <pre><code class="language-utkrisht">number: 5</code></pre>
+    <p>Depending on the kind of data type they store, there are 3 types of containers.</p>
+    <ol>
+        <li><strong>Variable:</strong> Container that stores a primitive.</li>
+        <li><strong>Function:</strong> Container that stores a procedure.</li>
+        <li><strong>Reference:</strong> Container that stores a structure.</li>
+    </ol>
+    <pre><code class="language-utkrisht"># Variables
+message: "Hello World"
+age-in-years: 45
+is-logged: wrong
+
+# Function
+greet name: 
+    write "Hello |name|, how are you?"
+
+# Reference 
+fruits: ["apple", "banana", "mango"]
+product: [
+    name: "Headphones"
+    price: 2999
+    get-discounted-price discount:
+        exit price - discount
+]
+</code></pre>
+    <div class="spacer-small"></div>
+    <p>To reassign a value to the container, use the reassignment operator <code class="inline language-">=</code></p>
+    <pre><code class="language-utkrisht">quantity: 34
+quantity = 65
+
+# data type of container doesn't matter
+quantity = "high"
+quantity = [in-number: 17, in-words: "low"]</code></pre>
+
+    <div class="spacer"></div>
+
+    <h2>Common Operations</h2>
+    <h3>Container operations</h3>
+    <pre><code class="language-utkrisht"># Assignment 
+name: "uki"
+
+# Reassignment
+name = "js"
+
+# Make container unreassignable (meant for libraries, not normal use)
+unreassignable name
+name = "stuff" # gives error</code></pre>
+    <p>Assignment operators like <code class="inline language-*">+=</code>, <code class="inline language-*">-=</code>, <code class="inline language-*">++</code> etc. are not allowed.</p>
+    <div class="spacer-small"></div>
+    <h3>Arithmetic operations</h3>
+    <pre><code class="language-utkrisht"># Addition
+2 + 5
+
+# Substraction
+6 - 3
+
+# Multiplication 
+4 * 2
+
+# Division 
+6 / 2
+
+# Remainder 
+remainder 5, 3
+
+# Power
+power 2, 5
+
+# Negation 
+num: 5
+-num # equals -5
+
+# Useless operator 
++num # does nothing, same as writing `num`</code></pre>
+    <p><strong>Note: </strong><code class="inline language-*">-10</code> is interpreted as the number <code class="inline language-*">-10</code>, not as the result of negating <code class="inline language-*">10</code>.</p>
+    <div class="spacer-small"></div>
+    <h3>Comparison operations</h3>
+    <pre><code class="language-utkrisht"># equals, less than, more than
+(x = y) # by default `=` is treated as an reassignment operator unless present in an expression context
+x < y
+x > y
+
+# not equals, not less than, not more than
+x != y
+x !< y # equivalent to `>=`
+x !> y # equivalent to `<=`</code></pre>
+    <div class="spacer-small"></div>
+    <h3>Logical operations</h3>
+    <pre><code class="language-utkrisht"># And
+right & wrong
+
+# Or
+right ? wrong
+
+# Not
+!wrong</code></pre>
+    <div class="spacer-small"></div>
+    <h3>Other operations</h3>
+    <pre><code class="language-utkrisht"># range expression
+# A special kind of syntax to create an object with range properties,
+# useful in accessing expression and loops
+1_5_2
+25_-6
+0.523_&lt;23.56
+10_!
+
+
+# accessing
+user: [name: "bro", shout: {write "I'M BROOOO"]
+user.name  # "bro"
+user.shout # I'M BROOOO
+
+fruits: ["apple", "mango", "banana"]
+fruits.1    # "apple" (Array index starts at 1)
+fruits.-1   # "banana"
+fruits.2_3  # ["mango", "banana"]
+fruits.2_-3 # ["mango", "apple"]
+fruits.-1_1 # reverses the array, same as using reverse function 
+
+name: "uki"
+name.1    # "u"
+name.1_2  # "uk"</code></pre>
     
-    <p>Types of containers
-        <ol>
-            <li><strong>Variable:</strong> Container that stores a primitive</li>
-            <li><strong>Function:</strong> Container that stores a procedure</li>
-            <li><strong>Reference:</strong> Container that stores a structure</li>
-            <li><strong>Nullable:</strong> Container that stores nullables</li>
-        </ol>
-    </p>
+
+    <div class="spacer"></div>
+    
+    <h2>Control flow</h2>
+    <h3>When</h3>
+    <pre><code class="language-utkrisht">age: 23
+
+when age > 18
+	write "You're an adult"
+else age < 18
+	write "You're a child"
+else
+	write "You're no longer a child, you became an adult!"</code></pre>
+    <div class="spacer-small"></div>
+	<h3>Loops</h3>
+    <pre><code class="language-utkrisht"># loop keyword followed by a procedure
+# loops infinitely
+loop
+    write "hello"
+
+# loop keyword followed by a boolean
+# loops infinitely if right
+loop right
+    write "hello"
+
+# doesn't loop if wrong
+loop wrong
+    write "hello"
+
+
+# loop keyword followed by a number
+# loops that many times
+loop 5 # loops 5 times
+    write "hello"
+
+
+# loop keyword followed by an iterable (i.e. string, array or object)
+# loops `length iterable` times 
+loop "Hello, World!" # loops 13 times
+    write "hello"
+
+loop [52, right, "orange"] # loops 3 times
+    write "hello"
+
+loop [id: 567, price: 899] # loops 2 times
+    write "hello"
+
+# with statement
+# declares a iterator/counter
+loop 5 with i 
+    write i
+    # here 
+    # `i` is the iterator
+    # `i` starts a 1 and ends at 5
+
+fruits: ["apple", "mango", "banana"]
+loop fruits with fruit
+    write "I love |fruit|"
+    
+    # I love apple
+    # I love mango
+    # I love banana
+
+# multiple iteravtors can be declared, separated by spaces
+loop fruit with i fruit
+    write "|i|. I love |fruit|"
+    
+    # 1. I love apple
+    # 2. I love mango 
+    # 3. I love banana
+
+name: "uki"
+loop name with i char
+    write "The char at position |i| is: |char|"</code></pre>
+    <p>Syntax and behaviour for looping objects with iterators and behaviour multiple looping is still under consideration</p>
+    
+    <pre><code class="language-utkrisht"># stop statement
+loop 50 with i
+    when i = 4
+        stop
+    write i
+    
+    # 1 
+    # 2 
+    # 3
+
+# next statement
+loop 3 with i
+    when i = 2
+        next
+    write i
+    
+    # 1
+    # 3
+
+# iterators can be used as labels in nested loops for next and stop statements
+loop 3 with i
+    loop 3 with j
+        when i = 2
+            next i
+        write "|i| |j|"
+    
+    # 1 1
+    # 1 2
+    # 1 3
+    # 3 1
+    # 3 2
+    # 3 3</code></pre>
+
+
+
 </article>
 
 <style>
@@ -119,8 +334,6 @@ js-undefined
     }
     
 </style>
-
-
 
 
 
