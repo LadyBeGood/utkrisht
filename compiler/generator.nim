@@ -1,4 +1,6 @@
-import types, strutils
+import std/strutils
+import pkg/pretty
+import ./types
 
 proc generator*(javaScriptAbstractSyntaxTree: seq[JavaScriptStatement]): string =
     var output = ""
@@ -100,16 +102,6 @@ proc generator*(javaScriptAbstractSyntaxTree: seq[JavaScriptStatement]): string 
         output.add(statementGenerator(statement))
     
     return output
-
-
-
-
-    
-    
-
-
-
-
 
 proc tokenGenerator(token: Token, indentLevel: int = 0): string =
     let indent = "    ".repeat(indentLevel)
