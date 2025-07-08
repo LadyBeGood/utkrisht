@@ -6,7 +6,7 @@ window.addEventListener("load", handleRoute);
 
 function handleRoute() {
     let page = location.hash.slice(1) || "home";
-    Navigate("website/components/" + page);
+    Navigate("website/pages/" + page);
 }
 
 
@@ -20,7 +20,7 @@ async function Navigate(page) {
     }, 100);
 
     try {
-        const response = await fetch(page + ".html");
+        const response = await fetch(page + "/index.html");
         const html = await response.text();
         clearTimeout(loadingTimeout);
         loader.style.display = "none";
