@@ -1,10 +1,9 @@
 
 <article class="markup">
-    
-    <p class="markup markup-alert markup-alert-warning">
+    <p class="warning-box">
         Syntax highlighting on this site is regex-based and may occasionally highlight code incorrectly.
     </p>
-    
+
     <h2>Example</h2>
     <pre><code class="language-utkrisht"># A program to print prime numbers between a user defined range
 is-prime num:
@@ -332,6 +331,30 @@ loop 3 with i
         font-family: "JetBrains Mono";
         background: green;
     }
+    
+    .warning-box {
+        background-color: #2c2a00;
+        color: #ffe58f;
+        border: 1px solid #a58d00;
+        padding: 1rem;
+        border-radius: 8px;
+        position: relative;
+    }
+    .warning-box::before {
+        content: "";
+        display: block;
+        position: absolute;
+        height: 24px;
+        width: 24px;
+        background: #ffe58f url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20fill%3D%27%232c2a00%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M1%2021h22L12%202%201%2021zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z%27/%3E%3C/svg%3E") center/cover no-repeat;
+        background-size: 15px;
+        border: 1px solid #a58d00;
+        border-radius: 999px;
+        top: 0;
+        left: 0;
+        transform: translate(-50%, -50%);
+    }
+
     
 </style>
 
