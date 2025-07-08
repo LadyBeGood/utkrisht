@@ -747,6 +747,32 @@ proc parser*(tokens: seq[Token]): seq[Statement] =
     
     return abstractSyntaxTree
 
+when isMainModule:
+    import lexer, generator, os, osproc, strutils, sequtils
+    
+    proc abstractSyntaxTreeCompiler(input: string): string =
+        abstractSyntaxTreeGenerator parser lexer input
+    
+    let args = commandLineParams()
+    if args.len == 0:
+        quit "Usage: uki <input> [output] [--tokens|--ast|--run]"
+
+    let inputPath = args[0].absolutePath()
+    if not fileExists(inputPath):
+        quit "Error: File not found: " & inputPath
+
+    let outputPath =
+        if args.len >= 2 and not args[1].startsWith("--"):
+            args[1].absolutePath()
+        else:
+            inputPath.changeFileExt("js")
+
+    let input = readFile(inputPath)
+    let mode = args.filterIt(it.startsWith("--"))
+    let output = abstractSyntaxTreeCompiler(input)
+
+    writeFile(outputPath, output)
+
 
 
 

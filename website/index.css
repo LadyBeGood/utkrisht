@@ -1,0 +1,44 @@
+
+header {
+    background-color: var(--azure);
+    display: flex;
+    align-items: center;
+    padding-inline: 15px;
+}
+
+header #current-page {
+    color: var(--almost-white);
+    font-weight: bold;
+    font-size: 20px;
+}
+
+main {
+    background-color: var(--almost-black);
+    overflow-y: scroll;
+    padding: 20px 15px;
+    line-height: 1.6;
+    color: var(--almost-white);
+    position: relative;
+}
+
+footer {
+    background-color: var(--azure);
+    border-top: 1px solid var(--dark-gray);
+}
+
+footer nav {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+footer .navigator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--almost-white);
+}
+
+

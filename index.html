@@ -7,6 +7,7 @@
     <title>Utkrisht Programming Language</title>
     <link rel="stylesheet" href="./website/resources/styles/index.css">
     <link rel="stylesheet" href="./website/resources/styles/markup.css">
+    <link rel="stylesheet" href="./website/index.css">
     <script src="./website/resources/scripts/prism.js" defer></script>
     <link rel="icon" href="./website/resources/images/avatar.png" type="image/png">
     <link rel="manifest" href="./website/manifest.json">
@@ -14,9 +15,7 @@
 </head>
 <body>
     <main>
-        <div class="loader-wrapper">
-            <div class="loader"></div>
-        </div>
+        <loading-spinner></loading-spinner>
         <div id="origin"></div>
     </main>
     
@@ -27,142 +26,17 @@
                 <p>Home</p>
             </a>
             <a class="navigator" href="#install">
-                <inject-svg src="./website/resources/images/install.svg"></inject-svg>
-                <p>Install</p>
+                <inject-svg src="./website/resources/images/code.svg"></inject-svg>
+                <p>Editor</p>
             </a>
             <a class="navigator" href="#learn">
-                <inject-svg src="./website/resources/images/learn.svg"></inject-svg>
-                <p>Learn</p>
+                <inject-svg src="./website/resources/images/guide.svg"></inject-svg>
+                <p>Guide</p>
             </a>
         </nav>
     </footer>
+    <script src="./website/index.js" type="module" defer></script>
 </body>
-
-<style>
-    
-    header {
-        background-color: var(--azure);
-        display: flex;
-        align-items: center;
-        padding-inline: 15px;
-    }
-    
-    header #current-page {
-        color: var(--almost-white);
-        font-weight: bold;
-        font-size: 20px;
-    }
-    
-    main {
-        background-color: var(--almost-black);
-        overflow-y: scroll;
-        padding: 20px 15px;
-        line-height: 1.6;
-        color: var(--almost-white);
-        position: relative;
-    }
-    
-
-    .loader-wrapper {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-    
-    .loader {
-        background: var(--almost-white);
-        width: 25px;
-        padding: 3px;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        --_m: 
-          conic-gradient(#0000 10%,#000),
-          linear-gradient(#000 0 0) content-box;
-        -webkit-mask: var(--_m);
-                mask: var(--_m);
-        -webkit-mask-composite: source-out;
-                mask-composite: subtract;
-        animation: l3 1s infinite linear;
-    }
-    
-    @keyframes l3 { to { transform: rotate(1turn); } }
-            
-    footer {
-        background-color: var(--azure);
-        border-top: 1px solid var(--dark-gray);
-    }
-    
-    footer nav {
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-    }
-    
-    footer .navigator {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: var(--almost-white);
-    }
-    
-    
-</style>
-<script>
-    
-    window.addEventListener("hashchange", handleRoute);
-    window.addEventListener("load", handleRoute);
-    
-    function handleRoute() {
-        let page = location.hash.slice(1) || "home";
-        Navigate("website/components/" + page);
-    }
-
-    
-    async function Navigate(page) {
-        const origin = document.querySelector("#origin");
-        const loader = document.querySelector("main .loader-wrapper");
-        
-        let loadingTimeout = setTimeout(() => {
-            origin.innerHTML = ""
-            loader.style.display = "block"
-        }, 100); 
-    
-        try {
-            const response = await fetch(page + ".html");
-            const html = await response.text();
-            clearTimeout(loadingTimeout);
-            loader.style.display = "none";
-            origin.innerHTML = html;
-            Prism.highlightAll();
-        } catch (error) {
-            clearTimeout(loadingTimeout);
-            const errorMessage = "Error fetching page: " + error;
-            console.error(errorMessage);
-            loader.style.display = "none";
-            origin.innerHTML = errorMessage;
-        }
-    }
-
-
-    
-    
-
-
-
-    document.querySelectorAll("inject-svg").forEach(async (element) => {
-        const name = element.getAttribute("src");
-        const res = await fetch(name);
-        const svgText = await res.text();
-    
-        const parser = new DOMParser();
-        const svg = parser.parseFromString(svgText, "image/svg+xml").documentElement;
-        element.replaceWith(svg);
-    });
-
-</script>
 </html>
 
 

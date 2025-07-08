@@ -2,6 +2,7 @@ import std/strutils
 import pkg/pretty
 import ./types
 
+#[
 proc generator*(javaScriptAbstractSyntaxTree: seq[JavaScriptStatement]): string =
     var output = ""
 
@@ -103,6 +104,9 @@ proc generator*(javaScriptAbstractSyntaxTree: seq[JavaScriptStatement]): string 
     
     return output
 
+]#
+
+
 proc tokenGenerator(token: Token, indentLevel: int = 0): string =
     let indent = "    ".repeat(indentLevel)
     if token == nil:
@@ -119,6 +123,7 @@ proc tokensGenerator*(tokens: seq[Token]): string =
     for token in tokens:
         result.add "    " & tokenGenerator(token, 1)
     result.add "]"
+
 
 
 proc abstractSyntaxTreeGenerator*(statements: seq[Statement]): string {.used.} =

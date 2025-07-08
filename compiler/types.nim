@@ -225,7 +225,7 @@ type
         Loop
         Try
 
-
+#[
     # JavaScript expressions
     JavaScriptExpression* = ref object of RootObj
 
@@ -327,7 +327,7 @@ type
     JavaScriptBreakStatement* = ref object of JavaScriptStatement
         counter*: string
 
-
+]#
 
 
 
