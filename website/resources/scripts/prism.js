@@ -13,7 +13,7 @@ Prism.languages.utkrisht = {
       greedy: true
     },
 
-    'keyword': /\b(?:try|fix|when|else|loop|with|stop|next|exit|import|export)\b/,
+    'keyword': /\b(?:try|fix|end|when|else|loop|with|stop|next|exit|import|export)\b/,
     'number': {
         pattern: /(^|[^\w-])-?\d+(?:\.\d+)?(?=$|[^\w-])/,
         lookbehind: true

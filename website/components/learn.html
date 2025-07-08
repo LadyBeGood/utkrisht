@@ -164,7 +164,8 @@ num: 5
 
 # Useless operator 
 +num # does nothing, same as writing `num`</code></pre>
-    <p><strong>Note: </strong><code class="inline language-*">-10</code> is interpreted as the number <code class="inline language-*">-10</code>, not as the result of negating <code class="inline language-*">10</code>.</p>
+    <div class="spacer-small"></div>
+    <p class="information-box"><code class="inline language-*">-10</code> is interpreted as the number <code class="inline language-*">-10</code>, not as the result of negating <code class="inline language-*">10</code>.</p>
     <div class="spacer-small"></div>
     <h3>Comparison operations</h3>
     <pre><code class="language-utkrisht"># equals, less than, more than
@@ -287,7 +288,9 @@ loop fruit with i fruit
 name: "uki"
 loop name with i char
     write "The char at position |i| is: |char|"</code></pre>
-    <p>Syntax and behaviour for looping objects with iterators and behaviour multiple looping is still under consideration</p>
+    <div class="spacer-small"></div>
+    <p class="information-box">Some looping constructs are still under consideration and not included here.</p>
+    <div class="spacer-small"></div>
     
     <pre><code class="language-utkrisht"># stop statement
 loop 50 with i
@@ -322,7 +325,19 @@ loop 3 with i
     # 3 2
     # 3 3</code></pre>
 
+    <div class="spacer"></div>
+    <h2>Try</h2>
+    <p>TODO</p>
+    <pre><code class="language-utkrisht">try
+    to-number "Hello, World!"
+fix value-error
+    write value-error.message
+end
+    write ""</code></pre>
 
+    <div class="spacer"></div>
+    
+    <h2></h2>
 
 </article>
 
@@ -332,30 +347,7 @@ loop 3 with i
         background: green;
     }
     
-    .warning-box {
-        background-color: #2c2a00;
-        color: #ffe58f;
-        border: 1px solid #a58d00;
-        padding: 1rem;
-        border-radius: 8px;
-        position: relative;
-    }
-    .warning-box::before {
-        content: "";
-        display: block;
-        position: absolute;
-        height: 24px;
-        width: 24px;
-        background: #ffe58f url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20fill%3D%27%232c2a00%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M1%2021h22L12%202%201%2021zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z%27/%3E%3C/svg%3E") center/cover no-repeat;
-        background-size: 15px;
-        border: 1px solid #a58d00;
-        border-radius: 999px;
-        top: 0;
-        left: 0;
-        transform: translate(-50%, -50%);
-    }
 
-    
 </style>
 
 

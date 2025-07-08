@@ -3,6 +3,57 @@
     word-wrap: break-word;
 }
 
+
+.warning-box {
+    background-color: #2c2a00;
+    color: #ffe58f;
+    border: 1px solid #a58d00;
+    padding: 1rem;
+    border-radius: 8px;
+    position: relative;
+}
+.warning-box::before {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    background: #ffe58f url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20fill%3D%27%232c2a00%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M1%2021h22L12%202%201%2021zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z%27/%3E%3C/svg%3E") center/cover no-repeat;
+    background-size: 15px;
+    border: 1px solid #a58d00;
+    border-radius: 999px;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+}
+
+.information-box {
+    background-color: #001f2c;
+    color: #8fd4ff;
+    border: 1px solid #0077b8;
+    padding: 1rem;
+    border-radius: 8px;
+    position: relative;
+}
+
+.information-box::before {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    background: #8fd4ff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23001f2c' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15h-1v-6h2v6h-1zm0-8h-1V7h2v2h-1z'/%3E%3C/svg%3E") center/cover no-repeat;
+    background-size: 15px;
+    border: 1px solid #0077b8;
+    border-radius: 999px;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+}
+
+
+
+
 .markup .spacer {
     margin: 5rem 0;
 }
