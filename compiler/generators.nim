@@ -1,8 +1,9 @@
-import types, strutils
+import std/strutils
+import pkg/pretty
+import ./types
 
 proc generator*(abstractSyntaxTree: seq[Statement]): string =
-    return ""
-
+    print abstractSyntaxTree
 
 proc tokenGenerator(token: Token, indentLevel: int = 0): string =
     let indent = "    ".repeat(indentLevel)
