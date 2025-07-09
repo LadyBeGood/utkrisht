@@ -1,0 +1,154 @@
+<article class="markup">
+    <p>Utkrisht compiler is written in a procedural style and avoids OOP. Compiler stages are implemented as big top-level functions, each containing relevant smaller helper functions.</p>
+    
+    <div class="spacer-small"></div>
+    <div class="warning-box">
+        This guide lists both current and upcoming features. So far, only these are complete:
+        <div class="spacer-extra-small"></div>
+        <ul>
+            <li>Lexical analysis</li>
+            <li>Parsing</li>
+            <li>Token generation</li>
+            <li>Abstract syntax tree generation</li>
+        </ul>
+    </div>
+    <div class="spacer"></div>
+    <h2>Files</h2>
+    <p>Compiler is located at <code class="language- inline">compiler</code> folder in root directory of GitHub repo.</p>
+    <table>
+        <tr>
+            <th>File</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>uki.nim</td>
+            <td>Entry point. Serves as a command-line interface.</td>
+        </tr>
+        <tr>
+            <td>types.nim</td>
+            <td>
+                Contains all the type declarations:
+                <ul>
+                    <li><code class="language- inline">TokenKind</code>, <code class="language- inline">Token</code></li>
+                    <li><code class="language- inline">Literal</code>s, <code class="language- inline">Expression</code>s, <code class="language- inline">Statement</code>s</li>
+                    <li><code class="language- inline">DataTypes</code>, <code class="language- inline">Context</code></li>
+                    <li><code class="language- inline">JavaScriptLiteral</code>s, <code class="language- inline">JavascriptExpression</code>s, <code class="language- inline">JavascriptStatement</code>s</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>error.nim</td>
+            <td>Basic error functionality (echoes error and quits immediately).
+            <div class="spacer-extra-small"></div>
+            <div class="information-box">
+                Error-tolerant compilation system (similar to typescript) was tried and discarded because of misleading cascading errors and complex error recovery.
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td>lexer.nim</td>
+            <td>Lexical analysis. Reports basic syntax errors like invalid characters or bad indentation.</td>
+        </tr>
+        <tr>
+            <td>parser.nim</td>
+            <td>
+                Recursive descend with Pratt parsing.
+                <div class="spacer-extra-small"></div>
+                <div class="warning-box">Needs revision, since syntax of some expressions have changed.</div>
+            </td>
+        </tr>
+        <tr>
+            <td>analyser.nim</td>
+            <td>Semantic analysis. This is the poster-girl stage of compiler and is the reason why next stages had to be reimplemented from scratch, most time will be given here. It is supposed to to everything from binding (note uki doesn't have hoisting but supports cyclic imports) to enigma type checking.</td>
+        </tr>
+        <tr>
+            <td>transformer.nim</td>
+            <td>Transforms uki ast to js ast. Indroduced later when code generation stage became complex. Targets unspecified ecmascript specification</td>
+        </tr>
+        <tr>
+            <td>generator.nim</td>
+            <td>
+                Contains 4 functions.
+                <ol>
+                    <li><code class="language- inline">generator</code>, exported</li>
+                    <li><code class="language- inline">tokenGenerator</code>, helper, not exported</li>
+                    <li><code class="language- inline">tokensGenerator</code>, exported</li>
+                    <li><code class="language- inline">abstractSyntaxTreeGenerator</code>, exported</li>
+                </ol>
+            </td>
+        </tr>
+        
+    </table>
+    
+
+    <div class="spacer"></div>
+    <h2>Compiler Pipelines</h2>
+    <pre><code class="language-*">
+                                                                                                                                                       ┌────────────────┐
+                       ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│ tokenGenerator ├──> .js
+                       │                                                                                                                               └────────────────┘
+                       │                                                                                                                  ┌─────────────────────────────┐
+                       │                               ┌───────────────────────────────────┬──────────────────────────────────────────────┤ abstractSyntaxTreeGenerator ├──> .js
+                       │                               │                                   │                                              └─────────────────────────────┘
+        ┌───────┐      ^       ┌────────┐              ^           ┌──────────┐            ^             ┌─────────────┐                                    ┌───────────┐
+.uki >──┤ lexer ├──> tokens >──┤ parser ├──> abstractSyntaxTree >──┤ analyser ├──> abstractSyntaxTree >──┤ transformer ├──> javaScriptAbstractSyntaxTree >──┤ generator ├──> .js
+        └───────┘              └────────┘                          └──────────┘   (with narrowed types)  └─────────────┘                                    └───────────┘
+
+</code></pre>
+    <div class="spacer-small"></div>
+    
+    <h3>Main Compiler Pipeline</h2>
+    <p>It consists of 5 main stages</p>
+    <pre><code class="language-">
+        ┌───────┐              ┌────────┐                          ┌──────────┐                          ┌─────────────┐                                    ┌───────────┐
+.uki >──┤ lexer ├──> tokens >──┤ parser ├──> abstractSyntaxTree >──┤ analyser ├──> abstractSyntaxTree >──┤ transformer ├──> javaScriptAbstractSyntaxTree >──┤ generator ├──> .js
+        └───────┘              └────────┘                          └──────────┘   (with narrowed types)  └─────────────┘                                    └───────────┘
+
+</code></pre>
+    <div class="spacer-small"></div>
+    <div class="information-box">
+        Alternate compiler pipelines (below) are meant for debugging. Their output is represented in a json-like form and emitted inside .js files to enable code folding by code editors.
+    </div>
+    <div class="spacer-small"></div>
+    <h3>Token Compiler Pipeline</h3>
+    <pre><code class="language-">
+        ┌───────┐              ┌────────────────┐ 
+.uki >──┤ lexer ├──> tokens >──┤ tokenGenerator ├──> .js
+        └───────┘              └────────────────┘
+
+</code></pre>
+    <h3>Abstract syntax tree Compiler Pipeline</h3>
+    <pre><code class="language-">
+        ┌───────┐              ┌────────┐                          ┌─────────────────────────────┐
+.uki >──┤ lexer ├──> tokens >──┤ parser ├──> abstractSyntaxTree >──┤ abstractSyntaxTreeGenerator ├──> .js
+        └───────┘              └────────┘                          └─────────────────────────────┘
+
+</code></pre>
+    <h3>Analysed abstract syntax tree Compiler Pipeline</h3>
+    <pre><code class="language-">
+        ┌───────┐              ┌────────┐                          ┌──────────┐                          ┌─────────────────────────────┐
+.uki >──┤ lexer ├──> tokens >──┤ parser ├──> abstractSyntaxTree >──┤ analyser ├──> abstractSyntaxTree >──┤ abstractSyntaxTreeGenerator ├──> .js
+        └───────┘              └────────┘                          └──────────┘   (with narrowed types)  └─────────────────────────────┘
+
+</code></pre>
+
+
+    <div class="spacer-small"></div>
+    <div class="information-box">
+        There is no Javascript abstract syntax tree compiler pipeline because the <code class="language- inline">generator</code> creates a 1:1 representation of Javascript abstract syntax tree anyways.
+    </div>
+</article>
+
+<!-- 
+These symbols will be helpful while editing
+
+│  
+│
+
+└
+┘
+──────────────
+┤    
+├
+
+-->

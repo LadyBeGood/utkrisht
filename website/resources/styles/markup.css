@@ -62,6 +62,10 @@
     margin: 2.5rem 0;
 }
 
+.spacer-extra-small {
+    margin: 1.25rem 0;
+}
+
 .markup details,
 .markup figcaption,
 .markup figure {

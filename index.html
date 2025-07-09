@@ -6,38 +6,165 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Utkrisht Programming Language</title>
     <link rel="stylesheet" href="./website/resources/styles/index.css">
-    <link rel="stylesheet" href="./website/resources/styles/markup.css">
-    <link rel="stylesheet" href="./website/index.css">
+    
     <script src="./website/resources/scripts/prism.js" defer></script>
     <link rel="icon" href="./website/resources/images/avatar.png" type="image/png">
     <link rel="manifest" href="./website/manifest.json">
     <meta name="theme-color" content="#1A1A1A">
+    <link rel="stylesheet" href="./website/resources/styles/markup.css">
 </head>
 <body>
     <main>
-        <loading-spinner></loading-spinner>
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
         <div id="origin"></div>
     </main>
     
     <footer>
         <nav>
             <a class="navigator" href="#home">
-                <inject-svg src="./website/resources/images/home.svg"></inject-svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg>
                 <p>Home</p>
             </a>
-            <a class="navigator" href="#guide/install">
-                <inject-svg src="./website/resources/images/code.svg"></inject-svg>
+            <a class="navigator" href="#editor">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z"/></svg>
                 <p>Editor</p>
             </a>
-            <a class="navigator" href="#guide/learn">
-                <inject-svg src="./website/resources/images/guide.svg"></inject-svg>
+            <a class="navigator" href="#guide">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M400-400h160v-80H400v80Zm0-120h320v-80H400v80Zm0-120h320v-80H400v80Zm-80 400q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/></svg>
                 <p>Guide</p>
             </a>
         </nav>
     </footer>
-    <script src="./website/index.js" type="module" defer></script>
+    
+    <style>
+                
+        header {
+            background-color: var(--azure);
+            display: flex;
+            align-items: center;
+            padding-inline: 15px;
+        }
+        
+        header #current-page {
+            color: var(--almost-white);
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        main {
+            background-color: var(--almost-black);
+            overflow-y: scroll;
+            padding: 20px 15px;
+            line-height: 1.6;
+            color: var(--almost-white);
+            position: relative;
+        }
+        
+        footer {
+            background-color: var(--azure);
+            border-top: 1px solid var(--dark-gray);
+        }
+        
+        footer nav {
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        footer .navigator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--almost-white);
+        }
+        
+        
+
+    </style>
+    <script type="module" defer>
+        window.addEventListener("hashchange", handleRoute);
+        window.addEventListener("load", handleRoute);
+        
+        function handleRoute() {
+            let page = location.hash.slice(1) || "home";
+            Navigate("website/pages/" + page);
+        }
+        
+        
+        const loadedPages = new Set(); // global cache
+        
+        async function Navigate(page) {
+            const origin = document.querySelector("#origin");
+            const loadingSpinner = document.querySelector("main .loading-spinner");
+            
+            /*
+            let loadingTimeout = setTimeout(() => {
+                origin.innerHTML = "";
+                loadingSpinner.style.display = "block";
+            }, 100); */
+        
+            origin.innerHTML = "";
+            loadingSpinner.style.display = "block";
+        
+            const id = page.replaceAll("/", "-");
+        
+            try {
+                const responseHTML = await fetch(`${page}.html`);
+                const html = await responseHTML.text();
+        
+                //clearTimeout(loadingTimeout);
+                loadingSpinner.style.display = "none";
+        
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
+        
+                const styles = doc.querySelectorAll("style, link[rel='stylesheet']");
+                const scripts = doc.querySelectorAll("script");
+        
+                styles.forEach(el => el.remove());
+                scripts.forEach(el => el.remove());
+        
+                origin.innerHTML = doc.body.innerHTML;
+        
+                if (!loadedPages.has(id)) {
+                    styles.forEach(el => document.head.appendChild(el.cloneNode(true)));
+        
+                    scripts.forEach(el => {
+                        const script = document.createElement("script");
+                        if (el.src) {
+                            script.src = el.src;
+                            script.type = el.type || "text/javascript";
+                        } else {
+                            script.textContent = el.textContent;
+                            script.type = el.type || "text/javascript";
+                        }
+                        document.head.appendChild(script);
+                    });
+        
+                    loadedPages.add(id);
+                }
+                
+                // it is required, don't remove it :'(
+                Prism.highlightAll();
+        
+            } catch (error) {
+                clearTimeout(loadingTimeout);
+                loadingSpinner.style.display = "none";
+                origin.innerHTML = "Error fetching page: " + error;
+                console.error(error);
+            }
+        }
+
+
+    </script>
 </body>
 </html>
+
+
 
 
 

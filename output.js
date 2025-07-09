@@ -1,18 +1,34 @@
 Statement [
+    ContainerAssignmentStatement {
+        identifier: Token {
+            kind: Identifier
+            lexeme: "name"
+            line: 1
+        }
+        parameters: Token []
+        expression: LiteralExpression {
+            value: StringLiteral {
+                value: "hello world"
+            }
+        }
+    }
     ExpressionStatement {
         expression: ContainerExpression {
             identifier: Token {
                 kind: Identifier
                 lexeme: "write"
-                line: 1
+                line: 2
             }
             arguments: Argument [
                 Argument {
                     nil
-                    LiteralExpression {
-                        value: StringLiteral {
-                            value: "Hello World"
+                    ContainerExpression {
+                        identifier: Token {
+                            kind: Identifier
+                            lexeme: "name"
+                            line: 2
                         }
+                        arguments: Expression []
                     }
                 }
             ]
