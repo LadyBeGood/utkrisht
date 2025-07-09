@@ -1,26 +1,22 @@
 <article id="guide">
     <a class="card" href="#guide/install">
         <div class="heading">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
-            <!-- <inject-svg src="./website/resources/images/install.svg"></inject-svg> -->
-            <h2>Installation</h2>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-183v-274L200-596v274l240 139Zm80 0 240-139v-274L520-457v274Zm-80 92L160-252q-19-11-29.5-29T120-321v-318q0-22 10.5-40t29.5-29l280-161q19-11 40-11t40 11l280 161q19 11 29.5 29t10.5 40v318q0 22-10.5 40T800-252L520-91q-19 11-40 11t-40-11Zm200-528 77-44-237-137-78 45 238 136Zm-160 93 78-45-237-137-78 45 237 137Z"/></svg>            
+            <h3>Installation</h3>
         </div>
         <p>Install the compiler to use Utkrisht locally on your system</p>
     </a>
     <a class="card" href="#guide/tutorial">
         <div class="heading">
-            
-        <!-- <inject-svg src="./website/resources/images/learn.svg"></inject-svg> -->
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M480-120 200-272v-240L40-600l440-240 440 240v320h-80v-276l-80 44v240L480-120Zm0-332 274-148-274-148-274 148 274 148Zm0 241 200-108v-151L480-360 280-470v151l200 108Zm0-241Zm0 90Zm0 0Z"/></svg>
-        <h2>Tutorial</h2>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"/></svg>
+            <h3>5-min Tutorial</h3>
         </div>
         <p>Learn the basics of Utkrisht language in 5 minutes.</p>
     </a>
     <a class="card" href="#guide/compiler">
         <div class="heading">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M756-120 537-339l84-84 219 219-84 84Zm-552 0-84-84 276-276-68-68-28 28-51-51v82l-28 28-121-121 28-28h82l-50-50 142-142q20-20 43-29t47-9q24 0 47 9t43 29l-92 92 50 50-28 28 68 68 90-90q-4-11-6.5-23t-2.5-24q0-59 40.5-99.5T701-841q15 0 28.5 3t27.5 9l-99 99 72 72 99-99q7 14 9.5 27.5T841-701q0 59-40.5 99.5T701-561q-12 0-24-2t-23-7L204-120Z"/></svg>
-        <!-- <inject-svg src="./website/resources/images/build.svg"></inject-svg> -->
-        <h2>Compiler internals</h2>
+            <h3>Compiler internals</h3>
         </div>
         <p>Learn more about the architecture of Utkrisht compiler</p>
     </a>
@@ -32,18 +28,46 @@
         flex-direction: column;
         gap: 20px;
     }
+    
     #guide .card {
-        border-radius: 0.5rem;
-        background-color: #202126;
+        border-radius: 0.75rem;
+        background: linear-gradient(145deg, #24262b, #1e1f23);
         padding: 20px 15px;
+        color: #e3e3e3;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
     }
     
     #guide .card .heading {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        margin-bottom: 8px;
+        position: relative;
     }
+    
+    #guide .card svg {
+        background-color: #2e2f35;
+        padding: 5px;
+        box-sizing: content-box;
+        border-radius: 8px;
+        fill: #70b5ff;
+    }
+    
+    #guide .card:nth-child(2) svg {
+        fill: #ffb870;
+    }
+    
+    #guide .card:nth-child(3) svg {
+        fill: #70ffaa;
+    }
+    
+    #guide .card p {
+        color: #c1c1c1;
+        margin: 0;
+    }
+    
     #guide a {
         display: block;
+        text-decoration: none;
     }
 </style>
