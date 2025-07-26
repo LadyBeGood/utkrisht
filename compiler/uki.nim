@@ -1,4 +1,4 @@
-import lexer, parser, analyser, transformer, generator
+import lexer, parser#[, analyser, transformer]#, generator
 import os, osproc, strutils, sequtils
 
 proc tokensCompiler(input: string): string =
@@ -8,7 +8,7 @@ proc abstractSyntaxTreeCompiler(input: string): string =
     abstractSyntaxTreeGenerator parser lexer input
 
 proc compiler(input: string): string =
-    generator transformer analyser parser lexer input
+    generator #[ transformer analyser ]# parser lexer input
 
 
 proc main() =
@@ -36,7 +36,7 @@ proc main() =
     writeFile(outputPath, output)
     
     if "--run" in mode:
-        discard execProcess("node " & tmp)
+        discard execProcess("node " & outputPath)
 
 
 main()
@@ -44,3 +44,5 @@ main()
 
 
 
+# nim c -d:release --cpu:amd64 --os:windows -o:binaries/utkrisht-win.exe uki.nim
+# nim c -d:release --cpu:amd64 --os:macosx  -o:binaries/utkrisht-macos   uki.nim

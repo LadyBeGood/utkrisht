@@ -1,12 +1,30 @@
 
-<article id="tutorial" class="markup">
+<article id="guide-tutorial" class="markup">
     <div class="spacer-small"></div>
-    <h1>5 minutes tutorial</h1>
+    <h1>5-Minute Tutorial</h1>
     <div class="spacer"></div>
+    <p>
+        Utkrisht (uki) is a source-to-source compiled language targeting JavaScript, designed to evolve into a full-featured web framework.
+    </p>
+    <div class="spacer"></div>
+    
+    <h2>Features</h2>
+    <p>
+        <ul>
+            <li>Statically & strongly typed (with 0 type declaration requirement thanks to enigma type checking)</li>
+            <li>Follows procedural paradigm</li>
+            <li>Simple & minimal indentation based syntax</li>
+        </ul>
+    </p>
+    
+    <div class="spacer"></div>
+    
     <p class="warning-box">
         Syntax highlighting on this site is regex-based and may occasionally highlight code incorrectly.
     </p>
+    <div class="spacer-small"></div>
 
+ 
     <h2>Example</h2>
     <pre><code class="language-utkrisht"># A program to print prime numbers between a user defined range
 is-prime num:
@@ -48,6 +66,14 @@ print-primes num-1, num-2</code></pre>
     <h2>Comments</h2>
     <pre><code class="language-utkrisht"># This is a comment</code></pre>
     <p>Only single line comments are allowed.</p>
+    <div class="spacer-small"></div>
+    <div class="information-box">
+        Notation in this tutorial (used wherever necessary):
+        <ul>
+            <li><code class="language- inline">#></code> comment means the message logged in the console.</li>
+            <li><code class="language- inline">#-></code> comment means the value of the preceding expression.</li>
+        </ul>
+    </div>
     
     <div class="spacer"></div>
     
@@ -139,84 +165,139 @@ name = "js"
 
 # Make container unreassignable (meant for libraries, not normal use)
 unreassignable name
-name = "stuff" # gives error</code></pre>
+name = "stuff" #> Error: Cannot reassign a unreassignable container `name`</code></pre>
     <p>Assignment operators like <code class="inline language-*">+=</code>, <code class="inline language-*">-=</code>, <code class="inline language-*">++</code> etc. are not allowed.</p>
     <div class="spacer-small"></div>
     <h3>Arithmetic operations</h3>
     <pre><code class="language-utkrisht"># Addition
-2 + 5
+2 + 5 #-> 7
 
 # Substraction
-6 - 3
+6 - 3 #-> 3
 
 # Multiplication 
-4 * 2
+4 * 2 #-> 8
 
 # Division 
-6 / 2
+6 / 3 #-> 2
 
 # Remainder 
-remainder 5, 3
+remainder 4, 3 #-> 1
 
 # Power
-power 2, 5
+power 3, 2 #-> 9
 
 # Negation 
 num: 5
--num # equals -5
+-num #-> -5
 
 # Useless operator 
-+num # does nothing, same as writing `num`</code></pre>
+# does nothing, same as writing `num`
++num #-> 5</code></pre>
     <div class="spacer-small"></div>
     <p class="information-box"><code class="inline language-*">-10</code> is interpreted as the number <code class="inline language-*">-10</code>, not as the result of negating <code class="inline language-*">10</code>.</p>
     <div class="spacer-small"></div>
     <h3>Comparison operations</h3>
-    <pre><code class="language-utkrisht"># equals, less than, more than
-(x = y) # by default `=` is treated as an reassignment operator unless present in an expression context
+    <pre><code class="language-utkrisht"># equals
+# by default `=` is treated as an reassignment operator unless present in an expression context
+(x = y) 
+
+# less than
 x < y
+
+# more than
 x > y
 
-# not equals, not less than, not more than
+# not equals
 x != y
-x !< y # equivalent to `>=`
-x !> y # equivalent to `<=`</code></pre>
+
+# not less than
+# same as greater-than-equals operator `>=` in js
+x !< y 
+
+# not more than
+# same as less-than-equals operator `<=` in js
+x !> y</code></pre>
     <div class="spacer-small"></div>
     <h3>Logical operations</h3>
     <pre><code class="language-utkrisht"># And
-right & wrong
+x & y
 
 # Or
-right ? wrong
+x ? y
 
 # Not
-!wrong</code></pre>
-    <div class="spacer-small"></div>
-    <h3>Other operations</h3>
-    <pre><code class="language-utkrisht"># range expression
-# A special kind of syntax to create an object with range properties,
-# useful in accessing expression and loops
-1_5_2
-25_-6
-0.523_&lt;23.56
-10_!
-
-
-# accessing
-user: [name: "bro", shout: {write "I'M BROOOO"]
-user.name  # "bro"
-user.shout # I'M BROOOO
-
-fruits: ["apple", "mango", "banana"]
-fruits.1    # "apple" (Array index starts at 1)
-fruits.-1   # "banana"
-fruits.2_3  # ["mango", "banana"]
-fruits.2_-3 # ["mango", "apple"]
-fruits.-1_1 # reverses the array, same as using reverse function 
-
-name: "uki"
-name.1    # "u"
-name.1_2  # "uk"</code></pre>
+!x</code></pre>
     
+    <div class="spacer-small"></div>
+    
+    <h3>Range operation</h3>
+    <div class="spacer-extra-small"></div>
+    <p>A special kind of syntax to create an object with range properties, useful in accessing expression and loops.</p>
+    <pre><code class="language-utkrisht">1_5_2 #> [
+      #>     type: "range"
+      #>     start: 1
+      #>     end-specified: right
+      #>     inclusive: right
+      #>     end: 5
+      #>     gap-specified: right
+      #>     gap: 2
+      #> ]
+
+25_-6 #> [
+      #>     type: "range"
+      #>     start: 25
+      #>     end-specified: right
+      #>     inclusive: right
+      #>     end: -6
+      #>     gap-specified: wrong
+      #>     gap: 0
+      #> ]
+
+0.523_&lt;23.56 #> [
+             #>     type: "range"
+             #>     start: 0.523
+             #>     end-specified: right
+             #>     inclusive: wrong
+             #>     end: 23.56
+             #>     gap-specified: wrong
+             #>     gap: 0
+             #> ]
+
+10_! #> [
+     #>     type: "range"
+     #>     start: 10
+     #>     end-specified: wrong
+     #>     inclusive: wrong
+     #>     end: 0
+     #>     gap-specified: wrong
+     #>     gap: 0
+     #> ]
+
+</code></pre>
+    
+    <div class="spacer-small"></div>
+    
+    <h3>Accessing operation</h3>
+    <pre><code class="language-utkrisht"># objects
+user: [name: "bro", shout: {write "I'M BROOOO"]
+user.name  #-> "bro"
+user.shout #> I'M BROOOO
+
+# array
+fruits: ["apple", "mango", "banana"]
+fruits.1    #-> "apple" (Array index starts at 1)
+fruits.-1   #-> "banana"
+fruits.2_3  #-> ["mango", "banana"]
+fruits.2_-3 #-> ["mango", "apple"]
+fruits.-1_1 #-> ["banana", "mango", "apple"]
+            # reverses the array, same as using reverse function 
+
+# string
+name: "uki"
+name.1    #-> "u"
+name.1_2  #-> "uk"</code></pre>
+
 
     <div class="spacer"></div>
     
@@ -330,29 +411,83 @@ loop 3 with i
 
     <div class="spacer"></div>
     <h2>Try</h2>
-    <p>TODO</p>
+    <p>Handling runtime errors (exceptions).</p>
     <pre><code class="language-utkrisht">try
-    to-number "Hello, World!"
-fix value-error
-    write value-error.message
-end
-    write ""</code></pre>
+    to-number "hi"
+fix err # or any other identifier for the error object
+    write error.message
 
+# if you don't require error details, you can omit it
+try
+    to-number "hi"
+fix
+    write "something isn't right"</code></pre>
+    
+    <div class="spacer-small"></div>
+    
+    <p>You can also create your own errors using <code class="inline language-">error</code> function.</p>
+    <pre><code class="language-utkrisht"># Signature of error function
+error String message, String name ~ "":</code></pre>
+    <div class="spacer-extra-small"></div>
+    <p>If <code class="inline language-">error</code> is called outside a <code class="inline language-">try</code> block, it logs the <code class="inline language-">message</code> to the console.</p>
+    <pre><code class="language-utkrisht">error "this is my error." #> Error [line X]: This is my error.
+error "This is my error", "my error" #> Error [line X]: This is my error.</code></pre>
+    <div class="spacer-extra-small"></div>
+<p>If called inside a <code class="inline language-">try</code> block, it sends an object with <code class="inline language-">message</code> and <code class="inline language-">name</code> to the <code class="inline language-">fix</code> block.</p>
+    <pre><code class="language-utkrisht">try
+    error "This is my error."
+fix err
+    write err.message #> This is my error.
+    write err.name    #> 
+                      # shows ""
+
+try
+    error "This is my error.", "my error"
+fix err
+    write err.message #> This is my error.
+    write err.name    #> my error</code></pre>
+    <div class="spacer-small"></div>
+    <p><code class="inline language-">name</code> property us useful when dealing with multiple errors.</p>
+    <pre><code class="language-utkrisht">try
+    function-that-can-generate-different-types-of-errors
+fix err
+    when err.name = "value error"
+        write "this is a value error"
+    else err.name = "type error"
+        write "this is a type error"</code></pre>
+    <div class="spacer-small"></div>
+    <div class="information-box">To not cause confusion, we use the identifier <code class="inline language-">err</code> here for storing error object, but you should always use <code class="inline language-">error</code> as identifier for clarity. The Utkrisht langauge style guide recommends avoiding abbreviations.</div>
     <div class="spacer"></div>
     
-    <h2></h2>
+    
+    <h2>Module system</h2>
+    <p>Top-level containers can be imported and exported between files. No namespace prefixing (or aliasing) is required to access imported containers unless in case of name-conflicts.</p>
+    <pre><code class="language-utkrisht"># math.uki
+export add a, b:
+    exit a + b
+
+export square a:
+    exit power a, 2</code></pre>
+    <pre><code class="language-utkrisht"># main.uki
+import math
+
+result: add 1, 2
+squared: square result
+write squared</code></pre>
+    <div class="spacer-small"></div>
+    <p>Cyclic imports are supported.</p>
+    <pre><code class="language-utkrisht"># a.uki
+import b
+
+export message-1: "Hello World!"
+write message-2</code></pre>
+    <pre><code class="language-utkrisht"># b.uki
+import a
+
+export message-2: "Goodbye World!"
+write message-1</code></pre>
+
 
 </article>
-
-<style>
-    #tutorial h1 {  
-        background: linear-gradient(90deg, #f6b56b, #f3a380); /* Warm pastel orange */  
-        -webkit-background-clip: text;  
-        -webkit-text-fill-color: transparent;  
-        text-shadow: 5px 5px 0 #f6b56b50;  
-    }
-
-</style>
-
 
 

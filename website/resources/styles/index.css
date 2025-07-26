@@ -105,7 +105,77 @@ body, html {
 }
 */
 
-.loading-spinner {
+
+header {
+    background-color: var(--azure);
+    display: flex;
+    align-items: center;
+    padding-inline: 15px;
+}
+
+header #current-page {
+    color: var(--almost-white);
+    font-weight: bold;
+    font-size: 20px;
+}
+
+main {
+    background-color: var(--almost-black);
+    overflow-y: scroll;
+    padding: 20px 15px;
+    line-height: 1.6;
+    color: var(--almost-white);
+    position: relative;
+}
+
+footer {
+    background-color: var(--azure);
+    border-top: 1px solid var(--dark-gray);
+}
+
+footer nav {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+footer .navigator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--steel);
+}
+
+
+footer .navigator.active {
+    color: var(--almost-white);
+}
+
+footer .navigator.active svg {
+    background: var(--almost-white);
+    border-radius: 999px;
+    width: 40px;
+}
+
+footer .navigator.active svg path {
+    fill: var(--almost-black);
+}
+footer .navigator .outlined-svg {
+    display: none;
+}
+
+footer .navigator.active .filled-svg {
+    display: block;
+}
+
+footer .navigator.active .outlined-svg {
+    display: none;
+}
+
+
+.spinner-container {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -113,7 +183,7 @@ body, html {
     display: none;
 }
 
-.loading-spinner > .spinner {
+.spinner-container > .spinner {
     background: var(--almost-white);
     width: 25px;
     padding: 3px;
@@ -135,8 +205,94 @@ body, html {
 
 
 
+/*
+ * #updates
+ */
+
+#updates .email-button {
+    display: inline-block;
+    padding: 0.6em 1.2em;
+    background-color: #2a2a2a;
+    color: #f0f0f0;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    border: 1px solid #444;
+    transition: background-color 0.15s;
+}
+
+#updates .email-button:hover {
+    background-color: #3a3a3a;
+}
+ 
+/*
+ * #guide
+ */
+
+#guide {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#guide .card {
+    border-radius: 0.75rem;
+    background: linear-gradient(145deg, #24262b, #1e1f23);
+    padding: 20px 15px;
+    color: #e3e3e3;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+#guide .card .heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+#guide .card svg {
+    background-color: #2e2f35;
+    padding: 5px;
+    box-sizing: content-box;
+    border-radius: 8px;
+    fill: #70b5ff;
+}
+
+#guide .card:nth-child(2) svg {
+    fill: #ffb870;
+}
+
+#guide .card:nth-child(3) svg {
+    fill: #70ffaa;
+}
+
+#guide .card p {
+    color: #c1c1c1;
+    margin: 0;
+}
+
+#guide a {
+    display: block;
+    text-decoration: none;
+}
 
 
 
+/* 
+ * #guide/compiler
+ */
+
+
+/* 
+ * #guide/install
+ */
+
+
+
+/* 
+ * #guide/tutorial
+ */
 
 
