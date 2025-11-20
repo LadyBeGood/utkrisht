@@ -27,33 +27,33 @@
  
     <h2>Example</h2>
     <pre><code class="language-utkrisht"># A program to print prime numbers between a user defined range
-is-prime num:
-    when num !> 1
+is-prime number:
+    when number !> 1
         exit wrong
-    else num = 2
+    else number = 2
         exit right
-    else (remainder num, 2) = 0
+    else remainder number, 2 = 0
         exit wrong
 
-    loop 3_(power num, 0.5)_2 with i
-        when (remainder num, i) = 0
+    loop 3_(power number, 0.5)_2 with i
+        when remainder number, i = 0
             exit wrong
 
     exit right
 
 
-print-primes num-1, num-2: 
-    write "Prime numbers from |num-1| to |num-2| are:"
-    
-    loop num-1_num-2 with num
-        when is-prime num
-            write num-1_num-2
+print-primes number-1, number-2:
+    write "Prime numbers from |number-1| to |number-2| are:"
+
+    loop number-1_number-2 with number
+        when is-prime number
+            write number
 
 
-num-1: to-number prompt "What is your 1st number" 
-num-2: to-number prompt "What is your 2nd number"
+number-1: to-number prompt "What is your 1st number" 
+number-2: to-number prompt "What is your 2nd number"
 
-print-primes num-1, num-2</code></pre>
+print-primes number-1, number-2</code></pre>
 
     <div class="spacer"></div>
     
