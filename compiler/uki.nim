@@ -1,4 +1,4 @@
-import lexer, parser#[, analyser, transformer]#, generator
+import lexer, parser, analyser, transformer, generator
 import os, osproc, strutils, sequtils
 
 proc tokensCompiler(input: string): string =
@@ -8,11 +8,11 @@ proc abstractSyntaxTreeCompiler(input: string): string =
     abstractSyntaxTreeGenerator parser lexer input
 
 proc compiler(input: string): string =
-    generator #[ transformer analyser ]# parser lexer input
+    generator transformer analyser parser lexer input
 
 
 proc main() =
-    let args = commandLineParams()
+    let args: seq[string] = commandLineParams()
     if args.len == 0:
         quit "Usage: uki <input> [output] [--tokens|--ast|--run]"
 
@@ -39,10 +39,8 @@ proc main() =
         discard execProcess("node " & outputPath)
 
 
-main()
+when isMainModule:
+    main()
 
 
 
-
-# nim c -d:release --cpu:amd64 --os:windows -o:binaries/utkrisht-win.exe uki.nim
-# nim c -d:release --cpu:amd64 --os:macosx  -o:binaries/utkrisht-macos   uki.nim
