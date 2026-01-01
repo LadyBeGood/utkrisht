@@ -8,29 +8,31 @@
             "]"
         ],
         [
+            "{",
+            "}"
+        ],
+        [
             "(",
             ")"
         ]
     ],
     "autoClosingPairs": [
-        {
-            "open": "[",
-            "close": "]",
-            "notIn": [
-                "comment"
-            ]
-        },
         [
             "(",
             ")"
         ],
+        [
+            "{",
+            "}"
+        ],
+        [
+            "[",
+            "]"
+        ],
         {
             "open": "\"",
             "close": "\"",
-            "notIn": [
-                "string",
-                "comment"
-            ]
+            "notIn": ["string"]
         }
     ],
     "surroundingPairs": [
@@ -45,6 +47,9 @@
         [
             "\"",
             "\""
+        ],
+        [
+            "{", "}"
         ]
     ],
     "folding": {

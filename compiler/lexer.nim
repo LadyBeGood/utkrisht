@@ -227,7 +227,8 @@ proc lexer*(input: string): seq[Token] =
                 index.inc()
         of '\n':
             newline()
-        of ' ', '\\':
+        of ' ', 
+           '\r':
             index.inc()
         of '!':
             if index + 1 < input.len and input[index + 1] in ['=', '>', '<']:
@@ -262,5 +263,27 @@ proc lexer*(input: string): seq[Token] =
 
 
 
+
+when isMainModule:
+    import std/[cmdline, os]
+    import generator
+    
+    let params = commandLineParams()
+
+    if params.len == 0:
+        quit("Please provide file name", QuitFailure)
+
+    let inputFileName = params[0]
+    let outputFileName =
+        if params.len >= 2: params[1] else: "demo/output.txt"
+
+    if not fileExists(inputFileName):
+        quit("Input file not found: " & inputFileName, QuitFailure)
+
+    try:
+        let data = readFile(inputFileName)
+        writeFile outputFileName, tokensGenerator lexer data
+    except IOError as e:
+        echo "IO error: ", e.msg
 
 
