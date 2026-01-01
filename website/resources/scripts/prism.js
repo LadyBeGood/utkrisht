@@ -25,7 +25,7 @@ Prism.languages.utkrisht = {
       greedy: true
     },
 
-    'keyword': /\b(?:try|fix|end|when|else|loop|with|stop|next|exit|import|export)\b/,
+    'keyword': /\b(?:try|fix|when|else|loop|with|stop|skip|exit|import|export)\b/,
     'number': {
         pattern: /(^|[^\w-])-?\d+(?:\.\d+)?(?=$|[^\w-])/,
         lookbehind: true
@@ -36,11 +36,15 @@ Prism.languages.utkrisht = {
         greedy: true,
         alias: 'function'
     },
+    'null': {
+        pattern: /\bnull\b/,
+        alias: 'boolean'
+    },
     'variable': {
         pattern: /\b[a-z](?:[a-z0-9-]*[a-z0-9])?\b/,
         greedy: true
     },
-    'operator': /!>|=|_|!>|<|>|!|\?|!=|&/,
+    'operator': /!>|=|_|!>|<|>|!|\||!=|&/,
     'punctuation': /[{}[\]();.,:]/
 };
 
