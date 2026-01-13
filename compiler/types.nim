@@ -55,7 +55,7 @@ type
         Wrong
         Exit
         Stop
-        Next
+        Skip
       
         # Spacing  
         Indent  

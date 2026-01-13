@@ -79,7 +79,7 @@ print-primes number-1, number-2</code></pre>
     
     <h2>Data types</h2>
     <p>
-        Utkrisht has 6 data types:
+        Utkrisht has 5 data types:
     </p>
     <ol>
         <li>String</li>
@@ -87,7 +87,6 @@ print-primes number-1, number-2</code></pre>
         <li>Boolean</li>
         <li>Procedure</li>
         <li>Structure</li>
-        <li>Null</li>
     </ol>
     <pre><code class="language-utkrisht"># String 
 "I program in Utkrisht 😼"
@@ -103,24 +102,40 @@ wrong
 {write "Hello World"}
 
 # Structure 
-["src/data.uki", optimize = right]
-
-# Null
-null</code></pre>
+[1, 2, 3]
+[name = "uki", age = 1]
+[1, 2, name = "uki", age = 1, 3]</code></pre>
     
     <div class="spacer"></div>
     
     <h2>Variables</h2>
     <p>Variables are identifiers that store data.</p>
    
-    <pre><code class="language-utkrisht"># A variable storing a string
-message: "Hello World"</code></pre>
+    <pre><code class="language-utkrisht">
+message: "Hello World"
+
+age-in-years: 45
+
+is-logged: wrong
+
+greet name: 
+    write "Hello \(name), how are you?"
+
+fruits: ["apple", "banana", "mango"]
+
+product: [
+    name = "Headphones"
+    price = 2999
+    get-discounted-price discount =
+        exit price - discount
+]
+</code></pre>
     <div class="spacer-small"></div>
-    <p>To assign a new value to the variable, use the reassignment operator <code class="inline language-">=</code></p>
+    <p>To reassign a value to the container, use the reassignment operator <code class="inline language-">=</code></p>
     <pre><code class="language-utkrisht">quantity: 34
 quantity = 65
 
-# Data type of the value does not matter
+# data type of container doesn't matter
 quantity = "high"
 quantity = [in-number = 17, in-words = "low"]</code></pre>
 
@@ -252,8 +267,8 @@ user.shout "Faraday" #> I'M FARADAY
 fruits: ["apple", "mango", cost = 540, "banana"]
 fruits.1     #-> "apple" (Array index starts at 1)
 fruits.2     #-> "mango"
-fruits.cost  #-> 540
 fruits.3     #-> "banana", `cost = 540` part does not affect indices
+fruits.cost  #-> 540
 
 
 # string
@@ -363,7 +378,7 @@ loop fruits with fruit
     # I love banana
 
 # multiple iterators can be declared
-loop fruit with [i, fruit]
+loop fruit with [key, fruit]
     write "\(i). I love \(fruit)"
     
     # 1. I love apple
@@ -397,11 +412,11 @@ loop 4 with i
     # 3
     # 4
 
-# iterators can be used as labels in nested loops for skip and stop statements
+# iterators can be used as labels in nested loops for next and stop statements
 loop 3 with i
     loop 3 with j
         when i = 2
-            skip i
+            next i
         write "\(i) \(j)"
     
     # 1 1

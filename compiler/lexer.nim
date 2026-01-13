@@ -1,9 +1,9 @@
 import types, tables, error
 
 proc lexer*(input: string): seq[Token] =
-    var index: int
+    var index = 0
     var tokens: seq[Token]
-    var line: int = 1
+    var line = 1
     var indentStack = @[0]
     const keywords = {
         "try": TokenKind.Try,
@@ -18,7 +18,7 @@ proc lexer*(input: string): seq[Token] =
         "export": TokenKind.Export,
         "exit": TokenKind.Exit,
         "stop": TokenKind.Stop,
-        "next": TokenKind.Next,
+        "skip": TokenKind.Skip,
     }.toTable
     
     var roundBracketStack: seq[int] = @[]
