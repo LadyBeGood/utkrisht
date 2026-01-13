@@ -103,3 +103,5 @@ wrong
 ### Keywords
 These are the keywords in Utkrisht. None of them are reserved words and can be used as identifiers.
 
+
+`else` `exit` `export` `fix` `import` `loop` `right` `skip` `stop` `try` `when` `with` `wrong`
