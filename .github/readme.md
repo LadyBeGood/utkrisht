@@ -8,7 +8,7 @@
 [![Version](https://img.shields.io/badge/version-0.1.0-orange)]()
 [![Platform](https://img.shields.io/badge/platform-linux-lightgrey)]()
 
-*A single language for the web*
+*A unified language for the web*
 
 </div>
 
@@ -68,9 +68,9 @@ Only single line comments are allowed.
 
 > [!NOTE]
 > Notation in this tutorial (used wherever necessary):
-> - `#>` comment means the message logged in the console.
-> - `#->` comment means the value of the preceding expression.
-> - `#` are regular comments.
+> - `#>` is the message logged in the console.
+> - `#->` is the value of the preceding expression.
+> - `#` is a regular comment.
 
 
 ### Data types
@@ -139,6 +139,7 @@ Utkrisht operators are context-sensitive.
 | `_`                                   | Infix                                     | Range construction                                      |
 | `.`                                   | Infix                                     | Access operator                                         |
 | `;`                                   | Postfix                                   | Procedure call                                          |
+| `/`                                   | Prefix                                    | Module access operator                                        |
 | `@`                                   | Prefix                                    | Async operator                                          |
 | `$`                                   | Prefix                                    | Reactivity operator                                     |
 | `~`                                   | Infix                                     | Default values for parameters and named arguments       |
@@ -170,7 +171,7 @@ Delimiters mark the beginning and end of syntactic constructs.
 | `"` ... `"`          | Strings                              |
 | `/` ... `/`          | Regular expressions                              |
 | `\(` ... `)`         | String Interpolation                 |
-| `#` ... NewLine or EOF  | Comment                           |
+| `#` ... NewLine or EndOfFile  | Comments                           |
 | Indent ... Dedent | Expressions, Procedures, Arguments, Parameters |
 
 
@@ -180,7 +181,7 @@ Terminators mark the end of a statement or declaration.
 | Terminator | Terminates                                    |
 |------------|-----------------------------------------------|
 | Newline    | Statements, Comments (terminating contexts) |
-| EOF        | Statements, Comments                          |
+| EndOfFile        | Statements, Comments                          |
 
 
 
@@ -192,9 +193,7 @@ An identifier is used to link a value with a name. Identifiers can be used in va
 message: "hi"
 
 # structure keys
-user: [
-    name = "Uki"
-]
+[name = "Uki"]
 
 # modules
 import components/footer
@@ -246,8 +245,10 @@ quantity = "high" # Data type of the value does not matter
 ```
 
 ### Control Flow
-#### Conditionals
+Control flow determines how execution proceeds through a program.  
 
+#### Conditionals
+Conditionals control which procedure will be invoked based on a **condition**. The condition must be a boolean value, Utkrisht does not have truthy or falsy values. 
 ```
 # Statement conditionals
 when age > 18
@@ -260,6 +261,142 @@ else
 
 # Expression conditionals
 status: when age < 18 "minor" else "adult"
+```
+#### Loops
+Loop is a data type sensitive construct. Therefore the behaviour of the loop depends upon the data type of the data following it.
+```
+# loop keyword followed directly by a procedure
+# loops infinitely
+loop
+    write "hello"
+
+# loop keyword followed by a boolean
+# loops infinitely if right
+loop right
+    write "hello"
+
+# doesn't loop if wrong
+loop wrong
+    write "hello"
+
+
+# loop keyword followed by a number
+# loops that many times
+loop 5 # loops 5 times
+    write "hello"
+
+
+# loop keyword followed by a string or structure
+# loops `length iterable` times 
+loop "uki" # loops 3 times because there are 2 characters in "uki": "u", "k" and "i"
+    write "hello"
+
+loop [id = 567, right, "orange"] # loops 3 times
+    write "hello"
+
+
+# with statement
+# declares a iterator/counter
+loop 5 with i 
+    write i
+
+    # here 
+    # `i` is the iterator
+    # `i` starts a 1 and ends at 5
+
+    #> 1
+    #> 2
+    #> 3
+    #> 4
+    #> 5
+
+fruits: ["apple", "mango", "banana"]
+loop fruits with fruit
+    write "I love \(fruit)"
+    
+    #> I love apple
+    #> I love mango
+    #> I love banana
+
+# multiple iterators can be declared
+loop fruits with [i, fruit]
+    write "\(i). I love \(fruit)"
+    
+    #> 1. I love apple
+    #> 2. I love mango 
+    #> 3. I love banana
+
+
+loop "hi" with [index, character]
+    write "The character at position \(index) is \(character)"
+
+    #> The character at position 1 is h
+    #> The character at position 2 is i
+
+
+
+```
+
+> [!NOTE]
+> Some looping constructs are still under consideration and not included here.
+
+
+```
+# stop statement, stops the loop
+loop 50 with i
+    when i = 4
+        stop
+    write i
+    
+    #> 1 
+    #> 2 
+    #> 3
+
+# skip statement, skips the iteration 
+loop 4 with i
+    when i = 2
+        skip
+    write i
+    
+    #> 1
+    #> 3
+    #> 4
+
+
+# iterators can be used as labels in nested loops for skip and stop statements
+loop 3 with i
+    loop 3 with j
+        when i = 2
+            skip i
+        write "\(i) \(j)"
+    
+    #> 1 1
+    #> 1 2
+    #> 1 3
+    #> 3 1
+    #> 3 2
+    #> 3 3
+```
+
+### Module System
+Top-level variables can be imported and exported between files. No namespace prefixing (or aliasing) is required to access imported containers unless in case of name-conflicts.
+
+```
+# math.uki
+export add a, b:
+    exit a + b
+
+export square a:
+    exit power a, 2
+```
+
+```
+# main.uki
+import math
+
+result: add 1, 2
+squared: square result
+write squared
 ```
 
 
