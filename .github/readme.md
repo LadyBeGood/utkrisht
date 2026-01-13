@@ -105,3 +105,49 @@ These are the keywords in Utkrisht. None of them are reserved words and can be u
 
 
 `else` `exit` `export` `fix` `import` `loop` `right` `skip` `stop` `try` `when` `with` `wrong`
+
+
+### Variables
+Declaration
+```
+message: "Hello World"
+```
+To assign a new value to the variable, use the reassignment operator `=`
+```
+quantity: 34
+quantity = 65
+
+# Data type of the value does not matter
+quantity = "high"
+quantity = [in-number = 17, in-words = "low"]
+```
+
+
+A valid identifier:
+
+- contains only lowercase letters (`a–z`), numbers (`0–9`), and `-`
+- starts with a lowercase letter
+- ends with a lowercase letter or number
+- does not contain consecutive hyphens (`--`, `---` etc.)
+
+```
+# Valid Identifiers
+
+name
+user-1
+user1
+file-path
+data-set-3
+a1-b2
+
+
+# Invalid Identifiers
+
+myName       # contains uppercase letter
+1value       # starts with a number
+-value       # starts with a hyphen, will be interpreted as negation
+value-       # ends with a hyphen
+my--var      # contains consecutive hyphens
+user_name    # contains underscore, will be interpreted as a range
+```
+
