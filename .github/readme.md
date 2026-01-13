@@ -56,10 +56,11 @@ Compile a input.uki file to output.js file:
 write "Hello World"
 ```
 
-Comments
+### Comments
 
+```
 # This is a comment
-
+```
 Only single line comments are allowed.
 
 
@@ -68,4 +69,4 @@ Only single line comments are allowed.
 > - `#>` comment means the message logged in the console.
 > - `#->` comment means the value of the preceding expression.
 
-Data types
+### Data types
