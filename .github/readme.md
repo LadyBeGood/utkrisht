@@ -70,6 +70,7 @@ Only single line comments are allowed.
 > Notation in this tutorial (used wherever necessary):
 > - `#>` comment means the message logged in the console.
 > - `#->` comment means the value of the preceding expression.
+> - `#` are regular comments.
 
 
 ### Data types
@@ -116,25 +117,88 @@ Utkrisht has **13 keywords**. None of them are reserved and may also be used as 
 
 
 
-### Operators
+### Symbols
+
+Symbols are non-alphanumeric tokens that have special meaning in the language syntax.  
+
+In Utkrisht, symbols are grouped by their role into **operators**, **separators**, **delimiters** and **terminators**.
+
+
+
+#### Operators
 
 Operators are symbols used to perform operations on values.  
 Utkrisht operators are context-sensitive.
 
-| Operators                 | Type                     | Description                                   |
-|---------------------------|--------------------------|-----------------------------------------------|
-| `:`                       | infix                    | Variable declaration                          |
-| `=`                       | infix                    | Reassignment   |
-| `+` `-` `*` `/`        | infix                    | Arithmetic operations                         |
-| `=` `<` `>` `!=` `!<` `!>`          | infix                   | Comparison operations                         |
-| `&` `\|` `!`                | infix  (except `!` which is prefix)                   | Logical operators                            |
-| `_`                       | infix                    | Range construction                            |
-| `.`                       | infix                    | Access operator                               |
-| `;`                       | postfix                  | Call operator                       |
+| Operator                              | Type                                      | Description                                             |
+|---------------------------------------|-------------------------------------------|---------------------------------------------------------|
+| `:`, `=`                              | Infix                                     | Variable declaration and reassignment                   |
+| `+`, `-`, `*`, `/`                    | Infix                                     | Arithmetic operations                                   |
+| `=`, `<`, `>`, `!=`, `!<`, `!>`       | Infix                                     | Comparison operations                                   |
+| `&`, `\|`, `!`                        | Infix (except `!`, which is prefix)       | Logical operations                                      |
+| `_`                                   | Infix                                     | Range construction                                      |
+| `.`                                   | Infix                                     | Access operator                                         |
+| `;`                                   | Postfix                                   | Procedure call                                          |
+| `@`                                   | Prefix                                    | Async operator                                          |
+| `$`                                   | Prefix                                    | Reactivity operator                                     |
+| `~`                                   | Infix                                     | Default values for parameters and named arguments       |
+| `\`                                   | Prefix                                    | Escape operator                                         |
+
+
+
+#### Separators
+
+Separators are symbols used to divide syntactic elements without performing an operation.
+
+| Separator  | Separates                                   |
+|------------|-----------------------------------------------|
+| `,`        | Arguments, Parameters, Properties     |
+| `~,`       | Arguments  (use default value for the parameter)                           |
+| Newline    | Arguments, Parameters, Properties (non-terminating contexts)    |
+
+
+
+#### Delimiters
+
+Delimiters mark the beginning and end of syntactic constructs.
+
+| Delimiter            | Delimits                              |
+|----------------------|------------------------------------------|
+| `(` ... `)`          | Expression groups                  |
+| `{` ... `}`          | Procedures                           |
+| `[` ... `]`          | Structures                           |
+| `"` ... `"`          | Strings                              |
+| `/` ... `/`          | Regular expressions                              |
+| `\(` ... `)`         | String Interpolation                 |
+| `#` ... NewLine or EOF  | Comment                           |
+| Indent ... Dedent | Expressions, Procedures, Arguments, Parameters |
+
+
+#### Terminators
+Terminators mark the end of a statement or declaration.
+
+| Terminator | Terminates                                    |
+|------------|-----------------------------------------------|
+| Newline    | Statements, Comments (terminating contexts) |
+| EOF        | Statements, Comments                          |
 
 
 
 ### Identifiers
+An identifier is used to link a value with a name. Identifiers can be used in various places:
+
+```
+# variables
+message: "hi"
+
+# structure keys
+user: [
+    name = "Uki"
+]
+
+# modules
+import components/footer
+```
 
 A valid identifier:
 
@@ -179,6 +243,23 @@ quantity: 34
 
 quantity = 65
 quantity = "high" # Data type of the value does not matter
+```
+
+### Control Flow
+#### Conditionals
+
+```
+# Statement conditionals
+when age > 18
+    write "You're an adult"
+else age < 18
+    write "You're a child"
+else
+    write "You're no longer a child, you became an adult!"
+
+
+# Expression conditionals
+status: when age < 18 "minor" else "adult"
 ```
 
 
