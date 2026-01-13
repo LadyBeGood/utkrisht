@@ -60,11 +60,10 @@ write "Hello World"
 ```
 
 ### Comments
-
+Only single line comments are allowed.
 ```
 # This is a comment
 ```
-Only single line comments are allowed.
 
 
 > [!NOTE]
@@ -101,27 +100,41 @@ wrong
 ```
 
 ### Keywords
-These are the keywords in Utkrisht. None of them are reserved words and can be used as identifiers.
+
+Keywords are predefined words used by the language to perform internal operations or represent built-in behavior. 
+
+Utkrisht has **13 keywords**. None of them are reserved and may also be used as [identifiers](#identifiers).
+
+| Keywords                          | Description                                   |
+|-----------------------------------|-----------------------------------------------|
+| `right`, `wrong`                  | Boolean literals                              |
+| `when`, `else`                    | Conditional branching                         |
+| `loop`, `with`, `stop`, `skip`    | Looping and loop control                      |
+| `try`, `fix`                      | Error handling                                |
+| `exit`                            | Exiting from a procedure                      |
+| `import`, `export`                | Module import and export                      |
 
 
-`else` `exit` `export` `fix` `import` `loop` `right` `skip` `stop` `try` `when` `with` `wrong`
+
+### Operators
+
+Operators are symbols used to perform operations on values.  
+Utkrisht operators are context-sensitive.
+
+| Operators                 | Type                     | Description                                   |
+|---------------------------|--------------------------|-----------------------------------------------|
+| `:`                       | infix                    | Variable declaration                          |
+| `=`                       | infix                    | Reassignment   |
+| `+` `-` `*` `/`        | infix                    | Arithmetic operations                         |
+| `=` `<` `>` `!=` `!<` `!>`          | infix                   | Comparison operations                         |
+| `&` `\|` `!`                | infix  (except `!` which is prefix)                   | Logical operators                            |
+| `_`                       | infix                    | Range construction                            |
+| `.`                       | infix                    | Access operator                               |
+| `;`                       | postfix                  | Call operator                       |
 
 
-### Variables
-Declaration
-```
-message: "Hello World"
-```
-To assign a new value to the variable, use the reassignment operator `=`
-```
-quantity: 34
-quantity = 65
 
-# Data type of the value does not matter
-quantity = "high"
-quantity = [in-number = 17, in-words = "low"]
-```
-
+### Identifiers
 
 A valid identifier:
 
@@ -130,19 +143,19 @@ A valid identifier:
 - ends with a lowercase letter or number
 - does not contain consecutive hyphens (`--`, `---` etc.)
 
-```
-# Valid Identifiers
 
+Valid Identifiers
+```
 name
 user-1
 user1
 file-path
 data-set-3
 a1-b2
+```
 
-
-# Invalid Identifiers
-
+Invalid Identifiers
+```
 myName       # contains uppercase letter
 1value       # starts with a number
 -value       # starts with a hyphen, will be interpreted as negation
@@ -150,4 +163,22 @@ value-       # ends with a hyphen
 my--var      # contains consecutive hyphens
 user_name    # contains underscore, will be interpreted as a range
 ```
+
+### Variables
+Variables are identifiers used to store data. All variables are mutable and can be reassigned.
+
+
+
+Declare a variable using `:`
+```
+message: "Hello World"
+```
+Reassign a value using `=`
+```
+quantity: 34
+
+quantity = 65
+quantity = "high" # Data type of the value does not matter
+```
+
 
