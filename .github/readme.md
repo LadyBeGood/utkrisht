@@ -185,7 +185,7 @@ Terminators mark the end of a statement or declaration.
 
 
 ### Identifiers
-An identifier is used to link a value with a name. Identifiers can be used in various places:
+Identifiers are names given to different entities in Utkrisht to uniquely identify them within the source code. Identifiers can be used in various places:
 
 ```
 # variables
@@ -377,27 +377,38 @@ loop 3 with i
     #> 3 3
 ```
 
-### Module System
-Top-level variables can be imported and exported between files. No namespace prefixing (or aliasing) is required to access imported containers unless in case of name-conflicts.
 
+
+### Modules
+
+A module is a reusable unit of code that organizes logic into separate files and folders. 
+
+A module can *import* other modules and *export* its variables to share them with other module that import them.
+
+>[!NOTE]
+> In an Utkrisht project, in order to be imported and compiled
+> - all file and folder names must be valid identifiers.
+> - a folder must not contain a file and folder of same name.
+
+There are two types of modules:
+1. **File Module**: Any Utkrisht file which is not inside a folder module.
+2. **Folder Module**: Any folder having a Utkrisht file of same name as a direct child.
+
+#### Import
+A module can be imported using the `import` keyword followed by its path:
 ```
-# math.uki
-export add a, b:
-    exit a + b
-
-export square a:
-    exit power a, 2
+import utilities 
+import components/footer
+import ../assets/icons
+import routes/[home, notifications, profile]
 ```
+When you write an import like `import abc`, the compiler looks for:
+- a file named `abc.uki`, or
+- a folder named `abc` that contains `abc.uki`.
 
+#### Export
+Use the `export` keyword available to other modules:
 ```
-# main.uki
-import math
-
-result: math/add 1, 2      # Using namespace
-squared: square result     # Without using namespace
-write squared
+export message: "hi"
 ```
-
-
-
 
