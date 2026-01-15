@@ -3,10 +3,9 @@
 
 # Utkrisht
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![License](https://img.shields.io/badge/license-MIT-blue)]()
-[![Version](https://img.shields.io/badge/version-0.1.0-orange)]()
-[![Platform](https://img.shields.io/badge/platform-linux-lightgrey)]()
+[![Build Status](https://img.shields.io/badge/build-passing-22c55e)]()
+![Repo Size](https://img.shields.io/github/repo-size/LadyBeGood/utkrisht?color=3b82f6)
+![Last Commit](https://img.shields.io/github/last-commit/LadyBeGood/utkrisht?color=8b5cf6)
 
 *A unified language for the web*
 
