@@ -394,9 +394,11 @@ export square a:
 # main.uki
 import math
 
-result: add 1, 2
-squared: square result
+result: math/add 1, 2      # Using namespace
+squared: square result     # Without using namespace
 write squared
 ```
+
+
 
 
