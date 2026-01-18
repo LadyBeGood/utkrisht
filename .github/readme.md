@@ -51,7 +51,7 @@ Compile a input.uki file to output.js file:
 ./uki input.uki output.js
 ```
 
-## Language tutorial
+## Tutorial
 
 ### Hello, World
 ```
@@ -73,31 +73,60 @@ Only single line comments are allowed.
 
 
 ### Data types
-Utkrisht has 5 data types:
+Utkrisht has 5 data types.
 
-1. String
-2. Number
-3. Boolean
-4. Procedure
-5. Structure
+| Data Type | Passed by | Clonable | iterable | Mutable | Callable |
+|-----------|-----------|----------|----------|---------|----------|
+| String    | Value     | Yes      | Yes      | No      | No       |
+| Number    | Value     | Yes      | No       | No      | No       |
+| Boolean   | Value     | Yes      | No       | No      | No       |
+| Procedure | Reference | No       | No       | No      | Yes      |
+| Structure | Reference | Yes      | Yes      | Yes     | No       |
+
 
 ```
 # String 
 "I program in Utkrisht 😼"
+"
+    A
+    multiline
+    string
+"
 
-# Number 
+
+
+# Number
+72
 -10.56
+nan
+infinity
+-infinity
+
+
 
 # Boolean 
 right
 wrong 
 
+
+
 # Procedure 
 {write "Hello World"}
+{exit arguments.1 + arguments.2}
+{
+    when arguments.1 !> 1
+        exit arguments.1
+    exit (caller arguments.1 - 1) + caller arguments.1 - 2
+}
+
+
 
 # Structure 
 ["src/data.uki", optimise = right]
 ```
+
+
+
 
 ### Keywords
 
@@ -120,25 +149,26 @@ Utkrisht has **13 keywords**. None of them are reserved and may also be used as 
 
 Symbols are non-alphanumeric tokens that have special meaning in the language syntax.  
 
+Symbols are context sensitive.
+
 In Utkrisht, symbols are grouped by their role into **operators**, **separators**, **delimiters** and **terminators**.
 
 
 
 #### Operators
 
-Operators are symbols used to perform operations on values.  
-Utkrisht operators are context-sensitive.
+Operators are symbols used to perform operations on values.
 
 | Operator                              | Type                                      | Description                                             |
 |---------------------------------------|-------------------------------------------|---------------------------------------------------------|
-| `:`, `=`                              | Infix                                     | Variable declaration and reassignment                   |
-| `+`, `-`, `*`, `/`                    | Infix                                     | Arithmetic operations                                   |
-| `=`, `<`, `>`, `!=`, `!<`, `!>`       | Infix                                     | Comparison operations                                   |
+| `:` `=`                               | Infix                                     | Variable declaration and reassignment                   |
+| `+` `-` `*` `/`                       | Infix                                     | Arithmetic operations                                   |
+| `=` `<` `>` `!=` `!<` `!>`            | Infix                                     | Comparison operations                                   |
 | `&`, `\|`, `!`                        | Infix (except `!`, which is prefix)       | Logical operations                                      |
 | `_`                                   | Infix                                     | Range construction                                      |
 | `.`                                   | Infix                                     | Access operator                                         |
 | `;`                                   | Postfix                                   | Procedure call                                          |
-| `/`                                   | Prefix                                    | Module access operator                                        |
+| `/`                                   | Prefix                                    | Module access operator                                  |
 | `@`                                   | Prefix                                    | Async operator                                          |
 | `$`                                   | Prefix                                    | Reactivity operator                                     |
 | `~`                                   | Infix                                     | Default values for parameters and named arguments       |
@@ -150,11 +180,11 @@ Utkrisht operators are context-sensitive.
 
 Separators are symbols used to divide syntactic elements without performing an operation.
 
-| Separator  | Separates                                   |
-|------------|-----------------------------------------------|
-| `,`        | Arguments, Parameters, Properties     |
-| `~,`       | Arguments  (use default value for the parameter)                           |
-| Newline    | Arguments, Parameters, Properties (non-terminating contexts)    |
+| Separator | Separates                                                    |
+|-----------|--------------------------------------------------------------|
+| `,`       | Arguments, Parameters, Properties                            |
+| `~,`      | Arguments  (use default value for the parameter)             |
+| Newline   | Arguments, Parameters, Properties (non-terminating contexts) |
 
 
 
@@ -162,25 +192,25 @@ Separators are symbols used to divide syntactic elements without performing an o
 
 Delimiters mark the beginning and end of syntactic constructs.
 
-| Delimiter            | Delimits                              |
-|----------------------|------------------------------------------|
-| `(` ... `)`          | Expression groups                  |
-| `{` ... `}`          | Procedures                           |
-| `[` ... `]`          | Structures                           |
-| `"` ... `"`          | Strings                              |
-| `/` ... `/`          | Regular expressions                              |
-| `\(` ... `)`         | String Interpolation                 |
-| `#` ... NewLine or EndOfFile  | Comments                           |
-| Indent ... Dedent | Expressions, Procedures, Arguments, Parameters |
+| Delimiter                    | Delimits                                       |
+|------------------------------|------------------------------------------------|
+| `(` ... `)`                  | Expression groups                              |
+| `{` ... `}`                  | Procedures                                     |
+| `[` ... `]`                  | Structures                                     |
+| `"` ... `"`                  | Strings                                        |
+| `/` ... `/`                  | Regular expressions                            |
+| `\(` ... `)`                 | String Interpolation                           |
+| `#` ... NewLine or EndOfFile | Comments                                       |
+| Indent ... Dedent            | Expressions, Procedures, Arguments, Parameters |
 
 
 #### Terminators
 Terminators mark the end of a statement or declaration.
 
-| Terminator | Terminates                                    |
-|------------|-----------------------------------------------|
+| Terminator | Terminates                                  |
+|------------|---------------------------------------------|
 | Newline    | Statements, Comments (terminating contexts) |
-| EndOfFile        | Statements, Comments                          |
+| EndOfFile  | Statements, Comments                        |
 
 
 
@@ -404,7 +434,7 @@ import routes/[home, notifications, profile]
 ```
 When you write an import like `import abc`, the compiler looks for:
 - a file named `abc.uki`, or
-- a folder named `abc` that contains `abc.uki`.
+- a folder named `abc` that contains a file named `abc.uki`.
 
 #### Export
 Use the `export` keyword available to other modules:
