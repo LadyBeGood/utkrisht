@@ -415,7 +415,7 @@ A module is a reusable unit of code that organizes logic into separate files and
 
 A module can *import* other modules and *export* its variables to share them with other module that import them.
 
->[!NOTE]
+> [!NOTE]
 > In an Utkrisht project, in order to be imported and compiled
 > - all file and folder names must be valid identifiers.
 > - a folder must not contain a file and folder of same name.
