@@ -102,8 +102,16 @@ Utkrisht has 5 data types.
 
 
 #### String
+A string represents a sequence of UTF-16 code units, identical to JavaScript strings.
 
+```
+write length "😼"       #> 2
+write "😼".1            #> \ud83d
 
+write length "é"        #> 1 (é)
+write length "é"        #> 2 (e + "́")
+write "é" = "é"         #> wrong (no normalization)
+```
 #### Number
 Number is represented in the double-precision 64-bit floating point format (IEEE 754), just like JavaScript's number type.
 ```
