@@ -59,9 +59,26 @@ write "Hello World"
 ```
 
 ### Comments
-Only single line comments are allowed.
+
+#### Regular Comments
+Used for notes. They can be placed anywhere.
 ```
-# This is a comment
+# This is a regular comment
+when 10 > 5  
+# This is also a comment
+    write "Condition is correct" # This is also a valid comment
+```
+
+#### Documentation Comments
+You can document a variable by directly placing comments above it. These comments are **directly** copied into the generated JavaScript as JSDoc comments, without any special syntax.
+
+```
+# Divide 2 numbers
+# - `a`: Numerator
+# - `b`: Denominator
+divide a, b: {
+    exit a / b
+}
 ```
 
 
@@ -84,47 +101,68 @@ Utkrisht has 5 data types.
 | Structure | Reference | Yes      | Yes      | Yes     | No       |
 
 
+#### String
+
+
+#### Number
+Number is represented in the double-precision 64-bit floating point format (IEEE 754), just like JavaScript's number type.
 ```
-# String 
-"I program in Utkrisht 😼"
-"
-    A
-    multiline
-    string
-"
+123            # one hundred and twenty three
+123.0          # same as above
 
+0              # zero
+-0             # same as above
 
-
-# Number
-72
--10.56
-nan
 infinity
--infinity
+-infinity    
+1 / 0          #-> infinity
+-1 / 0         #-> -infinity
+1 / -0         #-> -infinity
+-1 / -0        #-> infinity
 
-
-
-# Boolean 
-right
-wrong 
-
-
-
-# Procedure 
-{write "Hello World"}
-{exit arguments.1 + arguments.2}
-{
-    when arguments.1 !> 1
-        exit arguments.1
-    exit (caller arguments.1 - 1) + caller arguments.1 - 2
-}
-
-
-
-# Structure 
-["src/data.uki", optimise = right]
+nan            # stands for "not a number", but this is also a number
+-nan           # same as above
+0 / 0          #-> nan
+-0 / 0         #-> nan
+0 / -0         #-> nan
+-0 / -0        #-> nan
 ```
 
+```
+write 123 = 123.0             #> right
+
+write 0 = 0                   #> right
+write -0 = -0                 #> right
+write 0 = -0                  #> right
+
+write infinity = infinity     #> right
+write infinity = -infinity    #> wrong
+write -infinity = -infinity   #> right
+
+write nan = nan               #> wrong (This is not a typo)
+write nan != nan              #> right (This is also not a typo)
+
+write is-finite 123           #> right
+write is-finite infinity      #> wrong
+write is-finite -infinity     #> wrong
+write is-nan nan              #> right
+```
+
+```
+write 0.1 + 0.2 = 0.3         #> wrong
+write 0.1 + 0.2               #> 0.30000000000000004
+
+write 0.1 * 10                #> 1
+write 0.14 * 100              #> 14.000000000000002
+
+write 1.0000000000000001      #> 1
+write 9999999999999999        #> 10000000000000000
+```
+
+#### Boolean
+Boolean literals are represented by the keywords `right` and `wrong`. There are no *truthy* or *falsy* values.
+
+#### Procedure
 
 
 
