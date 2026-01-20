@@ -1,22 +1,5 @@
-import { isDigit, isSmallAlphabet, isBigAlphabet, isAlphaNumeric } from "./core.js"
-
-
-const keywords = new Map([
-    ["try", "Try"],
-    ["fix", "Fix"],
-    ["when", "When"],
-    ["else", "Else"],
-    ["loop", "Loop"],
-    ["with", "With"],
-    ["right", "Right"],
-    ["wrong", "Wrong"],
-    ["import", "Import"],
-    ["export", "Export"],
-    ["exit", "Exit"],
-    ["stop", "Stop"],
-    ["skip", "Skip"],
-]);
-
+import { isDigit, isSmallAlphabet, isBigAlphabet, isAlphaNumeric } from "core.js";
+import { error } from "logger.js";
 
 
 export function createLexer(source) {
@@ -43,70 +26,17 @@ function addToken(lexer, type, lexeme = "") {
 }
 
 
-export function lexer(input) {
 
 
-    function string() {
-        // Skip the opening quote
-        position++;  
-        
-        let accumulate = [];
-        while (true) {
-            if (isAtEnd()) {
-                error(line, "Unterminated string")
-            }
-    
-            if (input[position] === '"') {
-                break;
-            }
-            else if (input[position] === "\n") {
-                line++;
-            }
 
-            accumulate.push(input[position])
-            position++;
-        }
-    
-        // Skip the closing quote
-        position++;  
-
-        addToken("StringLiteral", accumulate.join(""))
-    }
-
-
-    function identifier() {
-        let accumulate = [];
-
-        while (!isAtEnd() && isAlphaNumeric(input[position])) {
-            accumulate.add(input[position])
-            position++;
-        }
-        
-        const word = accumulate.join("");
-        // Check if the identifier is a keyword
-        if (keywords.has(word)) {
-            addToken(keywords.get(word), word);
-        }
-        else {
-            addToken("Identifier", word);
-        }
-    }
-
-
-    addToken("EndOfFile", "File has ended");
-
-    return tokens;
-}
-
-
-function lexTokens(utkrisht, lexer) {
+function lex(utkrisht, lexer) {
     let character = lexer.source[lexer.position];
 
     switch (character) {
         case "(":
             //roundBracketStack.add(0)
             addToken("LeftRoundBracket", character);
-            position++;
+            lexer.position++;
             break;
         case ")":
             // roundBracketStack.pop()
@@ -253,18 +183,20 @@ function lexTokens(utkrisht, lexer) {
             } else if (isBigAlphabet(character)) {
                 error(line, "Uki only uses small characters for identifiers.")
             } else {
-                error(line, "Invalid character, `" + character + "`")
+                error(utkrisht, "Invalid character, `" + character + "`", line)
             }
     }
 }
 
 
-export function lex(manager, lexer) {
+export function lex(utkrisht, lexer) {
     while (!isAtEnd()) {
         lexer.start = lexer.current
 
-        lexTokens(manager, lexer)
+        lex(utkrisht, lexer)
     }
+
+    lexer.tokens.push()
 
     return lexer.tokens;
 }
