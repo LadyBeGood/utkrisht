@@ -1,0 +1,15 @@
+export const keywords = new Set([
+    "try",
+    "fix",
+    "when",
+    "else",
+    "loop",
+    "with",
+    "right",
+    "wrong",
+    "import",
+    "export",
+    "exit",
+    "stop",
+    "skip",
+]);

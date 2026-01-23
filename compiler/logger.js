@@ -1,8 +1,11 @@
 
+export function error(utkrisht, message, line) {
+    const red = "\x1b[31m";
+    const reset = "\x1b[0m";
 
-
-export function error(uki, message, line) {
-    console.error(`Error: ${message}`)
-    uki.hadError = true;
+    console.error(`${red}Error on line ${line}${reset}: ${message}`)
+    utkrisht.hadError = true;
 }
+
+
 

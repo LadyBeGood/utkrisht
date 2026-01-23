@@ -95,7 +95,7 @@
         },
         "comment": {
             "name": "comment",
-            "begin": "#",
+            "begin": "# ",
             "end": "\\n"
         },
         "number": {
@@ -115,6 +115,10 @@
                 {
                     "name": "entity.name.function",
                     "match": "(?<=^\\s*)[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]? ~ *(\\{)"
+                },
+                {
+                    "name": "entity.name.function",
+                    "match": "(?:webapp|shape|text|media|tag)"
                 }
             ]
         },
@@ -123,6 +127,10 @@
                 {
                     "name": "",
                     "match": "[a-z](?:[a-z0-9-]*[a-z0-9])?(?=:)"
+                },
+                {
+                    "name": "",
+                    "match": "[a-z](?:[a-z0-9-]*[a-z0-9])?(\\.)?[a-z](?:[a-z0-9-]*[a-z0-9])?(?=:)"
                 }
             ]
         }

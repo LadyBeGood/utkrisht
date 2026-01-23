@@ -1,9 +1,8 @@
 import { readFileSync } from "node:fs";
-import { error } from "logger.js";
-import { createLexer, lex } from "lexer.js";
-import { createParser, parse } from "parser.js";
+import { createLexer, lex } from "./lexer.js";
+import { createParser, parse } from "./parser.js";
 
-export function createUki() {
+export function createUtkrisht() {
     return {
         hadError: false
     };
@@ -30,20 +29,21 @@ function runFile(path) {
         process.exit(0);
     }
 
-    const uki = createUki();
+    const utkrisht = createUtkrisht();
 
-    run(uki, data)
+    run(utkrisht, data);
 }
 
 export function main() {
     const args = process.argv.slice(2);
 
     if (args.length > 1) {
-        console.error("Usage node uki <input.uki>")
+        console.error("Usage node uki <input.uki>");
         process.exit(0);
     }
 
     runFile(args[0]);
 }
 
-main();
+// main();
+

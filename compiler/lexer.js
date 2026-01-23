@@ -1,202 +1,308 @@
-import { isDigit, isSmallAlphabet, isBigAlphabet, isAlphaNumeric } from "core.js";
-import { error } from "logger.js";
-
+import { error } from "./logger.js";
+import { keywords } from "./keywords.js";
 
 export function createLexer(source) {
     return {
         source,
-        start: 0,
-        position,
+        position: 0,
         line: 1,
-        tokens: [],
-        keywords,
-        sourceLength
+        sourceLength: source.length,
+        indentStack: [],
+        roundBracketStack: [],
+        squareBracketStack: [],
     };
 }
 
-
-
-export function isAtEnd(lexer) {
+function isAtEnd(lexer) {
     return lexer.position >= lexer.sourceLength;
 }
 
+function match(lexer, expected) {
+    if (isAtEnd(lexer)) {
+        return false;
+    } else if (typeof expected === "function") {
+        return expected(lexer.source[lexer.position]);
+    } else if (lexer.source[lexer.position] === expected) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
-function addToken(lexer, type, lexeme = "") {
-    lexer.tokens.push({ type, lexeme, line });
+function isDigit(character) {
+    return "0123456789".includes(character);
+}
+
+function isSmallAlphabet(character) {
+    return "abcdefghijklmnopqrstuvwxyz".includes(character);
+}
+
+function isBigAlphabet(character) {
+    return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(character);
+}
+
+function isAlphaNumeric(character) {
+    return isSmallAlphabet(character) || isDigit(character) || character === "-";
+}
+
+function lexString(utkrisht, lexer) {
+    // Skip the opening quote
+    lexer.position++;
+    const stringStartPosition = lexer.position;
+    const stringStartLine = lexer.line;
+
+    while (true) {
+        if (isAtEnd(lexer)) {
+            error(utkrisht, "Unterminated string", stringStartLine);
+        } else if (match(lexer, '"')) {
+            break;
+        } else if (match(lexer, "\n")) {
+            lexer.line++;
+        }
+        lexer.position++;
+    }
+
+    const stringEndPosition = lexer.position;
+
+    // Skip the closing quote
+    lexer.position++
+
+    return { type: "StringLiteral", lexeme: lexer.source.slice(stringStartPosition, stringEndPosition), line: lexer.line}
+}
+
+function lexNumber(lexer) {
+    const numberStartPosition = lexer.position;
+    while (match(lexer, isDigit)) {
+        lexer.position++;
+    }
+
+    if (match(lexer, ".")) {
+        lexer.position++;
+        while (match(lexer, isDigit)) {
+            lexer.position++;
+        }
+    }
+
+    const numberEndPosition = lexer.position;
+
+    return { type: "NumericLiteral", lexeme: lexer.source.slice(numberStartPosition, numberEndPosition), line: lexer.line}
 }
 
 
 
+function lexIdentifier(lexer) {
+    const identifierStartPosition = lexer.position;
+    while (match(lexer, isAlphaNumeric)) {
+        lexer.position++;
+    }
+    const identifierEndPosition = lexer.position;
+
+    const lexeme = lexer.source.slice(identifierStartPosition, identifierEndPosition);
+    
+    let  type = "Identifier";
+    if (keywords.has(lexeme)) {
+        type = "Keyword"
+    }
+
+    return { type, lexeme, line: lexer.line};
+}
 
 
-function lex(utkrisht, lexer) {
+
+export function lexNewLine(utkrisht, lexer) {
+    lexer.line++;
+    lexer.position++; // Consume the '\n'
+
+    // return if inside a grouping expression;
+    if (lexer.roundBracketStack.length !== 0) {
+        return undefined;
+    }
+
+    let spaces = 0;
+    // Count leading whitespace on the new line
+    while (!isAtEnd(lexer)) {
+        if (match(lexer, " ")) {
+            spaces++;
+            lexer.position++;
+        } else {
+            break;
+        }
+    }
+
+    // Handle empty lines or lines with only whitespace
+    const nextChar = lexer.source[lexer.position];
+    if (nextChar === '\n' || nextChar === '\r' || isAtEnd(lexer)) {
+        return undefined; // Skip logic for empty lines
+    }
+
+    const currentIndent = lexer.indentStack[lexer.indentStack.length - 1];
+
+    // 1. Indentation increased
+    if (spaces > currentIndent) {
+        lexer.indentStack.push(spaces);
+        return { type: "INDENT", lexeme: "++++", line: lexer.line };
+    }
+
+    // 2. Indentation decreased
+    if (spaces < currentIndent) {
+        // You might need to pop multiple times (e.g., exiting two blocks at once)
+        // Note: For a single call to scanToken, you might need a "buffer" 
+        // to return multiple DEDENTs if your loop only expects one token.
+        if (!lexer.indentStack.includes(spaces)) {
+            error(utkrisht, lexer.line, "Indentation Error: Inconsistent indentation levels.");
+            return null;
+        }
+
+        lexer.indentStack.pop();
+        return { type: "DEDENT", lexeme: "----", line: lexer.line };
+    }
+
+    // 3. Indentation stayed the same
+    return undefined;
+}
+
+
+function lexToken(utkrisht, lexer) {
     let character = lexer.source[lexer.position];
 
     switch (character) {
         case "(":
-            //roundBracketStack.add(0)
-            addToken("LeftRoundBracket", character);
             lexer.position++;
-            break;
+            return { type: "LeftRoundBracket", lexeme: character, line: lexer.line };
         case ")":
-            // roundBracketStack.pop()
-            addToken("RightRoundBracket", character);
-            position++;
-            break;
-        case "{":
-            addToken("LeftCurlyBracket", character);
-            position++;
-            break;
-        case "}":
-            addToken("RightCurlyBracket", character);
-            position++;
-            break;
+            lexer.position++;
+            return { type: "RightRoundBracket", lexeme: character, line: lexer.line };
         case "[":
-            squareBracketStack.add(0)
-            addToken("LeftSquareBracket", character);
-            position++;
-            break;
+            lexer.position++;
+            return { type: "LeftSquareBracket", lexeme: character, line: lexer.line };
         case "]":
-            squareBracketStack.pop()
-            addToken("RightSquareBracket", character);
-            position++;
-            break;
-        case ",":
-            addToken("Comma", character);
-            position++;
-            break;
+            lexer.position++;
+            return { type: "RightSquareBracket", lexeme: character, line: lexer.line };
+        case "{":
+            lexer.position++;
+            return { type: "LeftCurlyBracket", lexeme: character, line: lexer.line };
+        case "}":
+            lexer.position++;
+            return { type: "RightCurlyBracket", lexeme: character, line: lexer.line };
         case ".":
-            addToken("Dot", character);
-            position++;
-            break;
+            lexer.position++;
+            return { type: "Dot", lexeme: character, line: lexer.line };
+        case ",":
+            lexer.position++;
+            return { type: "Comma", lexeme: character, line: lexer.line };
         case ":":
-            addToken("Colon", character);
-            position++;
-            break;
+            lexer.position++;
+            return { type: "Colon", lexeme: character, line: lexer.line };
+        case ";":
+            lexer.position++;
+            return { type: "SemiColon", lexeme: character, line: lexer.line };
         case "~":
-            addToken("Tilde", character);
-            position++;
-            break;
-        case "-":
-            if (position + 1 < inputLength && isDigit(input[position + 1])) {
-                position++;
-                number(true);
-            } else if (position + 1 < inputLength && input[position + 1] == "-") {
-                error(line, "Invalid token `--`");
-            } else {
-                addToken("Minus", character);
-                position++;
-            }
-            break;
-        case "+":
-            if (position + 1 < inputLength && isDigit(input[position + 1])) {
-                position++;
-                number()
-            } else if (position + 1 < inputLength && input[position + 1] == "+") {
-                error(line, "Invalid token `++`")
-            } else {
-                addToken("Plus", character);
-                position++;
-            }
-            break;
-        case "*":
-            addToken("Asterisk", character);
-            position++;
-            break;
-        case "/":
-            addToken("Slash", character);
-            position++;
-            break;
-        case "$":
-            addToken("Dollar", character);
-            position++;
-            break;
-        case "?":
-            addToken("Question", character);
-            position++;
-            break;
-        case "&":
-            addToken("Ampersand", character);
-            position++;
-            break;
+            lexer.position++;
+            return { type: "Tilde", lexeme: character, line: lexer.line };
         case "=":
-            addToken("Equal", character);
-            position++;
-            break;
-        case ">":
-            addToken("MoreThan", character);
-            position++;
-            break;
+            lexer.position++;
+            return { type: "Equal", lexeme: character, line: lexer.line };
         case "<":
-            addToken("LessThan", character);
-            position++;
-            break;
+            lexer.position++;
+            return { type: "LessThan", lexeme: character, line: lexer.line };
+        case ">":
+            lexer.position++;
+            return { type: "MoreThan", lexeme: character, line: lexer.line };
+        case "@":
+            lexer.position++;
+            return { type: "At", lexeme: character, line: lexer.line };
+        case "$":
+            lexer.position++;
+            return { type: "Dollar", lexeme: character, line: lexer.line };
+        case "&":
+            lexer.position++;
+            return { type: "And", lexeme: character, line: lexer.line };
+        case "+":
+            lexer.position++;
+            return { type: "Plus", lexeme: character, line: lexer.line };
+        case "-":
+            lexer.position++;
+            return { type: "Minus", lexeme: character, line: lexer.line };
+        case "*":
+            lexer.position++;
+            return { type: "Asterisk", lexeme: character, line: lexer.line };
+        case "/":
+            lexer.position++;
+            return { type: "Slash", lexeme: character, line: lexer.line };
         case "|":
-            addToken("Bar", character);
-            position++;
-            break;
-        case "#":
-            // Ignore single line comment
-            while (!isAtEnd() && not(input[position] === "\n")) {
-                position++;
-            }
-            break;
-        case "_":
-            if (position + 1 < inputLength && input[position + 1] === "<") {
-                position += 2;
-                addToken("UnderscoreLessThan", "_<")
-            } else {
-                addToken("Underscore", character);
-                position++;
-            }
-            break;
+            lexer.position++;
+            return { type: "Bar", lexeme: character, line: lexer.line };
+        case "\\":
+            lexer.position++;
+            return { type: "BackSlash", lexeme: character, line: lexer.line };
+        case " ":
+        case "\r":
+            lexer.position++;
+            return undefined;
         case "\n":
-            newline()
-            break;
-        case " ",
-            "\r":
-            position++;
-            break;
+            return lexNewLine(utkrisht, lexer)        
+        case "\t":
+            error(utkrisht, "Utkrisht does not support tabs for indentation. Please use spaces.", lexer.line)    
         case "!":
-            if (position + 1 < inputLength && input[position + 1] in ["=", ">", "<"]) {
-                if (input[position + 1] == "=") {
-                    addToken("ExclamationEqual", "!=")
-                } else if (input[position + 1] == ">") {
-                    addToken("ExclamationMoreThan", "!>")
-                } else if (input[position + 1] == "<") {
-                    addToken("ExclamationLessThan", "!<")
-                    position += 2;
-                } else {
-                    addToken("Exclamation", character);
-                    position++;
-                }
+            lexer.position++;
+            if (match(lexer, "=")) {
+                lexer.position++;
+                return { type: "ExclamationMarkEqual", lexeme: "!=", line: lexer.line };
+            } else if (match(lexer, "<")) {
+                lexer.position++;
+                return { type: "ExclamationMarkLessThan", lexeme: "!<", line: lexer.line };
+            } else if (match(lexer, ">")) {
+                lexer.position++;
+                return { type: "ExclamationMarkMoreThan", lexeme: "!>", line: lexer.line };
+            } else {
+                return { type: "ExclamationMark", lexeme: character, line: lexer.line };
             }
-            break;
         case '"':
-            string()
-            break;
+            return lexString(utkrisht, lexer);
         default:
             if (isDigit(character)) {
-                number()
+                return lexNumber(lexer);
             } else if (isSmallAlphabet(character)) {
-                identifier()
+                return lexIdentifier(lexer);
             } else if (isBigAlphabet(character)) {
-                error(line, "Uki only uses small characters for identifiers.")
-            } else {
-                error(utkrisht, "Invalid character, `" + character + "`", line)
+                error(utkrisht, "Big Letters are not allowed in identifiers", lexer.line);
             }
+            error(utkrisht, "Invalid character `" + character + "`", lexer.line)
     }
 }
 
 
 export function lex(utkrisht, lexer) {
-    while (!isAtEnd()) {
-        lexer.start = lexer.current
+    const tokens = [];
 
-        lex(utkrisht, lexer)
+    while (!isAtEnd(lexer)) {
+        const token = lexToken(utkrisht, lexer);
+        if (token !== undefined) {
+            tokens.push(token);
+        }
     }
 
-    lexer.tokens.push()
+    // Add dedents
+    while (lexer.indentStack.length > 1) {
+        lexer.indentStack.pop();
+        tokens.push({ type: "DEDENT", lexeme: "----", line: lexer.line });
+    }
 
-    return lexer.tokens;
+    // Add the last token, i.e. EndOfFile
+    tokens.push({ type: "EndOfFile", line: lexer.line });
+
+    return tokens;
 }
+
+import { createUtkrisht } from "./utkrisht.js";
+
+const lexer = createLexer(`
+aaa
+    aaa
+        aaa
+aaa
+    aaa
+aaa
+`)
+const utkrisht = createUtkrisht();
+console.log(lex(utkrisht, lexer))
