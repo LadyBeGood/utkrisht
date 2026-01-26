@@ -1,4 +1,4 @@
-import logger from "./logger";
+import * as logger from "./logger.js";
 
 export function createParser(tokens) {
     return {

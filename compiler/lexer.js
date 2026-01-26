@@ -11,7 +11,6 @@ export function createLexer(source) {
         indentWidth: 0,
         // Used to emit the correct number of Dedent tokens when returning to outer scopes.
         nestingDepth: 0,
-        pendingComment: ""
     };
 }
 
@@ -19,7 +18,7 @@ function isAtEnd(lexer) {
     return lexer.position >= lexer.sourceLength;
 }
 
-function isCurrentToken(lexer, expected) {
+function isCurrentCharacter(lexer, expected) {
     if (isAtEnd(lexer)) {
         return false;
     } else if (typeof expected === "function") {
@@ -47,41 +46,206 @@ function isAlphaNumeric(character) {
     return isSmallAlphabet(character) || isDigit(character) || character === "-";
 }
 
-function lexString(utkrisht, lexer) {
+function alexString(utkrisht, lexer) {
     // Skip the opening quote
     lexer.position++;
-    const stringStartPosition = lexer.position;
-    const stringStartLine = lexer.line;
 
-    while (true) {
-        if (isAtEnd(lexer)) {
-            error(utkrisht, "Unterminated string", stringStartLine);
-            return undefined;
-        } else if (isCurrentToken(lexer, '"')) {
-            break;
-        } else if (isCurrentToken(lexer, "\n")) {
-            lexer.line++;
-        }
-        lexer.position++;
+    let isSingleLine = true;
+
+    let temporaryPosition = lexer.position;
+    while (lexer.source[temporaryPosition] === " ") {
+        temporaryPosition++;
     }
 
-    const stringEndPosition = lexer.position;
+    if (lexer.source[temporaryPosition] === "\n") {
+        isSingleLine = false;
+        lexer.position = temporaryPosition;
+    }
 
-    // Skip the closing quote
-    lexer.position++
+    if (isSingleLine) {
+        const stringStartPosition = lexer.position;
+        const stringStartLine = lexer.line;
 
-    return { type: "StringLiteral", lexeme: lexer.source.slice(stringStartPosition, stringEndPosition), line: lexer.line}
+        while (true) {
+            if (isAtEnd(lexer)) {
+                error(utkrisht, "Unterminated string", stringStartLine);
+                return undefined;
+            } else if (isCurrentCharacter(lexer, '"')) {
+                break;
+            } else if (isCurrentCharacter(lexer, "\n")) {
+                error(utkrisht, "Single line strings cannot contain a new line. Either use a `\\n` character or a multiline string.")
+                return undefined;
+            }
+            lexer.position++;
+        }
+
+        const stringEndPosition = lexer.position;
+
+        // Skip the closing quote
+        lexer.position++
+
+        return { type: "StringLiteral", lexeme: lexer.source.slice(stringStartPosition, stringEndPosition), line: stringStartLine }
+    }
+
+    else {
+        const stringStartLine = lexer.line;
+        // Skip this newline
+        lexer.position++
+        lexer.line++
+
+        const stringRanges = [];
+
+        while (true) {
+            if (isAtEnd(lexer)) {
+                error(utkrisht, "Unterminated string", stringStartLine);
+            }
+            
+            if (lexer.source[lexer.position + nestingDepth * indentWidth] === '"') {
+                break;
+            }
+
+            lexer.position++;
+        }
+
+        const strings = []
+        for (const [start, end] of stringRanges) {
+            strings.push(lexer.source.slice(start, end));
+        }
+
+        return { type: "StringLiteral", lexeme: strings.join(""), line: stringStartLine }
+    }
+}
+
+
+function lexString(utkrisht, lexer) {
+    const stringStartLine = lexer.line;
+    // Skip opening quote
+    lexer.position++; 
+
+    let isSingleLine = true;
+    let temporaryPosition = lexer.position;
+
+    // Check for "followed by spaces and a newline"
+    while (lexer.source[temporaryPosition] === " ") {
+        temporaryPosition++;
+    }
+
+    if (lexer.source[temporaryPosition] === "\n") {
+        isSingleLine = false;
+        // Skip the spaces and the first \n
+        lexer.position = temporaryPosition + 1; 
+        lexer.line++;
+    }
+
+    if (isSingleLine) {
+        const start = lexer.position;
+        
+        while (!isCurrentCharacter(lexer, '"')) {
+            if (isAtEnd(lexer)) {
+                error(utkrisht, "Unterminated string", stringStartLine);
+                return undefined;
+            }
+            
+            if (lexer.source[lexer.position] === "\n") {
+                error(utkrisht, "Single line strings cannot contain a new line.", stringStartLine);
+                return undefined;
+            }
+
+            lexer.position++;
+        }
+
+        const lexeme = lexer.source.slice(start, lexer.position);
+        
+        // Skip closing "
+        lexer.position++; 
+        
+        return { type: "StringLiteral", lexeme, line: stringStartLine };
+    }
+
+    else { // !isSingleLine
+
+        const lines = [];
+
+        if (lexer.indentWidth === 0) {
+            let temporaryPosition = lexer.position;
+            while (lexer.source[temporaryPosition] === " ") {
+                lexer.indentWidth++;
+                temporaryPosition++;
+            }
+        }
+        // The indentation we must skip for the closing quote
+        let requiredClosingQuoteOffset = lexer.nestingDepth * lexer.indentWidth;
+        // The indentation we must skip for EVERY line inside this string
+        let requiredContentOffset = requiredClosingQuoteOffset + lexer.indentWidth;
+
+        while (true) {
+            if (isAtEnd(lexer)) {
+                error(utkrisht, "Unterminated multiline string", stringStartLine);
+                return undefined;
+            }
+
+            // Check if the current line is the closing quote line
+            // It must be at the correct nesting level (same as the 'parent' code)
+            let closingCandidate = lexer.position;
+            while (lexer.source[closingCandidate] === " ") {
+                closingCandidate++;
+            }
+
+            if (lexer.source[closingCandidate] === '"') {
+                // Ensure the closing quote is indented correctly (matching parent)
+                const closingQuoteOffset = closingCandidate - lexer.position;
+                if (closingQuoteOffset !== requiredClosingQuoteOffset) {
+                    error(utkrisht, "Closing quote indentation must match the block level.", lexer.line);
+                    return undefined;
+                }
+                // Move past the quote
+                lexer.position = closingCandidate + 1; 
+                break;
+            }
+
+            // Validate leading spaces for the current content line
+            let spaceCount = 0;
+            while (spaceCount < requiredContentOffset && lexer.source[lexer.position + spaceCount] === " ") {
+                spaceCount++;
+            }
+
+            if (spaceCount < requiredContentOffset) {
+                error(utkrisht, `Insufficient indentation for multiline string. Expected ${requiredContentOffset} spaces.`, lexer.line);
+                return undefined;
+            }
+
+            // Capture from after the skipOffset until the end of the line
+            lexer.position += requiredContentOffset;
+            const lineStart = lexer.position;
+            while (!isAtEnd(lexer) && lexer.source[lexer.position] !== "\n") {
+                if (lexer.source[lexer.position] === '"') {
+                    error(utkrisht, "Closing quote must be on its own line for multiline strings.", lexer.line);
+                    return undefined;
+                }
+                lexer.position++;
+            }
+
+            lines.push(lexer.source.slice(lineStart, lexer.position));
+
+            if (isCurrentCharacter(lexer, "\n")) {
+                lexer.line++;
+                lexer.position++;
+            }
+        }
+
+        return { type: "StringLiteral", lexeme: lines.join("\n"), line: stringStartLine };
+    }
 }
 
 function lexNumber(lexer) {
     const numberStartPosition = lexer.position;
-    while (isCurrentToken(lexer, isDigit)) {
+    while (isCurrentCharacter(lexer, isDigit)) {
         lexer.position++;
     }
 
-    if (isCurrentToken(lexer, ".")) {
+    if (isCurrentCharacter(lexer, ".")) {
         lexer.position++;
-        while (isCurrentToken(lexer, isDigit)) {
+        while (isCurrentCharacter(lexer, isDigit)) {
             lexer.position++;
         }
     }
@@ -95,7 +259,7 @@ function lexNumber(lexer) {
 
 function lexIdentifier(lexer) {
     const identifierStartPosition = lexer.position;
-    while (isCurrentToken(lexer, isAlphaNumeric)) {
+    while (isCurrentCharacter(lexer, isAlphaNumeric)) {
         lexer.position++;
     }
     const identifierEndPosition = lexer.position;
@@ -118,13 +282,13 @@ function lexNewLine(utkrisht, lexer) {
     lexer.position++;
 
     let leadingSpaces = 0;
-    while (!isAtEnd(lexer) && isCurrentToken(lexer, " ")) {
+    while (!isAtEnd(lexer) && isCurrentCharacter(lexer, " ")) {
         leadingSpaces++;
         lexer.position++;
     }
 
     // Ignore blank lines
-    if (isCurrentToken(lexer, "\n")) {
+    if (isCurrentCharacter(lexer, "\n")) {
         return undefined;
     }
     
@@ -134,7 +298,7 @@ function lexNewLine(utkrisht, lexer) {
     }
 
     // Ignore commented blank lines
-    if (isCurrentToken(lexer, "#")) {
+    if (isCurrentCharacter(lexer, "#")) {
         return undefined;
     }
 
@@ -215,7 +379,7 @@ function lexToken(utkrisht, lexer) {
             lexer.position++;
             return { type: "Colon", lexeme: character, line: lexer.line };
         case "#":
-            while (!isCurrentToken(lexer, "\n") && !isAtEnd(lexer)) {
+            while (!isCurrentCharacter(lexer, "\n") && !isAtEnd(lexer)) {
                 lexer.position++
             }
             return undefined;
@@ -269,15 +433,15 @@ function lexToken(utkrisht, lexer) {
         case "!":
             lexer.position++;
             
-            if (isCurrentToken(lexer, "=")) {
+            if (isCurrentCharacter(lexer, "=")) {
                 lexer.position++;
                 return { type: "ExclamationMarkEqual", lexeme: "!=", line: lexer.line };
             } 
-            else if (isCurrentToken(lexer, "<")) {
+            else if (isCurrentCharacter(lexer, "<")) {
                 lexer.position++;
                 return { type: "ExclamationMarkLessThan", lexeme: "!<", line: lexer.line };
             } 
-            else if (isCurrentToken(lexer, ">")) {
+            else if (isCurrentCharacter(lexer, ">")) {
                 lexer.position++;
                 return { type: "ExclamationMarkMoreThan", lexeme: "!>", line: lexer.line };
             } 
@@ -308,16 +472,16 @@ export function lex(utkrisht, lexer) {
 
     let leadingSpaces = 0;
     while (!isAtEnd(lexer)) {
-        if (isCurrentToken(lexer, " ")) {
+        if (isCurrentCharacter(lexer, " ")) {
             leadingSpaces++;
             lexer.position++
-        } else if (isCurrentToken(lexer, "\n")) {
+        } else if (isCurrentCharacter(lexer, "\n")) {
             lexer.line++
             lexer.position++
             leadingSpaces = 0;
-        } else if (isCurrentToken(lexer, "#")) {
+        } else if (isCurrentCharacter(lexer, "#")) {
             leadingSpaces = 0;
-            while (!isAtEnd(lexer) && !isCurrentToken(lexer, "\n")) {
+            while (!isAtEnd(lexer) && !isCurrentCharacter(lexer, "\n")) {
                 lexer.position++
             }
         } else {
@@ -359,10 +523,11 @@ const utkrisht = createUtkrisht();
 const lexer = createLexer(`
 
 
-loop
-when
-else
-
+bbb ~ "
+    Hello How are you?
+       
+    aaaa
+"
 `)
 
-console.log(lex(utkrisht, lexer))
+console.log(lex(utkrisht, lexer));
