@@ -24,13 +24,46 @@ function getCurrentToken(parser) {
     return parser.tokens[parser.poistion];
 }
 
-function isCurrentTokenType(parser, type) {
-    return getCurrentToken(parser).type === type;
+
+function isCurrentTokenType(parser, ...types) {
+    for (const type of types) {
+        if (getCurrentToken(parser).type === type) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function isAtEnd(parser) {
     return parser.tokens[parser.poistion].type === "EndOffile";
 }
+
+function ignoreToken(parser, ...tokens) {
+    if (isCurrentTokenType(parser, ...tokens)) {
+        parser.poistion++;
+    }
+}
+
+function expectToken(utkrisht, parser, ...tokens) {
+    if (isCurrentTokenType(parser, ...tokens)) {
+        return;
+    }
+
+    const expected =
+        tokens.length === 1
+            ? tokens[0]
+            : "one of [" + tokens.join(", ") + "]"
+        ;
+
+    const found =
+        isCurrentTokenType(parser, "EndOfFile")
+            ? "reached end of code"
+            : "got " + getCurrentToken(parser).type
+        ;
+
+    throw error(utkrisht, "Expected " + expected + ", but " + found, getCurrentToken(parser))
+}
+
 
 function synchronise(parser) {
     while (!isAtEnd(parser)) {
@@ -42,6 +75,138 @@ function synchronise(parser) {
             break;
         }
     }
+}
+
+function parsePrimaryExpression(utkrisht, parser) {
+    let expression;
+
+    if (isCurrentTokenType(parser, "right")) {
+        expression = { type: "LiteralExpression", value: { type: "BooleanExpression", value: true }};
+        parser.poistion++;
+    } else if (isCurrentTokenType(parser, "wrong")) {
+        expression = { type: "LiteralExpression", value: { type: "BooleanExpression", value: false }};
+        parser.poistion++;
+    } else if (isCurrentTokenType(parser, "StringLiteral")) {
+        expression = { type: "LiteralExpression", value: { type: "StringLiteral", value: getCurrentToken(parser).lexeme }};
+        parser.poistion++;
+    } else if (isCurrentTokenType(parser, "NumericLiteral")) {
+        expression = { type: "LiteralExpression", value: { type: "NumericLiteral", value: Number(getCurrentToken(parser).lexeme) }};
+        parser.poistion++;
+    } else if (isCurrentTokenType(parser, "LeftRoundBracket")) {
+        parser.poistion++;
+        expression = { type: "GroupingExpression", expression: parseExpression(utkrisht, parser) };
+        expectToken(utkrisht, parser, "RightRoundBracket");
+        parser.poistion++;
+    } else if (isCurrentTokenType(parser, Identifier)) {
+        expression = parseVariableExpression(utkrisht, parser);
+    } else {
+        throw error(
+            utkrisht, 
+            isCurrentTokenType(parser, "EndOfFile") 
+                ? "Expected an expression but reached end of code" 
+                : "Expected an expression but got " + getCurrentToken(parser).type
+            ,
+            getCurrentToken(parser)
+        );
+    }
+
+    return expression;
+}
+
+function parseUnaryExpression(utkrisht, parser) {
+    if (isCurrentTokenType(parser, "ExclamationMark", "Minus")) {
+        const operator = getCurrentToken(parser);
+        parser.poistion++
+        const right = parseUnaryExpression(utkrisht, parser);
+        return { type: "UnaryExpression", operator, right };
+    }
+
+    return parsePrimaryExpression(utkrisht, parser);
+}
+
+
+function parseMultiplicationAndDivisionExpression(utkrisht, parser) {
+    let expression = parseUnaryExpression(utkrisht, parser);
+
+    while (isCurrentTokenType(parser, "Asterisk", "Slash")) {
+        const operator = getCurrentToken(parser);
+        parser.poistion++;
+        const right = parseUnaryExpression(utkrisht, parser)
+        expression = { left: expression, operator, right }
+    }
+
+    return expression;
+}
+
+function parseAdditionAndSubstractionExpression(utkrisht, parser) {
+    let expression = parseMultiplicationAndDivisionExpression(utkrisht, parser);
+
+    while (isCurrentTokenType(parser, "Plus", "Minus")) {
+        const operator = getCurrentToken(parser);
+        parser.poistion++;
+        const right = parseMultiplicationAndDivisionExpression(utkrisht, parser);
+        expression = { left: expression, operator, right }
+    }
+
+    return expression;
+}
+
+
+function parseComparisonExpression(utkrisht, parser) {
+    let expression = parseAdditionAndSubstractionExpression(utkrisht, parser);
+
+    while (isCurrentTokenType(parser, "MoreThan", "LessThan", "ExclamationMarkMoreThan", "ExclamationMarkLessThan")) {
+        const operator = getCurrentToken(parser);
+        parser.poistion++;
+        const right = parseAdditionAndSubstractionExpression(utkrisht, parser);
+        expression = { left: expression, operator, right }
+    }
+
+    return expression;
+}
+
+function parseEqualityAndInequalityExpression(utkrisht, parser) {
+    let expression = parseComparisonExpression();
+
+    while (isCurrentTokenType(parser, "Equal", "ExclamationMarkEqual")) {
+        const operator = getCurrentToken(parser);
+        parser.poistion++;
+        const right = parseComparisonExpression(utkrisht, parser);
+        expression = { left: expression, operator, right };
+    }
+    return expression;
+}
+
+function parseExpression(utkrisht, parser) {
+    return parseEqualityAndInequalityExpression(utkrisht, parser);
+}
+
+function parseExpressionStatement(utkrisht, parser) {
+    const expressionStatement = parseExpression(utkrisht, parser);
+    expectToken(utkrisht, parser, "NewLine", "Dedent", "EndOfFile");
+    ignoreToken(parser, "NewLine")
+    return expressionStatement;
+}
+
+
+function parseWhenStatement(utkrisht, parser) {
+
+}
+function parseLoopStatement(utkrisht, parser) {
+
+}
+function parseTryStatement(utkrisht, parser) {
+
+}
+function parseExitStatement(utkrisht, parser) {
+
+}
+function parseStopOrSkipStatement(utkrisht, parser) {
+
+}
+
+function parseVariableAssignmentStatement(utkrisht, parser) {
+
 }
 
 function parseVariableDeclaration(utkrisht, parser) {
@@ -70,11 +235,13 @@ function parseStatement(utkrisht, parser) {
     }
     else {
         if (isCurrentTokenType(parser, "Else")) {
-            error(utkrisht, "Can not use `else` statement without `when` statement", getCurrentToken(parser).line)
+            throw error(utkrisht, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
         } else if (isCurrentTokenType(parser, "Fix")) {
-
+            throw error(utkrisht, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
         } else if (isCurrentTokenType(parser, "With")) {
-
+            throw error(utkrisht, "Can not use `fix` statement without `with` statement", getCurrentToken(parser))
+        } else {
+            return parseExpressionStatement(utkrisht, parser);
         }
     }
 }
