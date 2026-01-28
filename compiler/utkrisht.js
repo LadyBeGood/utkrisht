@@ -13,10 +13,14 @@ function run(utkrisht, source) {
     const lexer = createLexer(source);
     const tokens = lex(utkrisht, lexer);
 
+    console.log(tokens)
+    if (utkrisht.hadError) {
+        return;
+    }
     const parser = createParser(tokens);
     const statements = parse(utkrisht, parser);
 
-    console.log(statements);
+    console.log(JSON.stringify(statements, null, 4));
 }
 
 
@@ -45,5 +49,5 @@ export function main() {
     runFile(args[0]);
 }
 
-// main();
+main();
 

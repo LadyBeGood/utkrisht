@@ -46,75 +46,6 @@ function isAlphaNumeric(character) {
     return isSmallAlphabet(character) || isDigit(character) || character === "-";
 }
 
-function alexString(utkrisht, lexer) {
-    // Skip the opening quote
-    lexer.position++;
-
-    let isSingleLine = true;
-
-    let temporaryPosition = lexer.position;
-    while (lexer.source[temporaryPosition] === " ") {
-        temporaryPosition++;
-    }
-
-    if (lexer.source[temporaryPosition] === "\n") {
-        isSingleLine = false;
-        lexer.position = temporaryPosition;
-    }
-
-    if (isSingleLine) {
-        const stringStartPosition = lexer.position;
-        const stringStartLine = lexer.line;
-
-        while (true) {
-            if (isAtEnd(lexer)) {
-                error(utkrisht, "Unterminated string", stringStartLine);
-                return undefined;
-            } else if (isCurrentCharacter(lexer, '"')) {
-                break;
-            } else if (isCurrentCharacter(lexer, "\n")) {
-                error(utkrisht, "Single line strings cannot contain a new line. Either use a `\\n` character or a multiline string.")
-                return undefined;
-            }
-            lexer.position++;
-        }
-
-        const stringEndPosition = lexer.position;
-
-        // Skip the closing quote
-        lexer.position++
-
-        return { type: "StringLiteral", lexeme: lexer.source.slice(stringStartPosition, stringEndPosition), line: stringStartLine }
-    }
-
-    else {
-        const stringStartLine = lexer.line;
-        // Skip this newline
-        lexer.position++
-        lexer.line++
-
-        const stringRanges = [];
-
-        while (true) {
-            if (isAtEnd(lexer)) {
-                error(utkrisht, "Unterminated string", stringStartLine);
-            }
-            
-            if (lexer.source[lexer.position + nestingDepth * indentWidth] === '"') {
-                break;
-            }
-
-            lexer.position++;
-        }
-
-        const strings = []
-        for (const [start, end] of stringRanges) {
-            strings.push(lexer.source.slice(start, end));
-        }
-
-        return { type: "StringLiteral", lexeme: strings.join(""), line: stringStartLine }
-    }
-}
 
 
 function lexString(utkrisht, lexer) {
@@ -237,7 +168,7 @@ function lexString(utkrisht, lexer) {
     }
 }
 
-function lexNumber(lexer) {
+function lexNumber(lexer, isNegative = false) {
     const numberStartPosition = lexer.position;
     while (isCurrentCharacter(lexer, isDigit)) {
         lexer.position++;
@@ -252,7 +183,7 @@ function lexNumber(lexer) {
 
     const numberEndPosition = lexer.position;
 
-    return { type: "NumericLiteral", lexeme: lexer.source.slice(numberStartPosition, numberEndPosition), line: lexer.line}
+    return { type: "NumericLiteral", lexeme: (isNegative ? "-" : "") + lexer.source.slice(numberStartPosition, numberEndPosition), line: lexer.line}
 }
 
 
@@ -289,6 +220,14 @@ function lexNewLine(utkrisht, lexer) {
 
     // Ignore blank lines
     if (isCurrentCharacter(lexer, "\n")) {
+        return undefined;
+    }
+
+    if (isCurrentCharacter(lexer, "\r")) {
+        lexer.position++;
+        if (!isCurrentCharacter(lexer, "\n")) {
+            error(utkrisht, "Carriage return must be followed by a NewLine character.", lexer.line);
+        }
         return undefined;
     }
     
@@ -406,10 +345,18 @@ function lexToken(utkrisht, lexer) {
             return { type: "And", lexeme: character, line: lexer.line };
         case "+":
             lexer.position++;
-            return { type: "Plus", lexeme: character, line: lexer.line };
+            if (isCurrentCharacter(lexer, isDigit)) {
+                return lexNumber(lexer)
+            } else {
+                return { type: "Plus", lexeme: character, line: lexer.line };
+            }
         case "-":
             lexer.position++;
-            return { type: "Minus", lexeme: character, line: lexer.line };
+            if (isCurrentCharacter(lexer, isDigit)) {
+                return lexNumber(lexer, /* isNegative */ true)
+            } else {
+                return { type: "Minus", lexeme: character, line: lexer.line };
+            }
         case "*":
             lexer.position++;
             return { type: "Asterisk", lexeme: character, line: lexer.line };
@@ -423,13 +370,23 @@ function lexToken(utkrisht, lexer) {
             lexer.position++;
             return { type: "BackSlash", lexeme: character, line: lexer.line };
         case " ":
-        case "\r":
             lexer.position++;
             return undefined;
+        case "\r":
+            lexer.position++;
+            if (isCurrentCharacter(lexer, "\n")) {
+                return lexNewLine(utkrisht, lexer);
+            } else {
+                error(utkrisht, "Carriage return must be followed by a NewLine character.", lexer.line);
+                lexer.position++
+                return undefined;
+            }
         case "\n":
             return lexNewLine(utkrisht, lexer)        
         case "\t":
-            error(utkrisht, "Utkrisht does not support tabs for indentation. Please use spaces.", lexer.line)    
+            error(utkrisht, "Utkrisht does not support tabs for indentation. Please use spaces.", lexer.line);
+            lexer.position++
+            return undefined; 
         case "!":
             lexer.position++;
             
@@ -459,6 +416,8 @@ function lexToken(utkrisht, lexer) {
             } 
             else if (isBigAlphabet(character)) {
                 error(utkrisht, "Big Letters are not allowed in identifiers", lexer.line);
+                lexer.position++;
+                return undefined;
             }
             error(utkrisht, "Invalid character `" + character + "`", lexer.line);
             lexer.position++
@@ -479,6 +438,16 @@ export function lex(utkrisht, lexer) {
             lexer.line++
             lexer.position++
             leadingSpaces = 0;
+        } else if (isCurrentCharacter(lexer, "\r")) {
+            lexer.position++;
+            if (isCurrentCharacter(lexer, "\n")) {
+                lexer.line++
+                lexer.position++
+                leadingSpaces = 0;
+            } else {
+                error(utkrisht, "Carriage return must be followed by a NewLine character.", lexer.line);
+                lexer.position++;
+            }
         } else if (isCurrentCharacter(lexer, "#")) {
             leadingSpaces = 0;
             while (!isAtEnd(lexer) && !isCurrentCharacter(lexer, "\n")) {
@@ -517,17 +486,9 @@ export function lex(utkrisht, lexer) {
 }
 
 
-import { createUtkrisht } from "./utkrisht.js";
+// import { createUtkrisht } from "./utkrisht.js";
 
-const utkrisht = createUtkrisht();
-const lexer = createLexer(`
+// const utkrisht = createUtkrisht();
+// const lexer = createLexer("110 + +")
 
-
-bbb ~ "
-    Hello How are you?
-       
-    aaaa
-"
-`)
-
-console.log(lex(utkrisht, lexer));
+// console.log(JSON.stringify(lex(utkrisht, lexer), null, 4));

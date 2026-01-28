@@ -32,7 +32,7 @@
             "patterns": [
                 {
                     "name": "keyword.control",
-                    "match": "\\b(try|fix|when|else|loop|with|take|stop|next|exit|import|export)\\b"
+                    "match": "\\b(try|fix|when|else|loop|with|take|stop|skip|exit|import|export)\\b"
                 },
                 {
                     "name": "constant.language",
