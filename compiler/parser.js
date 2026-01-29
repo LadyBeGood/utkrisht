@@ -322,20 +322,20 @@ function parseStatement(utkrisht, parser) {
     if (isCurrentTokenType(parser, "When")) {
         return parseWhenStatement(utkrisht, parser);
     }
-    else if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(utkrisht, parser);
+    else if (isCurrentTokenType(parser, "Loop")) {
+        return parseLoopStatement(utkrisht, parser);
     }
-    else if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(utkrisht, parser);
+    else if (isCurrentTokenType(parser, "Try")) {
+        return parseTryStatement(utkrisht, parser);
     }
-    else if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(utkrisht, parser);
+    else if (isCurrentTokenType(parser, "Exit")) {
+        return parseExitStatement(utkrisht, parser);
     }
-    else if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(utkrisht, parser);
+    else if (isCurrentTokenType(parser, "Stop", "Skip")) {
+        return parseStopOrSkipStatement(utkrisht, parser);
     }
-    else if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(utkrisht, parser);
+    else if (isCurrentTokenType(parser, "Identifier") && isVariableAssignment(parser)) {
+        return parseVariableAssignmentStatement(utkrisht, parser);
     }
     else {
         if (isCurrentTokenType(parser, "Else")) {
@@ -361,117 +361,8 @@ function isCurrentTokenTypeExpressionStart(parser) {
     )
 }
 
+function isVariableDeclaration(parser) {
 
-/**
- * ## Single Line Mode
- * - `aaa ~ 0` should be treated like Declaration(name => "aaa", value => 0)
- * - `aaa = 0` should be treated like Assignment(name => "aaa", value => 0)
- * - `aaa bbb ~ {}` should be treated like Declaration(name => "aaa", parameters => ["bbb"], value => {})
- * - `aaa bbb = {}` should be treated like Assignment(name => "aaa", parameters => ["bbb"], value => {})
- * - `aaa` should be treated like Variable(name => "aaa", arguments => [])
- * - `aaa bbb` should be treated like Variable(name => "aaa", arguments => ["bbb"])
- * - `aaa 0, bbb = 1` should give an error, and not treat `bbb = 1` as an equality operation
- * ## Multi Line Mode (Only applicable for function declaration or assignment with parameters or function calls with arguments)
- * - Should be treated like Declaration(name => "aaa", parameters => ["bbb"], value => {}) 
- *  ```
- *   aaa
- *       bbb
- *   ~ {}
- *   ``` 
- * - Should be treated like Assignment(name => "aaa", parameters => ["bbb"], value => {})
- *  ```
- *   aaa
- *       bbb
- *   = {}
- *   ``` 
- * - Should give an Indentation error instead of treating it as equality of `bbb` and `{}`
- * ```
- * aaa
- *     bbb = {}
- * ```
- */
-function handleIdentifier(utkrisht, parser) {
-    const startPosition = parser.position;
-    const isSingleLineMode = parser.tokens[parser.position + 1].type === "Indent" ? false : true;
-    
-    const name = getCurrentToken(parser);
-    parser.position++;
-
-    const parametersOrArguments = [];
-
-    if (isSingleLineMode) {
-        while (true) {
-            // Named Argument or Default Parameter Value
-            if (isCurrentTokenType(parser, "Identifier") && isNextTokenType(parser, "Colon")) {
-                const name = getCurrentToken(parser);
-                parser.position += 2;
-                const value = parseExpression(utkrisht, parser);
-                parametersOrArguments.push({ type: "NamedArgumentOrDefaultParameterValue", name, value });
-
-                if (isCurrentTokenType(parser, "Comma")) {
-                    parser.position++;
-                    continue;
-                } else {
-                    break
-                }
-            }
-
-            if (isCurrentTokenTypeExpressionStart(parser)) {
-                const value = parseExpression(utkrisht, parser);
-                parametersOrArguments.push({ type: "ParameterOrArgument", value });
-
-                if (isCurrentTokenType(parser, "Comma")) {
-                    parser.position++;
-                    continue;
-                } else {
-                    break
-                }
-            }
-
-            break;
-        }
-    } else {
-        expectToken(utkrisht, parser, "Indent");
-        parser.position++;
-
-        while (isCurrentTokenType(parser, "Comma")) {
-            break;
-        }
-
-        expectToken(utkrisht, parser, "Dedent");
-    }
-
-
-
-    if (isCurrentTokenType(parser, "Tilde")) {
-        // Skip Tilde token
-        parser.position++;
-
-        const type = "VariableDeclaration";
-        const value = parseExpression(utkrisht, parser);
-        ignoreToken(parser, "NewLine");
-
-        return { type, name, parameters: parametersOrArguments, value }
-    }
-    
-    else if (isCurrentTokenType(parser, "Equal")) {
-        // Skip Equal token
-        parser.position++;
-        
-        const type = "VariableAssignment";
-        const value = parseExpression(utkrisht, parser);
-        ignoreToken(parser, "Newline");
-
-        parser.variableAssignment = { type, name, parameters: parametersOrArguments, value }
-        parser.variableAssignmentEndPosition = parser.position;
-        parser.position = startPosition;
-    }
-
-    else {
-        const type = "VariableExpression";
-        parser.variableExpression = { type, name, arguments: parametersOrArguments }
-        parser.position = startPosition;
-    }
 }
 
 
