@@ -13,14 +13,14 @@ function run(utkrisht, source) {
     const lexer = createLexer(source);
     const tokens = lex(utkrisht, lexer);
 
-    console.log(tokens)
+    console.log(JSON.stringify(tokens, null, 4))
     if (utkrisht.hadError) {
         return;
     }
-    const parser = createParser(tokens);
-    const statements = parse(utkrisht, parser);
+    // const parser = createParser(tokens);
+    // const statements = parse(utkrisht, parser);
 
-    console.log(JSON.stringify(statements, null, 4));
+    // console.log(JSON.stringify(statements, null, 4));
 }
 
 

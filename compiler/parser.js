@@ -94,6 +94,40 @@ function synchronise(parser) {
 }
 
 
+/**
+ * Scans ahead to determine if this statement is a Declaration, Assignment, or Expression.
+ * It respects nesting (ignores '=' or '~' inside brackets or deeper indents).
+ */
+function getStatementContext(parser) {
+    let pos = parser.position;
+    let depth = 0;
+    let hasIndent = false;
+
+    while (pos < parser.tokens.length) {
+        const token = parser.tokens[pos];
+
+        // Track nesting depth
+        if (["LeftRoundBracket", "LeftBrace", "Indent"].includes(token.type)) {
+            depth++;
+            if (token.type === "Indent") hasIndent = true;
+        }
+        if (["RightRoundBracket", "RightBrace", "Dedent"].includes(token.type)) depth--;
+
+        // Only look for operators at the base depth of this statement
+        if (depth === 0) {
+            if (token.type === "Tilde") return { type: "DECLARATION", hasIndent };
+            if (token.type === "Equal") return { type: "ASSIGNMENT", hasIndent };
+            if (token.type === "NewLine" || token.type === "EndOfFile") break;
+        }
+
+        if (depth < 0) break; // Exited the current block
+        pos++;
+    }
+    return { type: "EXPRESSION", hasIndent };
+}
+
+
+
 function parseVariableExpression(utkrisht, parser) {
     if (parser.variableExpression !== undefined) {
         parser.position = parser.variableExpressionEndPosition;
@@ -327,6 +361,35 @@ function isCurrentTokenTypeExpressionStart(parser) {
     )
 }
 
+
+/**
+ * ## Single Line Mode
+ * - `aaa ~ 0` should be treated like Declaration(name => "aaa", value => 0)
+ * - `aaa = 0` should be treated like Assignment(name => "aaa", value => 0)
+ * - `aaa bbb ~ {}` should be treated like Declaration(name => "aaa", parameters => ["bbb"], value => {})
+ * - `aaa bbb = {}` should be treated like Assignment(name => "aaa", parameters => ["bbb"], value => {})
+ * - `aaa` should be treated like Variable(name => "aaa", arguments => [])
+ * - `aaa bbb` should be treated like Variable(name => "aaa", arguments => ["bbb"])
+ * - `aaa 0, bbb = 1` should give an error, and not treat `bbb = 1` as an equality operation
+ * ## Multi Line Mode (Only applicable for function declaration or assignment with parameters or function calls with arguments)
+ * - Should be treated like Declaration(name => "aaa", parameters => ["bbb"], value => {}) 
+ *  ```
+ *   aaa
+ *       bbb
+ *   ~ {}
+ *   ``` 
+ * - Should be treated like Assignment(name => "aaa", parameters => ["bbb"], value => {})
+ *  ```
+ *   aaa
+ *       bbb
+ *   = {}
+ *   ``` 
+ * - Should give an Indentation error instead of treating it as equality of `bbb` and `{}`
+ * ```
+ * aaa
+ *     bbb = {}
+ * ```
+ */
 function handleIdentifier(utkrisht, parser) {
     const startPosition = parser.position;
     const isSingleLineMode = parser.tokens[parser.position + 1].type === "Indent" ? false : true;
@@ -364,6 +427,8 @@ function handleIdentifier(utkrisht, parser) {
                     break
                 }
             }
+
+            break;
         }
     } else {
         expectToken(utkrisht, parser, "Indent");
@@ -412,12 +477,8 @@ function handleIdentifier(utkrisht, parser) {
 
 function parseDeclaration(utkrisht, parser) {
     try {
-        if (isCurrentTokenType(parser, "Identifier")) {
-            const x = handleIdentifier(utkrisht, parser);
-            if (x !== undefined) {
-                return x;
-            }
-            return parseStatement(utkrisht, parser);
+        if (isCurrentTokenType(parser, "Identifier") && isVariableDeclaration(parser)) {
+            parseVariableDeclaration(utkrisht, parser);
         } else {
             return parseStatement(utkrisht, parser);
         }

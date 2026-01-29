@@ -313,7 +313,24 @@ function lexToken(utkrisht, lexer) {
             return { type: "Dot", lexeme: character, line: lexer.line };
         case ",":
             lexer.position++;
-            return { type: "Comma", lexeme: character, line: lexer.line };
+            const token = { type: "Comma", lexeme: character, line: lexer.line };
+            
+            while (isCurrentCharacter(lexer, " ")) {
+                lexer.position++;
+            }
+            
+            if (isCurrentCharacter(lexer, "\n")) {
+                lexer.position++;
+                lexer.line++
+            } else if (isCurrentCharacter(lexer, "\r")) {
+                lexer.position++;
+                if (!isCurrentCharacter(lexer, "\n")) {
+                    error(utkrisht, "Carriage return must be followed by a NewLine character.", lexer.line);
+                }
+                lexer.position++;
+                lexer.line++
+            }
+            return token;
         case ":":
             lexer.position++;
             return { type: "Colon", lexeme: character, line: lexer.line };
