@@ -56,7 +56,7 @@ You can document a variable by directly placing comments above it. These comment
 # Divide 2 numbers
 # - `a`: Numerator
 # - `b`: Denominator
-divide a, b: {
+divide a, b ~ {
     exit a / b
 }
 ```
@@ -70,15 +70,15 @@ divide a, b: {
 
 
 ### Data types
-Utkrisht has 5 data types.
+Utkrisht has **5 data types**.
 
-| Data Type | Passed by | Clonable | iterable | Mutable | Callable | Hashable |
-|-----------|-----------|----------|----------|---------|----------|----------|
-| String    | Value     | Yes      | Yes      | No      | No       | Yes      |
-| Number    | Value     | Yes      | No       | No      | No       | Yes<sup>[1]</sup>     |
-| Boolean   | Value     | Yes      | No       | No      | No       | Yes      |
-| Procedure | Reference | No       | No       | No      | Yes      | Yes      |
-| Structure | Reference | Yes      | Yes      | Yes     | No       | Yes      |
+| Data Type     | Passed by | Clonable | iterable | Mutable | Callable | Hashable          |
+|---------------|-----------|----------|----------|---------|----------|-------------------|
+| **String**    | Value     | Yes      | Yes      | No      | No       | Yes               |
+| **Number**    | Value     | Yes      | No       | No      | No       | Yes<sup>[1]</sup> |
+| **Boolean**   | Value     | Yes      | No       | No      | No       | Yes               |
+| **Procedure** | Reference | No       | No       | No      | Yes      | Yes               |
+| **Structure** | Reference | Yes      | Yes      | Yes     | No       | Yes               |
 
 > [!NOTE]
 > [1] All numbers including `nan` are hashable and can be used as keys. 
@@ -238,7 +238,7 @@ Separators are symbols used to divide syntactic elements without performing an o
 |-----------|--------------------------------------------------------------|
 | `,`       | Arguments, Parameters, Properties                            |
 | `!,`      | Arguments  (use default value for the parameter)             |
-| Newline   | Arguments, Parameters, Properties (non-terminating contexts) |
+| NewLine   | Arguments, Parameters, Properties (non-terminating contexts) |
 
 
 
@@ -263,7 +263,7 @@ Terminators mark the end of a statement or declaration.
 
 | Terminator | Terminates                                  |
 |------------|---------------------------------------------|
-| Newline    | Statements, Comments (terminating contexts) |
+| NewLine    | Statements, Comments (terminating contexts) |
 | EndOfFile  | Statements, Comments                        |
 
 
@@ -331,18 +331,18 @@ quantity = "high" # Data type of the value does not matter
 Control flow determines how execution proceeds through a program.  
 
 #### Conditionals
-Conditionals control which procedure will be invoked based on a **condition**. The condition must be a boolean value, Utkrisht does not have truthy or falsy values. 
+Conditionals control which block will be executed based on a **condition**. The condition must be a boolean value, Utkrisht does not have truthy or falsy values. 
 ```
-# Statement conditionals
-when age > 18
-    write "You're an adult"
-else age < 18
+# Conditional statement
+when age < 13 
     write "You're a child"
+else age > 19
+    write "You're an adult"
 else
-    write "You're no longer a child, you became an adult!"
+    write "You're a teen"
 
 
-# Expression conditionals multiline
+# Multiline conditional expression
 status ~ 
     when age < 13 
         "child"
@@ -351,13 +351,13 @@ status ~
     else
         "teen"
     
-# Expression conditionals singleline
+# Singleline conditional expression
 status ~ when (age < 13) "child" else (age > 19) "adult" else "teen"
 ```
 #### Loops
 Loop is a data type sensitive construct. Therefore the behaviour of the loop depends upon the data type of the data following it.
 ```
-# loop keyword followed directly by a procedure
+# loop keyword not followed by any data type
 # loops infinitely
 loop
     write "hello"
@@ -380,7 +380,7 @@ loop 5 # loops 5 times
 
 # loop keyword followed by a string or structure
 # loops `length iterable` times 
-loop "uki" # loops 3 times because there are 2 characters in "uki": "u", "k" and "i"
+loop "uki" # loops 3 times because there are 3 characters in "uki": "u", "k" and "i"
     write "hello"
 
 loop [id = 567, right, "orange"] # loops 3 times
@@ -494,15 +494,14 @@ A module can be imported using the `import` keyword followed by its path:
 import utilities 
 import components/footer
 import ../assets/icons
-import routes/[home, notifications, profile]
 ```
 When you write an import like `import abc`, the compiler looks for:
 - a file named `abc.uki`, or
 - a folder named `abc` that contains a file named `abc.uki`.
 
 #### Export
-Use the `export` keyword available to other modules:
+Use the `export` keyword to make the variable available to other modules that import it:
 ```
-export message: "hi"
+export message ~ "hi"
 ```
 
