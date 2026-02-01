@@ -1,6 +1,7 @@
 import { error } from "./logger.js";
 import { keywords } from "./keywords.js";
 
+
 export function createLexer(source) {
     return {
         source,
@@ -295,31 +296,6 @@ function lexComma(utkrisht, lexer) {
     const tokens = [{ type: "Comma", lexeme: ",", line: lexer.line }];
     lexer.position++;
 
-    // Ignore spaces
-    // while (true) {
-    //     if (isCurrentCharacter(lexer, " ")) {
-    //         lexer.position++;
-    //     } else if (isCurrentCharacter(lexer, "#")) {
-    //         lexComent(lexer);
-    //     } else {
-    //         break;
-    //     }
-    // }
-    
-    // if (isCurrentCharacter(lexer, "\r")) {
-    //     lexer.position++;
-    //     if (!isCurrentCharacter(lexer, "\n")) {
-    //         error(utkrisht, "Carriage return must be followed by a NewLine character.", lexer.line);
-    //     }
-    // }
-
-    // if (isCurrentCharacter(lexer, "\n")) {
-    //     const whiteSpaceTokens = lexNewLine(utkrisht, lexer);
-    //     if (Array.isArray(whiteSpaceTokens) || whiteSpaceTokens !== undefined && whiteSpaceTokens.type !== "NewLine") {
-    //         tokens.push(...whiteSpaceTokens)
-    //     }
-    // } 
-
     // Ignore spaces and comments
     while (true) {
         while (true) {
@@ -593,10 +569,3 @@ export function lex(utkrisht, lexer) {
     return tokens;
 }
 
-
-// import { createUtkrisht } from "./utkrisht.js";
-
-// const utkrisht = createUtkrisht();
-// const lexer = createLexer("110 + +")
-
-// console.log(JSON.stringify(lex(utkrisht, lexer), null, 4));

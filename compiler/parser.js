@@ -119,10 +119,10 @@ function isCurrentTokenTypeExpressionStart(parser) {
 function parseVariableExpression(utkrisht, parser) {
     if (parser.variableExpression !== undefined) {
         parser.position = parser.variableExpressionEndPosition;
-        
+
         parser.variableExpression = undefined;
         parser.variableExpressionEndPosition = undefined;
-        
+
         return parser.variableExpression;
     }
     const name = getCurrentToken(parser);
@@ -131,7 +131,7 @@ function parseVariableExpression(utkrisht, parser) {
     const _arguments = [];
     while (true) {
         if (isCurrentTokenTypeExpressionStart(parser)) {
-            _arguments.push( { type: "Argument", name: undefined, value: parseExpression(utkrisht, parser) });
+            _arguments.push({ type: "Argument", name: undefined, value: parseExpression(utkrisht, parser) });
 
             if (isCurrentTokenType(parser, "Comma")) {
                 parser.position++;
@@ -157,7 +157,7 @@ function parseVariableExpression(utkrisht, parser) {
 
         break;
     }
-    
+
     return { type: "VariableExpression", name, _arguments }
 }
 
@@ -165,16 +165,16 @@ function parsePrimaryExpression(utkrisht, parser) {
     let expression;
 
     if (isCurrentTokenType(parser, "right")) {
-        expression = { type: "LiteralExpression", value: { type: "BooleanExpression", value: true }};
+        expression = { type: "LiteralExpression", value: { type: "BooleanExpression", value: true } };
         parser.position++;
     } else if (isCurrentTokenType(parser, "wrong")) {
-        expression = { type: "LiteralExpression", value: { type: "BooleanExpression", value: false }};
+        expression = { type: "LiteralExpression", value: { type: "BooleanExpression", value: false } };
         parser.position++;
     } else if (isCurrentTokenType(parser, "StringLiteral")) {
-        expression = { type: "LiteralExpression", value: { type: "StringLiteral", value: getCurrentToken(parser).lexeme }};
+        expression = { type: "LiteralExpression", value: { type: "StringLiteral", value: getCurrentToken(parser).lexeme } };
         parser.position++;
     } else if (isCurrentTokenType(parser, "NumericLiteral")) {
-        expression = { type: "LiteralExpression", value: { type: "NumericLiteral", value: Number(getCurrentToken(parser).lexeme) }};
+        expression = { type: "LiteralExpression", value: { type: "NumericLiteral", value: Number(getCurrentToken(parser).lexeme) } };
         parser.position++;
     } else if (isCurrentTokenType(parser, "LeftRoundBracket")) {
         parser.position++;
@@ -185,9 +185,9 @@ function parsePrimaryExpression(utkrisht, parser) {
         expression = parseVariableExpression(utkrisht, parser);
     } else {
         throw error(
-            utkrisht, 
-            isCurrentTokenType(parser, "EndOfFile") 
-                ? "Expected an expression but reached end of code" 
+            utkrisht,
+            isCurrentTokenType(parser, "EndOfFile")
+                ? "Expected an expression but reached end of code"
                 : "Expected an expression but got " + getCurrentToken(parser).type
             ,
             getCurrentToken(parser)
@@ -272,39 +272,199 @@ function parseExpressionStatement(utkrisht, parser) {
     return expressionStatement;
 }
 
+function parseBlock(utkrisht, parser) {
+    expectToken(utkrisht, parser, "Indent");
+    parser.position++;
+
+    const statements = [];
+
+    while (!isAtEnd(parser) && !isCurrentTokenType(parser, "Dedent")) {
+        statements.push(parseDeclaration(utkrisht, parser));
+    }
+
+    expectToken(utkrisht, parser, "Dedent");
+    parser.position++;
+
+    return { type: "Block", statements }
+}
 
 function parseWhenStatement(utkrisht, parser) {
+    const whenClauses = [];
+
+    const whenKeyword = getCurrentToken(parser);
+    parser.position++;
+
+    const condition = parseExpression(utkrisht, parser);
+    const block = parseBlock(utkrisht, parser);
+
+    whenClauses.push({ type: "WhenClause", keyword: whenKeyword, condition, block });
+
+    while (isCurrentTokenType(parser, "Else")) {
+        const keyword = getCurrentToken(parser);
+        parser.position++;
+
+        let condition = undefined;
+        if (!isCurrentTokenType(parser, "Indent")) {
+            condition = parseExpression(utkrisht, parser);
+        }
+
+        const block = parseBlock(utkrisht, parser);
+
+        whenClauses.push({ type: "WhenClause", keyword, condition, block });
+    } 
+
+    return { type: "WhenStatement", whenClauses }
+}
+
+
+function parseBinding(utkrisht, parser) {
+    expectToken(utkrisht, parser, "LeftSquareBracket", "Identifier")
+
+    // Destructure
+    if (isCurrentTokenType("LeftSquareBracket")) {
+        parser.position++; // consume [
+        const declarations = [];
+
+        while (!isCurrentTokenType(parser, "RightSquareBracket")) {
+            // Nesting allowed for arrays, but groups still forbidden
+            declarations.push(parseBinding(utkrisht, parser));
+
+            if (isCurrentTokenType(parser, "Comma")) {
+                parser.position++;
+            } else {
+                break;
+            }
+        }
+
+        expectToken(utkrisht, parser, "RightSquareBracket");
+        parser.position++; // consume ]
+
+        return { type: "Destructure", declarations };
+    }
+
+    // Simple Identifier
+    if (isCurrentTokenType("Identifier")) {
+        const value = getCurrentToken(parser);
+        parser.position++;
+        return { type: "Identifier", value };
+    }
 
 }
+
 function parseLoopStatement(utkrisht, parser) {
+    const loopKeyword = getCurrentToken(parser);
+    let isGrouping = false
+    
+    if (isCurrentTokenType(parser, "LeftRoundBracket")) {
+        isGrouping = true;
+        parser.position++;
+    }
 
+    const loopClauses = [];
+    while(isCurrentTokenTypeExpressionStart(parser)) {
+        const left = parseExpression(utkrisht, parser);
+
+        let withKeyword;
+        let right;
+        if (isCurrentTokenType(parser, "With")) {
+            withKeyword = getCurrentToken(parser);
+            parser.position++
+
+            right = parseBinding(utkrisht, parser, true);
+        }
+
+        loopClauses.push({ type: "LoopClause", withKeyword, left, right })
+
+        if (isCurrentTokenType(parser, "Comma")) {
+            parser.position++
+        } else {
+            break;
+        }
+    }
+
+    if (isGrouping) {
+        expectToken(utkrisht, parser, "RightRoundBracket");
+        parser.position++;
+    }
+
+    const block = parseBlock(utkrisht, parser);
+
+    return { type: "LoopStatement", loopKeyword, loopClauses, block }
 }
+
+
 function parseTryStatement(utkrisht, parser) {
+    const tryKeyword = getCurrentToken(parser);
+    parser.position++;
 
+    const tryBlock = parseBlock(utkrisht, parser);
+
+    expectToken(utkrisht, parser, "Fix");
+    const fixKeyword = getCurrentToken(parser);
+    parser.position++;
+
+    const fixBlock = parseBlock(utkrisht, parser);
+
+    return { type: "TryStatement", tryKeyword, tryBlock, fixKeyword, fixBlock };
 }
+
+
 function parseExitStatement(utkrisht, parser) {
+    const keyword = getCurrentToken(parser);
+    parser.position++;
 
+    let value = undefined;
+    
+    if (!isCurrentTokenType(parser, "NewLine", "Dedent")) {
+        value = parseExpression(utkrisht, parser);
+    }
+
+    expectToken(utkrisht, parser, "NewLine", "Dedent");
+    ignoreToken(parser, "NewLine");
+
+    return { type: "ExitStatement", keyword, value }
 }
+
 function parseStopOrSkipStatement(utkrisht, parser) {
+    const keyword = getCurrentToken(parser);
+    parser.position++;
 
-}
+    let label = undefined;
+    if (isCurrentTokenType(parser, "Identifier")) {
+        label = getCurrentToken(parser);
+    }
 
-function parseVariableAssignmentStatement(utkrisht, parser) {
+    expectToken(utkrisht, parser, "NewLine", "Dedent");
+    ignoreToken(parser, "NewLine");
 
-}
-
-function parseVariableDeclaration(utkrisht, parser) {
-    const name = getCurrentToken(parser);
-
-    const parametersOrArguments = [];
-    while (isCurrentTokenType(parser, "Identifier")) {
-        const name = getCurrentToken(parser);
-        parser.position++
-
-
+    if (keyword.type === "Stop") {
+        return { type: "StopStatement", keyword, label}
+    } else {
+        return { type: "SkipStatement", keyword, label}
     }
 }
 
+function parseVariableAssignmentStatement(utkrisht, parser) {
+    const name = getCurrentToken(parser);
+    parser.position++;
+
+    expectToken(utkrisht, parser, "Equal");
+    parser.position++;
+
+    const value = parseExpression(utkrisht, parser);
+
+    ignoreToken(parser, "NewLine");
+
+    return { type: "Assignment", name, value };
+}
+
+
+/**  
+ * This function behaviour may change with new Utkrisht versions.
+ */
+function isVariableAssignment(parser) {
+    return isNextTokenType(parser, "Equal")
+}
 
 function parseStatement(utkrisht, parser) {
     if (isCurrentTokenType(parser, "When")) {
@@ -339,7 +499,63 @@ function parseStatement(utkrisht, parser) {
 }
 
 
+function parseVariableDeclaration(utkrisht, parser) {
+    const name = getCurrentToken(parser);
+    parser.position++;
 
+    const parameters = [];
+    while (isCurrentTokenType(parser, "Identifier")) {
+        const name = getCurrentToken(parser);
+        parser.position++
+        
+        let defaultValue = undefined;
+        if (isCurrentTokenType(parser, "Colon")) {
+            parser.position++;
+            defaultValue = parseExpression();
+        }
+
+        parameters.push( { type: "Parameter", name, defaultValue })
+        if (isCurrentTokenType(parser, "Comma")) {
+            parser.position++;
+        } else {
+            break;
+        }
+    }
+
+    expectToken(utkrisht, parser, "Tilde");
+    parser.position++;
+
+    const value = parseExpression(utkrisht, parser);
+    ignoreToken(parser, "NewLine");
+
+    return { type: "Declaration", name, parameters, value }
+}
+
+
+function isVariableDeclaration(parser) {
+    let curlyBracketNestingDepth = 0;
+    let squareBracketNestingDepth = 0;
+
+    while (!isAtEnd(parser)) {
+        if (isCurrentTokenType(parser, "LeftCurlyBracket")) {
+            curlyBracketNestingDepth++;
+        } else if (isCurrentTokenType(parser, "LeftSquareBracket")) {
+            squareBracketNestingDepth++;
+        } else if (isCurrentTokenType(parser, "RightCurlyBracket")) {
+            curlyBracketNestingDepth--;
+        } else if (isCurrentTokenType(parser, "RightSquareBracket")) {
+            squareBracketNestingDepth--;
+        }
+
+        if (curlyBracketNestingDepth === 0 && squareBracketNestingDepth === 0) {
+            if (isCurrentTokenType(parser, "NewLine")) {
+                return false;
+            } else if (isCurrentTokenType(parser, "Tilde")) {
+                return true;
+            }
+        }
+    }
+}
 
 
 function parseDeclaration(utkrisht, parser) {
