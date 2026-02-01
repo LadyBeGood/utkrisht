@@ -4,10 +4,6 @@ export function createParser(tokens) {
     return {
         tokens,
         position: 0,
-        variableExpression: undefined,
-        variableExpressionEndPosition: undefined,
-        variableAssignment: undefined,
-        variableAssignmentEndPosition: undefined,
     };
 }
 
@@ -32,6 +28,10 @@ function getNextToken(parser) {
     return parser.tokens[parser.position + 1];
 }
 
+function getTokenTypeAtPosition(parser, position) {
+    return parser.tokens[position];
+}
+
 function isCurrentTokenType(parser, ...types) {
     for (const type of types) {
         if (getCurrentToken(parser).type === type) {
@@ -49,6 +49,16 @@ function isNextTokenType(parser, ...types) {
     }
     return false;
 }
+
+function isTokenTypeAtPosition(parser, position, ...types) {
+    for (const type of types) {
+        if (getTokenTypeAtPosition(parser, position).type === type) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 function isAtEnd(parser) {
     return parser.tokens[parser.position].type === "EndOfFile";
@@ -94,38 +104,16 @@ function synchronise(parser) {
 }
 
 
-/**
- * Scans ahead to determine if this statement is a Declaration, Assignment, or Expression.
- * It respects nesting (ignores '=' or '~' inside brackets or deeper indents).
- */
-function getStatementContext(parser) {
-    let pos = parser.position;
-    let depth = 0;
-    let hasIndent = false;
-
-    while (pos < parser.tokens.length) {
-        const token = parser.tokens[pos];
-
-        // Track nesting depth
-        if (["LeftRoundBracket", "LeftBrace", "Indent"].includes(token.type)) {
-            depth++;
-            if (token.type === "Indent") hasIndent = true;
-        }
-        if (["RightRoundBracket", "RightBrace", "Dedent"].includes(token.type)) depth--;
-
-        // Only look for operators at the base depth of this statement
-        if (depth === 0) {
-            if (token.type === "Tilde") return { type: "DECLARATION", hasIndent };
-            if (token.type === "Equal") return { type: "ASSIGNMENT", hasIndent };
-            if (token.type === "NewLine" || token.type === "EndOfFile") break;
-        }
-
-        if (depth < 0) break; // Exited the current block
-        pos++;
-    }
-    return { type: "EXPRESSION", hasIndent };
+function isCurrentTokenTypeExpressionStart(parser) {
+    return isCurrentTokenType(parser,
+        "NumericLiteral",
+        "StringLiteral",
+        "Right",
+        "Wrong",
+        "Identifier",
+        "LeftRoundBracket"
+    )
 }
-
 
 
 function parseVariableExpression(utkrisht, parser) {
@@ -350,20 +338,8 @@ function parseStatement(utkrisht, parser) {
     }
 }
 
-function isCurrentTokenTypeExpressionStart(parser) {
-    return isCurrentTokenType(parser,
-        "NumericLiteral",
-        "StringLiteral",
-        "Right",
-        "Wrong",
-        "Identifier",
-        "LeftRoundBracket"
-    )
-}
 
-function isVariableDeclaration(parser) {
 
-}
 
 
 function parseDeclaration(utkrisht, parser) {

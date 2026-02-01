@@ -17,10 +17,10 @@ function run(utkrisht, source) {
     if (utkrisht.hadError) {
         return;
     }
-    // const parser = createParser(tokens);
-    // const statements = parse(utkrisht, parser);
+    const parser = createParser(tokens);
+    const statements = parse(utkrisht, parser);
 
-    // console.log(JSON.stringify(statements, null, 4));
+    console.log(JSON.stringify(statements, null, 4));
 }
 
 

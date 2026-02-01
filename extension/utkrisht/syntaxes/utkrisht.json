@@ -119,6 +119,10 @@
                 {
                     "name": "entity.name.function",
                     "match": "(?:webapp|shape|text|media|tag)"
+                },
+                {
+                    "name": "entity.name.function",
+                    "match": "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?=\\()"
                 }
             ]
         },

@@ -1,0 +1,20 @@
+{
+  "name": "utkrisht",
+  "version": "0.1.0",
+  "description": "A unified language for the web.",
+  "homepage": "https://github.com/LadyBeGood/utkrisht#readme",
+  "bugs": {
+    "url": "https://github.com/LadyBeGood/utkrisht/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LadyBeGood/utkrisht.git"
+  },
+  "license": "ISC",
+  "author": "LadyBeGood",
+  "type": "module",
+  "main": ".compiler/utkrisht.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

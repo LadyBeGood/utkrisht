@@ -20,35 +20,15 @@
 
 
 ## Installation
-> [!WARNING]
-> Do not install this now, everything is broken and has errors.
-
-
-### Prerequisites
-[Install Nim](https://nim-lang.org/install.html)
-
-### Steps
-Clone this repository
-```
-git clone https://github.com/LadyBeGood/utkrisht.git
-```
-
-Compile the compiler
 
 ```bash
-nim c --d:release --opt:speed --passC:-flto --out:uki --verbosity:0 ./utkrisht/compiler/uki.nim
+npm install -g utkrisht
 ```
-
-(Optional) Clean up the repository after successful compilation:
-```bash
-rm -rf utkrisht
-```
-
 ### Example usage
 Compile a input.uki file to output.js file:
 
 ```bash
-./uki input.uki output.js
+uki input.uki output.js
 ```
 
 ## Tutorial
