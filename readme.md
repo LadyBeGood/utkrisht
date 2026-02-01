@@ -145,23 +145,23 @@ nan            # stands for "not a number", but this is also a number
 ```
 
 ```
-write 123 = 123.0             #> right
+(123 = 123.0)             #-> right
 
-write 0 = 0                   #> right
-write -0 = -0                 #> right
-write 0 = -0                  #> right
+(0 = 0)                   #-> right
+(-0 = -0)                 #-> right
+(0 = -0)                  #-> right
 
-write infinity = infinity     #> right
-write infinity = -infinity    #> wrong
-write -infinity = -infinity   #> right
+(infinity = infinity)     #-> right
+(infinity = -infinity)    #-> wrong
+(-infinity = -infinity)   #-> right
 
-write nan = nan               #> wrong (This is not a typo)
-write nan != nan              #> right (This is also not a typo)
+(nan = nan)                #-> wrong (This is not a typo)
+(nan != nan)               #-> right (This is also not a typo)
 
-write is-finite 123           #> right
-write is-finite infinity      #> wrong
-write is-finite -infinity     #> wrong
-write is-nan nan              #> right
+is-finite 123             #-> right
+is-finite infinity        #-> wrong
+is-finite -infinity       #-> wrong
+is-nan nan                #-> right
 ```
 
 ```
