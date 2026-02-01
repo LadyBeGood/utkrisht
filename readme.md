@@ -72,18 +72,46 @@ divide a, b: {
 ### Data types
 Utkrisht has 5 data types.
 
-| Data Type | Passed by | Clonable | iterable | Mutable | Callable |
-|-----------|-----------|----------|----------|---------|----------|
-| String    | Value     | Yes      | Yes      | No      | No       |
-| Number    | Value     | Yes      | No       | No      | No       |
-| Boolean   | Value     | Yes      | No       | No      | No       |
-| Procedure | Reference | No       | No       | No      | Yes      |
-| Structure | Reference | Yes      | Yes      | Yes     | No       |
+| Data Type | Passed by | Clonable | iterable | Mutable | Callable | Hashable |
+|-----------|-----------|----------|----------|---------|----------|----------|
+| String    | Value     | Yes      | Yes      | No      | No       | Yes      |
+| Number    | Value     | Yes      | No       | No      | No       | Yes<sup>[1]</sup>     |
+| Boolean   | Value     | Yes      | No       | No      | No       | Yes      |
+| Procedure | Reference | No       | No       | No      | Yes      | Yes      |
+| Structure | Reference | Yes      | Yes      | Yes     | No       | Yes      |
 
+> [!NOTE]
+> [1] All numbers including `nan` are hashable and can be used as keys. 
+> Structure uses the algorithm [SameValueZero](https://tc39.github.io/ecma262/#sec-samevaluezero) to test keys for equivalnce. 
+> So `nan` is considered equal to `nan`.
 
 #### String
-A string represents a sequence of UTF-16 code units, identical to JavaScript strings.
+Strings are used to store textual data. 
 
+Strings can be created using double quotes:
+```
+# Single line strings
+"This is a single line string."
+
+# Multi line string
+"
+    This is a multiline string.
+    * These strings are allowed to span multiple lines.
+    * They need to be properly indented.
+    * Leading spaces, spaces and newline after starting quote and newline after ending quote are all trimmed off.
+"
+```
+
+Special characters
+| Character | Description     |
+|-----------|-----------------|
+| `\n`      | New Line        |
+| `\r`      | Carriage Return |
+| `\"`      | Quote           |
+| `\\`      | Backslash       |
+| `\t`      | Tab             |
+
+A string is represented internally a sequence of UTF-16 code units, identical to JavaScript strings, and thus share the same quirks.
 ```
 write length "😼"       #> 2
 write "😼".1            #> \ud83d
@@ -158,16 +186,16 @@ Boolean literals are represented by the keywords `right` and `wrong`. There are 
 
 Keywords are predefined words used by the language to perform internal operations or represent built-in behavior. 
 
-Utkrisht has **13 keywords**. None of them are reserved and may also be used as [identifiers](#identifiers).
+Utkrisht has **14 keywords**. None of them are reserved and may also be used as [identifiers](#identifiers).
 
-| Keywords                          | Description                                   |
-|-----------------------------------|-----------------------------------------------|
-| `right`, `wrong`                  | Boolean literals                              |
-| `when`, `else`                    | Conditional branching                         |
-| `loop`, `with`, `stop`, `skip`    | Looping and loop control                      |
-| `try`, `fix`                      | Error handling                                |
-| `exit`                            | Exiting from a procedure                      |
-| `import`, `export`                | Module import and export                      |
+| Keywords                    | Description              |
+|-----------------------------|--------------------------|
+| `right` `wrong`             | Boolean literals         |
+| `when` `else`               | Conditional branching    |
+| `loop` `with` `stop` `skip` | Looping and loop control |
+| `try` `fix`                 | Error handling           |
+| `exit` `give`               | Exiting from a procedure |
+| `import` `export`           | Module import and export |
 
 
 
@@ -189,11 +217,11 @@ Operators are symbols used to perform operations on values.
 |---------------------------------------|-------------------------------------------|---------------------------------------------------------|
 | `:` `=`                               | Infix                                     | Variable declaration and reassignment                   |
 | `+` `-` `*` `/`                       | Infix                                     | Arithmetic operations                                   |
-| `=` `<` `>` `!=` `!<` `!>`            | Infix                                     | Comparison operations                                   |
-| `&`, `\|`, `!`                        | Infix (except `!`, which is prefix)       | Logical operations                                      |
+| `=` `<` `>` <br />`!=` `!<` `!>`      | Infix                                     | Comparison operations                                   |
+| `&` `\|` `!`                          | Infix (except `!`, which is prefix)       | Logical operations                                      |
 | `_`                                   | Infix                                     | Range construction                                      |
 | `.`                                   | Infix                                     | Access operator                                         |
-| `;`                                   | Postfix                                   | Procedure call                                          |
+| `!`                                   | Postfix                                   | Procedure call                                          |
 | `/`                                   | Prefix                                    | Module access operator                                  |
 | `@`                                   | Prefix                                    | Async operator                                          |
 | `$`                                   | Prefix                                    | Reactivity operator                                     |
@@ -209,7 +237,7 @@ Separators are symbols used to divide syntactic elements without performing an o
 | Separator | Separates                                                    |
 |-----------|--------------------------------------------------------------|
 | `,`       | Arguments, Parameters, Properties                            |
-| `~,`      | Arguments  (use default value for the parameter)             |
+| `!,`      | Arguments  (use default value for the parameter)             |
 | Newline   | Arguments, Parameters, Properties (non-terminating contexts) |
 
 
@@ -245,7 +273,7 @@ Identifiers are names given to different entities in Utkrisht to uniquely identi
 
 ```
 # variables
-message: "hi"
+message ~ "hi"
 
 # structure keys
 [name = "Uki"]
@@ -287,13 +315,13 @@ Variables are identifiers used to store data. All variables are mutable and can 
 
 
 
-Declare a variable using `:`
+Declare a variable using `~`
 ```
-message: "Hello World"
+message ~ "Hello World"
 ```
 Reassign a value using `=`
 ```
-quantity: 34
+quantity ~ 34
 
 quantity = 65
 quantity = "high" # Data type of the value does not matter
@@ -314,8 +342,17 @@ else
     write "You're no longer a child, you became an adult!"
 
 
-# Expression conditionals
-status: when age < 18 "minor" else "adult"
+# Expression conditionals multiline
+status ~ 
+    when age < 13 
+        "child"
+    else age > 19
+        "adult"
+    else
+        "teen"
+    
+# Expression conditionals singleline
+status ~ when (age < 13) "child" else (age > 19) "adult" else "teen"
 ```
 #### Loops
 Loop is a data type sensitive construct. Therefore the behaviour of the loop depends upon the data type of the data following it.
