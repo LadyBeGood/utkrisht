@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini TypeScript Playground</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+        }
+
+        .left-panel {
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: #252526;
+            padding: 8px 16px;
+            border-bottom: 1px solid #333;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #editor {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .right-panel {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+        }
+
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #333;
+        }
+
+        .preview-header {
+            background: #252526;
+            padding: 8px 16px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-header h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #fullscreen-btn {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        #fullscreen-btn:hover {
+            background: #1177bb;
+        }
+
+        #preview {
+            flex: 1;
+            border: none;
+            background: white;
+        }
+
+        .bottom-section {
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+        }
+
+        .tabs {
+            display: flex;
+            background: #252526;
+            border-bottom: 1px solid #333;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #969696;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: #d4d4d4;
+            background: #2a2d2e;
+        }
+
+        .tab-btn.active {
+            color: #d4d4d4;
+            border-bottom-color: #0e639c;
+            background: #1e1e1e;
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow: auto;
+            padding: 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .tab-panel {
+            display: none;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .error {
+            color: #f48771;
+        }
+
+        .log {
+            color: #d4d4d4;
+            margin-bottom: 4px;
+        }
+
+        .fullscreen .preview-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            background: #1e1e1e;
+        }
+
+        .fullscreen .bottom-section {
+            display: none;
+        }
+
+        .token-keyword {
+            color: #569cd6;
+        }
+
+        .token-string {
+            color: #ce9178;
+        }
+
+        .token-number {
+            color: #b5cea8;
+        }
+
+        .token-identifier {
+            color: #9cdcfe;
+        }
+
+        .token-operator {
+            color: #d4d4d4;
+        }
+
+        .token-punctuation {
+            color: #d4d4d4;
+        }
+
+        .token-component {
+            color: #4ec9b0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="container">
+        <div class="left-panel">
+            <div class="editor-header">Editor - Mini TypeScript</div>
+            <div id="editor"></div>
+        </div>
+        <div class="right-panel">
+            <div class="preview-section">
+                <div class="preview-header">
+                    <h3>Preview</h3>
+                    <button id="fullscreen-btn">Fullscreen</button>
+                </div>
+                <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
+            </div>
+            <div class="bottom-section">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="console">Console</button>
+                    <button class="tab-btn" data-tab="ast">AST</button>
+                    <button class="tab-btn" data-tab="tokens">Tokens</button>
+                    <button class="tab-btn" data-tab="compiled">Compiled JS</button>
+                </div>
+                <div class="tab-content">
+                    <div id="console" class="tab-panel active"></div>
+                    <div id="ast" class="tab-panel"></div>
+                    <div id="tokens" class="tab-panel"></div>
+                    <div id="compiled" class="tab-panel"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <script>
+        const TokenType = {
+            NUMBER: 'NUMBER',
+            STRING: 'STRING',
+            IDENTIFIER: 'IDENTIFIER',
+            KEYWORD: 'KEYWORD',
+            OPERATOR: 'OPERATOR',
+            PUNCTUATION: 'PUNCTUATION',
+            NEWLINE: 'NEWLINE',
+            EOF: 'EOF',
+            COMPONENT: 'COMPONENT'
+        };
+
+        const KEYWORDS = new Set([
+            'let', 'function', 'if', 'else', 'for', 'while', 'return',
+            'break', 'continue', 'new', 'true', 'false', 'null', 'of', 'in'
+        ]);
+
+        class Lexer {
+            constructor(source) {
+                this.source = source;
+                this.pos = 0;
+                this.tokens = [];
+            }
+
+            tokenize() {
+                while (this.pos < this.source.length) {
+                    this.skipWhitespace();
+                    if (this.pos >= this.source.length) break;
+                    const char = this.peek();
+
+                    if (char === '\n') {
+                        this.advance();
+                        this.addToken(TokenType.NEWLINE, '\n');
+                    } else if (char === '/' && this.peekNext() === '/') {
+                        this.skipComment();
+                    } else if (char === '"' || char === "'") {
+                        this.string();
+                    } else if (char === '<' && this.isComponentStart()) {
+                        this.component();
+                    } else if (this.isDigit(char)) {
+                        this.number();
+                    } else if (this.isAlpha(char)) {
+                        this.identifier();
+                    } else if (this.isOperator(char)) {
+                        this.operator();
+                    } else if (this.isPunctuation(char)) {
+                        this.punctuation();
+                    } else {
+                        this.advance();
+                    }
+                }
+                this.addToken(TokenType.EOF, '');
+                return this.tokens;
+            }
+
+            peek() { return this.pos < this.source.length ? this.source[this.pos] : '\0'; }
+            peekNext() { return this.pos + 1 < this.source.length ? this.source[this.pos + 1] : '\0'; }
+            advance() { return this.source[this.pos++]; }
+
+            skipWhitespace() {
+                while (this.pos < this.source.length &&
+                    (this.peek() === ' ' || this.peek() === '\t' || this.peek() === '\r')) {
+                    this.advance();
+                }
+            }
+
+            skipComment() {
+                while (this.peek() !== '\n' && this.peek() !== '\0') this.advance();
+            }
+
+            isComponentStart() {
+                let i = this.pos + 1;
+                if (i >= this.source.length) return false;
+                if (this.source[i] === '/') i++;
+                return this.isAlpha(this.source[i]) && this.source[i] === this.source[i].toUpperCase();
+            }
+
+            component() {
+                let value = this.advance();
+                let isClosing = false;
+
+                if (this.peek() === '/') {
+                    value += this.advance();
+                    isClosing = true;
+                }
+
+                while (this.isAlphaNum(this.peek()) || this.peek() === '-') {
+                    value += this.advance();
+                }
+
+                if (this.peek() === '>') value += this.advance();
+                else if (this.peek() === '/' && this.peekNext() === '>') {
+                    value += this.advance();
+                    value += this.advance();
+                }
+
+                this.addToken(TokenType.COMPONENT, value);
+            }
+
+            string() {
+                const quote = this.advance();
+                let value = '';
+                while (this.peek() !== quote && this.peek() !== '\0') {
+                    if (this.peek() === '\\') {
+                        this.advance();
+                        value += this.advance();
+                    } else {
+                        value += this.advance();
+                    }
+                }
+                if (this.peek() === quote) this.advance();
+                this.addToken(TokenType.STRING, value);
+            }
+
+            number() {
+                let value = '';
+                while (this.isDigit(this.peek())) value += this.advance();
+                if (this.peek() === '.' && this.isDigit(this.peekNext())) {
+                    value += this.advance();
+                    while (this.isDigit(this.peek())) value += this.advance();
+                }
+                this.addToken(TokenType.NUMBER, value);
+            }
+
+            identifier() {
+                let value = '';
+                while (this.isAlphaNum(this.peek()) || this.peek() === '_') value += this.advance();
+                const type = KEYWORDS.has(value) ? TokenType.KEYWORD : TokenType.IDENTIFIER;
+                this.addToken(type, value);
+            }
+
+            operator() {
+                let value = this.advance();
+                const twoChar = value + this.peek();
+                if (['==', '!=', '<=', '>=', '&&', '||', '++', '--'].includes(twoChar)) {
+                    value += this.advance();
+                }
+                this.addToken(TokenType.OPERATOR, value);
+            }
+
+            punctuation() {
+                this.addToken(TokenType.PUNCTUATION, this.advance());
+            }
+
+            isDigit(c) { return c >= '0' && c <= '9'; }
+            isAlpha(c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
+            isAlphaNum(c) { return this.isAlpha(c) || this.isDigit(c); }
+            isOperator(c) { return '+-*/=!><&|.%'.includes(c); }
+            isPunctuation(c) { return '(){}[],;:.'.includes(c); }
+
+            addToken(type, value) {
+                this.tokens.push({ type, value, pos: this.pos });
+            }
+        }
+
+        class ASTNode {
+            constructor(type) {
+                this.type = type;
+            }
+        }
+
+        class Program extends ASTNode {
+            constructor(statements) {
+                super('Program');
+                this.statements = statements;
+            }
+        }
+
+        class VariableDeclaration extends ASTNode {
+            constructor(name, initializer) {
+                super('VariableDeclaration');
+                this.name = name;
+                this.initializer = initializer;
+            }
+        }
+
+        class FunctionDeclaration extends ASTNode {
+            constructor(name, params, body) {
+                super('FunctionDeclaration');
+                this.name = name;
+                this.params = params;
+                this.body = body;
+            }
+        }
+
+        class FunctionExpression extends ASTNode {
+            constructor(params, body) {
+                super('FunctionExpression');
+                this.params = params;
+                this.body = body;
+            }
+        }
+
+        class Block extends ASTNode {
+            constructor(statements) {
+                super('Block');
+                this.statements = statements;
+            }
+        }
+
+        class IfStatement extends ASTNode {
+            constructor(condition, consequent, alternate) {
+                super('IfStatement');
+                this.condition = condition;
+                this.consequent = consequent;
+                this.alternate = alternate;
+            }
+        }
+
+        class ForStatement extends ASTNode {
+            constructor(init, condition, update, body) {
+                super('ForStatement');
+                this.init = init;
+                this.condition = condition;
+                this.update = update;
+                this.body = body;
+            }
+        }
+
+        class ForOfStatement extends ASTNode {
+            constructor(variable, iterable, body) {
+                super('ForOfStatement');
+                this.variable = variable;
+                this.iterable = iterable;
+                this.body = body;
+            }
+        }
+
+        class ReturnStatement extends ASTNode {
+            constructor(argument) {
+                super('ReturnStatement');
+                this.argument = argument;
+            }
+        }
+
+        class BreakStatement extends ASTNode {
+            constructor() { super('BreakStatement'); }
+        }
+
+        class ContinueStatement extends ASTNode {
+            constructor() { super('ContinueStatement'); }
+        }
+
+        class ExpressionStatement extends ASTNode {
+            constructor(expression) {
+                super('ExpressionStatement');
+                this.expression = expression;
+            }
+        }
+
+        class BinaryExpression extends ASTNode {
+            constructor(left, operator, right) {
+                super('BinaryExpression');
+                this.left = left;
+                this.operator = operator;
+                this.right = right;
+            }
+        }
+
+        class UnaryExpression extends ASTNode {
+            constructor(operator, argument) {
+                super('UnaryExpression');
+                this.operator = operator;
+                this.argument = argument;
+            }
+        }
+
+        class AssignmentExpression extends ASTNode {
+            constructor(left, right) {
+                super('AssignmentExpression');
+                this.left = left;
+                this.right = right;
+            }
+        }
+
+        class CallExpression extends ASTNode {
+            constructor(callee, args) {
+                super('CallExpression');
+                this.callee = callee;
+                this.arguments = args;
+            }
+        }
+
+        class MemberExpression extends ASTNode {
+            constructor(object, property, computed) {
+                super('MemberExpression');
+                this.object = object;
+                this.property = property;
+                this.computed = computed;
+            }
+        }
+
+        class Identifier extends ASTNode {
+            constructor(name) {
+                super('Identifier');
+                this.name = name;
+            }
+        }
+
+        class Literal extends ASTNode {
+            constructor(value, raw) {
+                super('Literal');
+                this.value = value;
+                this.raw = raw;
+            }
+        }
+
+        class ArrayExpression extends ASTNode {
+            constructor(elements) {
+                super('ArrayExpression');
+                this.elements = elements;
+            }
+        }
+
+        class ObjectExpression extends ASTNode {
+            constructor(properties) {
+                super('ObjectExpression');
+                this.properties = properties;
+            }
+        }
+
+        class Property extends ASTNode {
+            constructor(key, value) {
+                super('Property');
+                this.key = key;
+                this.value = value;
+            }
+        }
+
+        class NewExpression extends ASTNode {
+            constructor(callee, args) {
+                super('NewExpression');
+                this.callee = callee;
+                this.arguments = args;
+            }
+        }
+
+        class ComponentElement extends ASTNode {
+            constructor(tag, attributes, children, selfClosing) {
+                super('ComponentElement');
+                this.tag = tag;
+                this.attributes = attributes;
+                this.children = children;
+                this.selfClosing = selfClosing;
+            }
+        }
+
+        class ComponentAttribute extends ASTNode {
+            constructor(name, value) {
+                super('ComponentAttribute');
+                this.name = name;
+                this.value = value;
+            }
+        }
+
+        class ComponentText extends ASTNode {
+            constructor(value) {
+                super('ComponentText');
+                this.value = value;
+            }
+        }
+
+        class ComponentExpression extends ASTNode {
+            constructor(expression) {
+                super('ComponentExpression');
+                this.expression = expression;
+            }
+        }
+
+        class Parser {
+            constructor(tokens) {
+                this.tokens = tokens;
+                this.pos = 0;
+            }
+
+            parse() {
+                const statements = [];
+                while (!this.isAtEnd()) {
+                    this.skipNewlines();
+                    if (!this.isAtEnd()) statements.push(this.parseStatement());
+                }
+                return new Program(statements);
+            }
+
+            parseStatement() {
+                this.skipNewlines();
+
+                if (this.match('let')) return this.parseVariableDeclaration();
+                if (this.check('function')) return this.parseFunctionDeclaration();
+                if (this.match('if')) return this.parseIfStatement();
+                if (this.match('for')) return this.parseForStatement();
+                if (this.match('return')) return this.parseReturnStatement();
+                if (this.match('break')) {
+                    this.consume(';');
+                    return new BreakStatement();
+                }
+                if (this.match('continue')) {
+                    this.consume(';');
+                    return new ContinueStatement();
+                }
+                if (this.check('{')) return this.parseBlock();
+
+                return this.parseExpressionStatement();
+            }
+
+            parseVariableDeclaration() {
+                const name = this.consume(TokenType.IDENTIFIER).value;
+                let init = null;
+                if (this.match('=')) init = this.parseExpression();
+                this.consume(';');
+                return new VariableDeclaration(name, init);
+            }
+
+            parseFunctionDeclaration() {
+                this.consume('function');
+                const name = this.consume(TokenType.IDENTIFIER).value;
+                this.consume('(');
+                const params = this.parseParameters();
+                this.consume(')');
+                const body = this.parseBlock();
+                return new FunctionDeclaration(name, params, body);
+            }
+
+            parseParameters() {
+                const params = [];
+                if (!this.check(')')) {
+                    do {
+                        params.push(this.consume(TokenType.IDENTIFIER).value);
+                    } while (this.match(','));
+                }
+                return params;
+            }
+
+            parseBlock() {
+                this.consume('{');
+                const statements = [];
+                while (!this.check('}') && !this.isAtEnd()) {
+                    this.skipNewlines();
+                    if (!this.check('}')) statements.push(this.parseStatement());
+                }
+                this.consume('}');
+                return new Block(statements);
+            }
+
+            parseIfStatement() {
+                this.consume('(');
+                const condition = this.parseExpression();
+                this.consume(')');
+                const consequent = this.parseStatement();
+                let alternate = null;
+                if (this.match('else')) alternate = this.parseStatement();
+                return new IfStatement(condition, consequent, alternate);
+            }
+
+            parseForStatement() {
+                this.consume('(');
+                if (this.check('let')) {
+                    const lookahead = this.peekAhead(2);
+                    if (lookahead && lookahead.value === 'of') return this.parseForOfStatement();
+                }
+
+                let init = null;
+                if (!this.check(';')) {
+                    if (this.check('let')) {
+                        this.advance();
+                        const name = this.consume(TokenType.IDENTIFIER).value;
+                        let initializer = null;
+                        if (this.match('=')) initializer = this.parseExpression();
+                        init = new VariableDeclaration(name, initializer);
+                    } else {
+                        init = this.parseExpression();
+                    }
+                }
+                this.consume(';');
+
+                let condition = null;
+                if (!this.check(';')) condition = this.parseExpression();
+                this.consume(';');
+
+                let update = null;
+                if (!this.check(')')) update = this.parseExpression();
+                this.consume(')');
+
+                const body = this.parseStatement();
+                return new ForStatement(init, condition, update, body);
+            }
+
+            parseForOfStatement() {
+                this.consume('let');
+                const variable = this.consume(TokenType.IDENTIFIER).value;
+                this.consume('of');
+                const iterable = this.parseExpression();
+                this.consume(')');
+                const body = this.parseStatement();
+                return new ForOfStatement(variable, iterable, body);
+            }
+
+            parseReturnStatement() {
+                let argument = null;
+                if (!this.check(';') && !this.checkNewline()) argument = this.parseExpression();
+                if (this.check(';')) this.consume(';');
+                return new ReturnStatement(argument);
+            }
+
+            parseExpressionStatement() {
+                const expr = this.parseExpression();
+                if (this.check(';')) this.consume(';');
+                return new ExpressionStatement(expr);
+            }
+
+            parseExpression() { return this.parseAssignment(); }
+
+            parseAssignment() {
+                const expr = this.parseOr();
+                if (this.match('=')) {
+                    const right = this.parseAssignment();
+                    return new AssignmentExpression(expr, right);
+                }
+                return expr;
+            }
+
+            parseOr() {
+                let left = this.parseAnd();
+                while (this.match('||')) {
+                    const right = this.parseAnd();
+                    left = new BinaryExpression(left, '||', right);
+                }
+                return left;
+            }
+
+            parseAnd() {
+                let left = this.parseEquality();
+                while (this.match('&&')) {
+                    const right = this.parseEquality();
+                    left = new BinaryExpression(left, '&&', right);
+                }
+                return left;
+            }
+
+            parseEquality() {
+                let left = this.parseComparison();
+                while (this.match('==') || this.match('!=')) {
+                    const op = this.previous().value;
+                    const right = this.parseComparison();
+                    left = new BinaryExpression(left, op, right);
+                }
+                return left;
+            }
+
+            parseComparison() {
+                let left = this.parseAdditive();
+                while (this.match('<') || this.match('>') || this.match('<=') || this.match('>=')) {
+                    const op = this.previous().value;
+                    const right = this.parseAdditive();
+                    left = new BinaryExpression(left, op, right);
+                }
+                return left;
+            }
+
+            parseAdditive() {
+                let left = this.parseMultiplicative();
+                while (this.match('+') || this.match('-')) {
+                    const op = this.previous().value;
+                    const right = this.parseMultiplicative();
+                    left = new BinaryExpression(left, op, right);
+                }
+                return left;
+            }
+
+            parseMultiplicative() {
+                let left = this.parseUnary();
+                while (this.match('*') || this.match('/') || this.match('%')) {
+                    const op = this.previous().value;
+                    const right = this.parseUnary();
+                    left = new BinaryExpression(left, op, right);
+                }
+                return left;
+            }
+
+            parseUnary() {
+                if (this.match('!') || this.match('-')) {
+                    const op = this.previous().value;
+                    const right = this.parseUnary();
+                    return new UnaryExpression(op, right);
+                }
+                return this.parsePostfix();
+            }
+
+            parsePostfix() {
+                let expr = this.parsePrimary();
+                while (true) {
+                    if (this.match('.')) {
+                        const prop = this.consume(TokenType.IDENTIFIER).value;
+                        expr = new MemberExpression(expr, new Identifier(prop), false);
+                    } else if (this.match('[')) {
+                        const prop = this.parseExpression();
+                        this.consume(']');
+                        expr = new MemberExpression(expr, prop, true);
+                    } else if (this.match('(')) {
+                        const args = this.parseArguments();
+                        this.consume(')');
+                        expr = new CallExpression(expr, args);
+                    } else {
+                        break;
+                    }
+                }
+                return expr;
+            }
+
+            parseArguments() {
+                const args = [];
+                if (!this.check(')')) {
+                    do {
+                        args.push(this.parseExpression());
+                    } while (this.match(','));
+                }
+                return args;
+            }
+
+            parsePrimary() {
+                if (this.match('true')) return new Literal(true, 'true');
+                if (this.match('false')) return new Literal(false, 'false');
+                if (this.match('null')) return new Literal(null, 'null');
+
+                if (this.match(TokenType.NUMBER)) {
+                    const val = this.previous().value;
+                    return new Literal(parseFloat(val), val);
+                }
+
+                if (this.match(TokenType.STRING)) {
+                    const val = this.previous().value;
+                    return new Literal(val, `"${val}"`);
+                }
+
+                if (this.match(TokenType.IDENTIFIER)) {
+                    return new Identifier(this.previous().value);
+                }
+
+                if (this.match('new')) {
+                    const callee = this.consume(TokenType.IDENTIFIER).value;
+                    this.consume('(');
+                    const args = this.parseArguments();
+                    this.consume(')');
+                    return new NewExpression(new Identifier(callee), args);
+                }
+
+                if (this.match('function')) {
+                    this.consume('(');
+                    const params = this.parseParameters();
+                    this.consume(')');
+                    const body = this.parseBlock();
+                    return new FunctionExpression(params, body);
+                }
+
+                if (this.match('[')) return this.parseArray();
+                if (this.match('{')) return this.parseObject();
+                if (this.match('(')) {
+                    const expr = this.parseExpression();
+                    this.consume(')');
+                    return expr;
+                }
+                if (this.match(TokenType.COMPONENT)) {
+                    return this.parseComponentFromToken();
+                }
+
+                throw new Error(`Unexpected token: ${this.peek().value}`);
+            }
+
+            parseArray() {
+                const elements = [];
+                if (!this.check(']')) {
+                    do {
+                        elements.push(this.parseExpression());
+                    } while (this.match(','));
+                }
+                this.consume(']');
+                return new ArrayExpression(elements);
+            }
+
+            parseObject() {
+                const properties = [];
+                if (!this.check('}')) {
+                    do {
+                        const key = this.consume(TokenType.IDENTIFIER).value;
+                        this.consume(':');
+                        const value = this.parseExpression();
+                        properties.push(new Property(key, value));
+                    } while (this.match(','));
+                }
+                this.consume('}');
+                return new ObjectExpression(properties);
+            }
+
+            parseComponentFromToken() {
+                const token = this.previous();
+                const text = token.value;
+                const match = text.match(/<\/?([A-Z][A-Za-z0-9-]*)\s*(\/?)>/);
+
+                if (!match) throw new Error('Invalid component tag');
+
+                const tagName = match[1];
+                const isClosing = text.startsWith('</');
+                const isSelfClosing = text.endsWith('/>') || match[2] === '/';
+
+                if (isClosing) return null;
+
+                const attributes = [];
+                const children = [];
+
+                while (!this.isAtEnd() && !this.checkComponentClosing(tagName)) {
+                    if (this.match(TokenType.COMPONENT)) {
+                        const child = this.parseComponentFromToken();
+                        if (child) children.push(child);
+                    } else if (this.check(TokenType.STRING)) {
+                        children.push(new ComponentText(this.advance().value));
+                    } else if (this.check('{')) {
+                        this.advance();
+                        children.push(new ComponentExpression(this.parseExpression()));
+                        this.consume('}');
+                    } else if (!this.checkNewline()) {
+                        this.advance();
+                    } else {
+                        this.advance();
+                    }
+                }
+
+                if (this.checkComponentClosing(tagName)) this.advance();
+
+                return new ComponentElement(tagName, attributes, children, false);
+            }
+
+            checkComponentClosing(tagName) {
+                if (!this.check(TokenType.COMPONENT)) return false;
+                const val = this.peek().value;
+                return val === `</${tagName}>` || val.startsWith(`</${tagName}>`);
+            }
+
+            match(type) {
+                if (this.check(type)) {
+                    this.advance();
+                    return true;
+                }
+                return false;
+            }
+
+            check(type) {
+                if (this.isAtEnd()) return false;
+                const token = this.peek();
+                if (type === TokenType.IDENTIFIER) return token.type === TokenType.IDENTIFIER;
+                if (type === TokenType.NUMBER) return token.type === TokenType.NUMBER;
+                if (type === TokenType.STRING) return token.type === TokenType.STRING;
+                if (type === TokenType.COMPONENT) return token.type === TokenType.COMPONENT;
+                return token.value === type;
+            }
+
+            checkNewline() { return this.peek().type === TokenType.NEWLINE; }
+            skipNewlines() { while (this.checkNewline()) this.advance(); }
+
+            consume(type) {
+                if (this.check(type)) return this.advance();
+                throw new Error(`Expected ${type} but got ${this.peek().value}`);
+            }
+
+            advance() {
+                if (!this.isAtEnd()) this.pos++;
+                return this.previous();
+            }
+
+            isAtEnd() { return this.peek().type === TokenType.EOF; }
+            peek() { return this.tokens[this.pos]; }
+            peekAhead(n) { return this.tokens[this.pos + n]; }
+            previous() { return this.tokens[this.pos - 1]; }
+        }
+
+        class Transpiler {
+            constructor() { this.indent = 0; }
+
+            transpile(node) { return this.visit(node); }
+
+            visit(node) {
+                const method = `visit${node.type}`;
+                if (this[method]) return this[method](node);
+                throw new Error(`Unknown node type: ${node.type}`);
+            }
+
+            getIndent() { return '  '.repeat(this.indent); }
+
+            visitProgram(node) {
+                let code = '';
+                code += `function __createElement(tag, attrs, children) {\n`;
+                code += `  const el = document.createElement(tag);\n`;
+                code += `  for (const [k, v] of Object.entries(attrs)) {\n`;
+                code += `    if (k.startsWith('on') && typeof v === 'function') {\n`;
+                code += `      el.addEventListener(k.slice(2).toLowerCase(), v);\n`;
+                code += `    } else {\n`;
+                code += `      el.setAttribute(k, v);\n`;
+                code += `    }\n`;
+                code += `  }\n`;
+                code += `  children.forEach(c => el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));\n`;
+                code += `  return el;\n`;
+                code += `}\n\n`;
+
+                for (const stmt of node.statements) {
+                    code += this.visit(stmt) + '\n';
+                }
+                return code;
+            }
+
+            visitVariableDeclaration(node) {
+                let code = `${this.getIndent()}let ${node.name}`;
+                if (node.initializer) code += ` = ${this.visit(node.initializer)}`;
+                return code + ';';
+            }
+
+            visitFunctionDeclaration(node) {
+                let code = `${this.getIndent()}function ${node.name}(${node.params.join(', ')}) {\n`;
+                this.indent++;
+                code += this.visit(node.body);
+                this.indent--;
+                return code + `${this.getIndent()}}`;
+            }
+
+            visitFunctionExpression(node) {
+                let code = `function(${node.params.join(', ')}) {\n`;
+                this.indent++;
+                code += this.visit(node.body);
+                this.indent--;
+                return code + `${this.getIndent()}}`;
+            }
+
+            visitBlock(node) {
+                let code = '';
+                for (const stmt of node.statements) {
+                    code += this.visit(stmt) + '\n';
+                }
+                return code;
+            }
+
+            visitIfStatement(node) {
+                let code = `${this.getIndent()}if (${this.visit(node.condition)}) {\n`;
+                this.indent++;
+                code += this.visit(node.consequent);
+                this.indent--;
+                code += `${this.getIndent()}}`;
+                if (node.alternate) {
+                    code += ` else {\n`;
+                    this.indent++;
+                    code += this.visit(node.alternate);
+                    this.indent--;
+                    code += `${this.getIndent()}}`;
+                }
+                return code;
+            }
+
+            visitForStatement(node) {
+                let init = node.init ? this.visit(node.init).replace(';', '') : '';
+                let cond = node.condition ? this.visit(node.condition) : '';
+                let update = node.update ? this.visit(node.update) : '';
+
+                let code = `${this.getIndent()}for (${init}; ${cond}; ${update}) {\n`;
+                this.indent++;
+                code += this.visit(node.body);
+                this.indent--;
+                return code + `${this.getIndent()}}`;
+            }
+
+            visitForOfStatement(node) {
+                let code = `${this.getIndent()}for (let ${node.variable} of ${this.visit(node.iterable)}) {\n`;
+                this.indent++;
+                code += this.visit(node.body);
+                this.indent--;
+                return code + `${this.getIndent()}}`;
+            }
+
+            visitReturnStatement(node) {
+                if (node.argument) return `${this.getIndent()}return ${this.visit(node.argument)};`;
+                return `${this.getIndent()}return;`;
+            }
+
+            visitBreakStatement(node) { return `${this.getIndent()}break;`; }
+            visitContinueStatement(node) { return `${this.getIndent()}continue;`; }
+
+            visitExpressionStatement(node) {
+                return `${this.getIndent()}${this.visit(node.expression)};`;
+            }
+
+            visitBinaryExpression(node) {
+                return `(${this.visit(node.left)} ${node.operator} ${this.visit(node.right)})`;
+            }
+
+            visitUnaryExpression(node) {
+                return `${node.operator}${this.visit(node.argument)}`;
+            }
+
+            visitAssignmentExpression(node) {
+                return `${this.visit(node.left)} = ${this.visit(node.right)}`;
+            }
+
+            visitCallExpression(node) {
+                const args = node.arguments.map(a => this.visit(a)).join(', ');
+                return `${this.visit(node.callee)}(${args})`;
+            }
+
+            visitMemberExpression(node) {
+                if (node.computed) return `${this.visit(node.object)}[${this.visit(node.property)}]`;
+                return `${this.visit(node.object)}.${node.property.name}`;
+            }
+
+            visitIdentifier(node) { return node.name; }
+
+            visitLiteral(node) {
+                if (typeof node.value === 'string') return `"${node.value}"`;
+                return String(node.value);
+            }
+
+            visitArrayExpression(node) {
+                const elements = node.elements.map(e => this.visit(e)).join(', ');
+                return `[${elements}]`;
+            }
+
+            visitObjectExpression(node) {
+                const props = node.properties.map(p => `${p.key}: ${this.visit(p.value)}`).join(', ');
+                return `{${props}}`;
+            }
+
+            visitNewExpression(node) {
+                const args = node.arguments.map(a => this.visit(a)).join(', ');
+                return `new ${this.visit(node.callee)}(${args})`;
+            }
+
+            visitComponentElement(node) {
+                const tag = node.tag.toLowerCase();
+                const attrs = node.attributes.map(a => `${a.name}: ${this.visit(a.value)}`).join(', ');
+                const children = node.children.map(c => {
+                    if (c.type === 'ComponentText') return `"${c.value}"`;
+                    if (c.type === 'ComponentExpression') return this.visit(c.expression);
+                    return this.visit(c);
+                }).join(', ');
+
+                return `__createElement("${tag}", {${attrs}}, [${children}])`;
+            }
+
+            visitComponentAttribute(node) {
+                return `${node.name}: ${this.visit(node.value)}`;
+            }
+
+            visitComponentText(node) { return `"${node.value}"`; }
+            visitComponentExpression(node) { return this.visit(node.expression); }
+        }
+
+        let editor;
+
+        function initEditor() {
+            require.config({
+                paths: {
+                    'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs'
+                }
+            });
+
+            require(['vs/editor/editor.main'], function () {
+                editor = monaco.editor.create(document.getElementById('editor'), {
+                    value: [
+                        '// Mini TypeScript with Svelte-style UI',
+                        'let count = 0;',
+                        'let items = ["apple", "banana", "cherry"];',
+                        '',
+                        'function increment() {',
+                        '  count = count + 1;',
+                        '  render();',
+                        '}',
+                        '',
+                        'function render() {',
+                        '  const app = document.getElementById("app");',
+                        '  app.innerHTML = "";',
+                        '  app.appendChild(',
+                        '    <div>',
+                        '      <h1>Count: {count}</h1>',
+                        '      <button onClick={increment}>Increment</button>',
+                        '      <ul>',
+                        '        {items.map(item => <li>{item}</li>)}',
+                        '      </ul>',
+                        '    </div>',
+                        '  );',
+                        '}',
+                        '',
+                        'render();'
+                    ].join('\n'),
+                    language: 'typescript',
+                    theme: 'vs-dark',
+                    automaticLayout: true,
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    lineNumbers: 'on',
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on'
+                });
+
+                monaco.languages.registerCompletionItemProvider('typescript', {
+                    provideCompletionItems: () => {
+                        return {
+                            suggestions: [
+                                {
+                                    label: 'let',
+                                    kind: monaco.languages.CompletionItemKind.Keyword,
+                                    insertText: 'let ${1:name} = ${2:value};',
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                                },
+                                {
+                                    label: 'function',
+                                    kind: monaco.languages.CompletionItemKind.Keyword,
+                                    insertText: 'function ${1:name}(${2:params}) {\n\t$0\n}',
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                                },
+                                {
+                                    label: 'if',
+                                    kind: monaco.languages.CompletionItemKind.Keyword,
+                                    insertText: 'if (${1:condition}) {\n\t$0\n}',
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                                },
+                                {
+                                    label: 'for',
+                                    kind: monaco.languages.CompletionItemKind.Keyword,
+                                    insertText: 'for (let ${1:i} = 0; ${1:i} < ${2:length}; ${1:i}++) {\n\t$0\n}',
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                                },
+                                {
+                                    label: 'for-of',
+                                    kind: monaco.languages.CompletionItemKind.Keyword,
+                                    insertText: 'for (let ${1:item} of ${2:array}) {\n\t$0\n}',
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                                },
+                                {
+                                    label: 'log',
+                                    kind: monaco.languages.CompletionItemKind.Function,
+                                    insertText: 'console.log($0);',
+                                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+                                }
+                            ]
+                        };
+                    }
+                });
+
+                let timeout;
+                editor.onDidChangeModelContent(() => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(compile, 500);
+                });
+
+                compile();
+            });
+        }
+
+        function compile() {
+            const source = editor.getValue();
+            const consoleEl = document.getElementById('console');
+            const astEl = document.getElementById('ast');
+            const tokensEl = document.getElementById('tokens');
+            const compiledEl = document.getElementById('compiled');
+            const preview = document.getElementById('preview');
+
+            consoleEl.innerHTML = '';
+
+            try {
+                const lexer = new Lexer(source);
+                const tokens = lexer.tokenize();
+
+                tokensEl.innerHTML = tokens.map(t =>
+                    `<span class="token-${t.type.toLowerCase()}">${t.type}: ${t.value.replace(/</g, '&lt;')}</span>`
+                ).join('\n');
+
+                const parser = new Parser(tokens);
+                const ast = parser.parse();
+
+                astEl.textContent = JSON.stringify(ast, (key, val) => {
+                    if (key === 'pos') return undefined;
+                    return val;
+                }, 2);
+
+                const transpiler = new Transpiler();
+                let js = transpiler.transpile(ast);
+
+                compiledEl.textContent = js;
+
+                const html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: sans-serif; padding: 20px; }
+                            button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 5px; }
+                            h1 { color: #333; }
+                            ul { line-height: 1.8; }
+                        </style>
+                    </head>
+                    <body>
+                        <div id="app"></div>
+                        <script>
+                            const originalLog = console.log;
+                            const originalError = console.error;
+                            
+                            console.log = (...args) => {
+                                originalLog(...args);
+                                window.parent.postMessage({type: 'log', data: args.join(' ')}, '*');
+                            };
+                            
+                            console.error = (...args) => {
+                                originalError(...args);
+                                window.parent.postMessage({type: 'error', data: args.join(' ')}, '*');
+                            };
+                            
+                            try {
+                                ${js}
+                            } catch (e) {
+                                console.error(e.message);
+                            }
+                        <\/script>
+                    </body>
+                    </html>
+                `;
+
+                preview.srcdoc = html;
+                consoleEl.innerHTML = '<div class="log">Console ready...</div>';
+
+            } catch (e) {
+                consoleEl.innerHTML = `<div class="error">Error: ${e.message}</div>`;
+                compiledEl.textContent = '';
+            }
+        }
+
+        window.addEventListener('message', (e) => {
+            const consoleEl = document.getElementById('console');
+            if (e.data.type === 'log') {
+                consoleEl.innerHTML += `<div class="log">> ${e.data.data}</div>`;
+            } else if (e.data.type === 'error') {
+                consoleEl.innerHTML += `<div class="error">Error: ${e.data.data}</div>`;
+            }
+        });
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        document.getElementById('fullscreen-btn').addEventListener('click', () => {
+            document.getElementById('container').classList.toggle('fullscreen');
+        });
+
+        window.onload = initEditor;
+    </script>
+</body>
+
+</html>

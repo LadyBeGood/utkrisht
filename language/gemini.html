@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini-TS Playground</title>
+    <style>
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-panel: #252526;
+            --border: #333;
+            --accent: #007acc;
+            --text: #d4d4d4;
+            --text-muted: #858585;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            height: 100%;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            min-width: 0;
+        }
+
+        .row-top {
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            background: white;
+        }
+
+        .row-bottom {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-panel);
+            overflow: hidden;
+        }
+
+        #editor-container {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .fullscreen-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .tabs {
+            display: flex;
+            background-color: #1a1a1a;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-right: 1px solid var(--border);
+            background: transparent;
+            border: none;
+        }
+
+        .tab.active {
+            color: white;
+            background-color: var(--bg-panel);
+            border-top: 2px solid var(--accent);
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow: auto;
+            padding: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .log-error {
+            color: #f48771;
+        }
+
+        .log-info {
+            color: #d4d4d4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="column">
+            <div style="padding: 10px; background: #2d2d2d; font-weight: bold; font-size: 0.9em;">SOURCE (Mini-TS +
+                Svelte)</div>
+            <div id="editor-container"></div>
+        </div>
+
+        <div class="column">
+            <div class="row-top">
+                <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
+                <iframe id="preview-frame"></iframe>
+            </div>
+
+            <div class="row-bottom">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('console')">Console</button>
+                    <button class="tab" onclick="switchTab('ast')">AST</button>
+                    <button class="tab" onclick="switchTab('tokens')">Tokens</button>
+                    <button class="tab" onclick="switchTab('js')">Compiled JS</button>
+                </div>
+                <div id="tab-console" class="tab-content"></div>
+                <div id="tab-ast" class="tab-content" style="display:none"></div>
+                <div id="tab-tokens" class="tab-content" style="display:none"></div>
+                <div id="tab-js" class="tab-content" style="display:none"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs/loader.js"></script>
+
+    <script>
+        // Global variable for the editor
+        let editor;
+
+        // 1. --- MONACO CONFIGURATION ---
+        require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.39.0/min/vs' } });
+
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('editor-container'), {
+                value: `<script>
+  let count = 0;
+  let name = "Dev";
+
+  function increment() {
+    count = count + 1;
+    console.log("Count is now:", count);
+  }
+<\/script>
+
+<h1>Hello {name}</h1>
+<p>Current count: {count}</p>
+<button onclick="increment()">Increment</button>`,
+                language: 'html',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                minimap: { enabled: false }
+            });
+
+            // Trigger initial run
+            run();
+
+            // Add Change Listener
+            let timeout;
+            editor.onDidChangeModelContent(() => {
+                clearTimeout(timeout);
+                timeout = setTimeout(run, 1000);
+            });
+        });
+
+        // 2. --- COMPILER LOGIC (TOKENIZER & PARSER) ---
+
+        function tokenize(source) {
+            const tokens = [];
+            let cursor = 0;
+            const keywords = ['let', 'function', 'return', 'if', 'else', 'for', 'while', 'break', 'continue'];
+
+            while (cursor < source.length) {
+                let char = source[cursor];
+
+                if (/\s/.test(char)) { cursor++; continue; }
+
+                if (['{', '}', '(', ')', ';', ',', '.', '[', ']', '+', '-', '*', '/', '%', '<', '>', '=', '!', '&', '|'].includes(char)) {
+                    let next = source[cursor + 1];
+                    if ((char === '=' && next === '=') ||
+                        (char === '&' && next === '&') ||
+                        (char === '|' && next === '|') ||
+                        (char === '<' && next === '=') ||
+                        (char === '>' && next === '=')) {
+                        tokens.push({ type: 'Operator', value: char + next });
+                        cursor += 2;
+                    } else {
+                        tokens.push({ type: 'Punctuation', value: char });
+                        cursor++;
+                    }
+                    continue;
+                }
+
+                if (/[0-9]/.test(char)) {
+                    let value = '';
+                    while (cursor < source.length && /[0-9.]/.test(source[cursor])) {
+                        value += source[cursor++];
+                    }
+                    tokens.push({ type: 'Number', value });
+                    continue;
+                }
+
+                if (char === '"') {
+                    let value = '';
+                    cursor++;
+                    while (cursor < source.length && source[cursor] !== '"') {
+                        value += source[cursor++];
+                    }
+                    cursor++;
+                    tokens.push({ type: 'String', value });
+                    continue;
+                }
+
+                if (/[a-zA-Z_$]/.test(char)) {
+                    let value = '';
+                    while (cursor < source.length && /[a-zA-Z0-9_$]/.test(source[cursor])) {
+                        value += source[cursor++];
+                    }
+                    if (keywords.includes(value)) tokens.push({ type: 'Keyword', value });
+                    else tokens.push({ type: 'Identifier', value });
+                    continue;
+                }
+                cursor++;
+            }
+            return tokens;
+        }
+
+        function parse(tokens) {
+            let current = 0;
+            function walk() {
+                let token = tokens[current];
+                if (!token) return null;
+
+                if (token.type === 'Number') { current++; return { type: 'NumericLiteral', value: token.value }; }
+                if (token.type === 'String') { current++; return { type: 'StringLiteral', value: token.value }; }
+
+                if (token.type === 'Keyword') {
+                    if (token.value === 'let') {
+                        current++;
+                        let name = tokens[current++].value;
+                        let init = null;
+                        if (tokens[current].value === '=') { current++; init = walk(); }
+                        if (tokens[current] && tokens[current].value === ';') current++;
+                        return { type: 'VariableDeclaration', name, init };
+                    }
+                    if (token.value === 'function') {
+                        current++;
+                        let name = tokens[current++].value;
+                        current++; // (
+                        let params = [];
+                        while (tokens[current].value !== ')') {
+                            params.push(tokens[current++].value);
+                            if (tokens[current].value === ',') current++;
+                        }
+                        current++; // )
+                        current++; // {
+                        let body = [];
+                        while (tokens[current].value !== '}') {
+                            let node = walk();
+                            if (node) body.push(node);
+                            else current++; // Safety break for parsing errors
+                        }
+                        current++; // }
+                        return { type: 'FunctionDeclaration', name, params, body };
+                    }
+                    if (token.value === 'return') {
+                        current++;
+                        let arg = walk();
+                        if (tokens[current] && tokens[current].value === ';') current++;
+                        return { type: 'ReturnStatement', argument: arg };
+                    }
+                }
+
+                if (token.type === 'Identifier') {
+                    let name = token.value;
+                    current++;
+                    if (tokens[current] && tokens[current].value === '=') {
+                        current++;
+                        let value = walk();
+                        if (tokens[current] && tokens[current].value === ';') current++;
+                        return { type: 'AssignmentExpression', left: name, right: value };
+                    }
+                    if (tokens[current] && tokens[current].value === '(') {
+                        current++;
+                        let args = [];
+                        while (tokens[current].value !== ')') {
+                            args.push(walk());
+                            if (tokens[current].value === ',') current++;
+                        }
+                        current++;
+                        if (tokens[current] && tokens[current].value === ';') current++;
+                        return { type: 'CallExpression', callee: name, arguments: args };
+                    }
+                    if (tokens[current] && tokens[current].value === '.') {
+                        current++;
+                        let property = tokens[current++].value;
+                        if (tokens[current].value === '(') {
+                            current++;
+                            let args = [];
+                            while (tokens[current].value !== ')') {
+                                args.push(walk());
+                                if (tokens[current].value === ',') current++;
+                            }
+                            current++;
+                            if (tokens[current] && tokens[current].value === ';') current++;
+                            return { type: 'CallExpression', callee: `${name}.${property}`, arguments: args };
+                        }
+                    }
+                    return { type: 'Identifier', name };
+                }
+                current++;
+                return null;
+            }
+
+            let ast = { type: 'Program', body: [] };
+            while (current < tokens.length) {
+                const node = walk();
+                if (node) ast.body.push(node);
+            }
+            return ast;
+        }
+
+        // 3. --- RUNTIME & EXECUTION ---
+
+        function dirtyExpressionTranspiler(code) {
+            // Simple regex hacks to enable Svelte-like reactivity (updating the UI on assignment)
+            let js = code;
+            js = js.replace(/(\w+)\s*=\s*(.+?);/g, (match, v, expr) => {
+                // Avoid changing let declarations again
+                if (match.trim().startsWith('let')) return match;
+                return `${v} = ${expr}; if(window.renderUI) window._state['${v}'] = ${v}; if(window.renderUI) renderUI();`;
+            });
+
+            js = js.replace(/let\s+(\w+)\s*=\s*(.+?);/g, (match, v, expr) => {
+                return `let ${v} = ${expr}; if(!window._state) window._state={}; window._state['${v}'] = ${v};`;
+            });
+            return js;
+        }
+
+        function compile() {
+            if (!editor) return null; // Wait for monaco
+            const rawInput = editor.getValue();
+
+            const scriptRegex = /<script>([\s\S]*?)<\/script>/;
+            const scriptMatch = rawInput.match(scriptRegex);
+
+            let scriptContent = "";
+            let htmlContent = rawInput;
+
+            if (scriptMatch) {
+                scriptContent = scriptMatch[1];
+                htmlContent = rawInput.replace(scriptRegex, '');
+            }
+
+            const tokens = tokenize(scriptContent);
+            const ast = parse(tokens);
+            const transpiledJS = dirtyExpressionTranspiler(scriptContent);
+
+            // Escape backticks for template literal usage
+            let cleanHtml = htmlContent.replace(/`/g, "\\`");
+            // Convert {var} to ${window._state['var'] || ''}
+            let templateFunctionBody = "return `" + cleanHtml.replace(/\{(\w+)\}/g, "${window._state['$1'] !== undefined ? window._state['$1'] : ''}") + "`;";
+
+            const runtimeCode = `
+            window._state = {};
+            ${transpiledJS}
+            window.renderUI = function() {
+                try {
+                    const body = ${templateFunctionBody};
+                    document.body.innerHTML = body;
+                } catch(e) { console.error('Render Error:', e); }
+            }
+            renderUI();
+        `;
+
+            return { tokens, ast, js: runtimeCode };
+        }
+
+        function run() {
+            //if (!editor) return;
+
+            const consoleTab = document.getElementById('tab-console');
+            consoleTab.innerHTML = '';
+
+            try {
+                const result = compile();
+                //if (!result) return;
+
+                document.getElementById('tab-tokens').innerText = JSON.stringify(result.tokens, null, 2);
+                document.getElementById('tab-ast').innerText = JSON.stringify(result.ast, null, 2);
+                document.getElementById('tab-js').innerText = result.js;
+
+                const iframe = document.getElementById('preview-frame');
+                const doc = iframe.contentWindow.document;
+
+                doc.open();
+                doc.write(`
+                <style>
+                    body { font-family: sans-serif; color: #333; padding: 20px; }
+                    button { padding: 8px 16px; cursor: pointer; background: #007acc; color: white; border: none; border-radius: 4px; }
+                    button:hover { background: #005f9e; }
+                </style>
+                <script>
+                    window.console = {
+                        log: (...args) => window.parent.postMessage({type: 'log', data: args}, '*'),
+                        error: (...args) => window.parent.postMessage({type: 'error', data: args}, '*')
+                    };
+                    window.onerror = (msg, s, l) => window.parent.postMessage({type: 'error', data: [msg + ' (line ' + l + ')']}, '*');
+                <\/script>
+                <script>
+                    ${result.js}
+                <\/script>
+            `);
+                doc.close();
+
+            } catch (e) {
+                addToConsole('error', ["Compiler Error: " + e.message]);
+            }
+        }
+
+        // 4. --- UI HELPERS ---
+        function addToConsole(type, args) {
+            const tab = document.getElementById('tab-console');
+            const div = document.createElement('div');
+            div.className = `log-entry log-${type}`;
+            div.innerText = `> ${args.join(' ')}`;
+            tab.appendChild(div);
+            tab.scrollTop = tab.scrollHeight;
+        }
+
+        window.addEventListener('message', (e) => {
+            if (e.data.type === 'log') addToConsole('info', e.data.data);
+            if (e.data.type === 'error') addToConsole('error', e.data.data);
+        });
+
+        window.toggleFullScreen = () => {
+            const iframe = document.getElementById('preview-frame');
+            if (!document.fullscreenElement) {
+                iframe.requestFullscreen().catch(e => alert(e.message));
+            } else {
+                document.exitFullscreen();
+            }
+        };
+
+        window.switchTab = (tabName) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.getElementById(`tab-${tabName}`).style.display = 'block';
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+        };
+    </script>
+
+</body>
+
+</html>

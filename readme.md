@@ -21,9 +21,18 @@
 
 ## Installation
 
+### Using npm (recommended)
 ```bash
 npm install -g utkrisht
 ```
+
+### Using bun
+```bash
+bun add -g utkrisht
+```
+> [!NOTE]
+> You may need to add the global bun's bin folder to `$PATH`.
+
 ### Example usage
 Compile a input.uki file to output.js file:
 
@@ -31,12 +40,8 @@ Compile a input.uki file to output.js file:
 uki input.uki output.js
 ```
 
-## Tutorial
 
-### Hello, World
-```
-write "Hello World"
-```
+## Reference
 
 ### Comments
 
@@ -83,7 +88,7 @@ Utkrisht has **5 data types**.
 > [!NOTE]
 > [1] All numbers including `nan` are hashable and can be used as keys. 
 > Structure uses the algorithm [SameValueZero](https://tc39.github.io/ecma262/#sec-samevaluezero) to test keys for equivalnce. 
-> So `nan` is considered equal to `nan`.
+> So here `nan` is considered equal to `nan`.
 
 #### String
 Strings are used to store textual data. 
@@ -98,7 +103,7 @@ Strings can be created using double quotes:
     This is a multiline string.
     * These strings are allowed to span multiple lines.
     * They need to be properly indented.
-    * Leading spaces, spaces and newline after starting quote and newline after ending quote are all trimmed off.
+    * Indentation spaces, spaces and the newline after starting quote and the newline after ending quote are all ignored.
 "
 ```
 
@@ -136,12 +141,16 @@ infinity
 1 / -0         #-> -infinity
 -1 / -0        #-> infinity
 
-nan            # stands for "not a number", but this is also a number
--nan           # same as above
-0 / 0          #-> nan
--0 / 0         #-> nan
-0 / -0         #-> nan
--0 / -0        #-> nan
+nan                   # stands for "not a number", but this is also a number 
+-nan                  # same as above
+0 / 0                 #-> nan
+-0 / 0                #-> nan
+0 / -0                #-> nan
+-0 / -0               #-> nan
+infinity / infinity   #-> nan
+infinity - infinity   #-> nan
+0 * infinity          #-> nan
+-0 * infinity         #-> nan
 ```
 
 ```

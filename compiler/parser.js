@@ -1,3 +1,4 @@
+import "./types.js"
 import * as logger from "./logger.js";
 
 export function createParser(tokens) {
@@ -15,8 +16,8 @@ class ParseError extends Error {
     }
 }
 
-function error(utkrisht, message, token) {
-    logger.error(utkrisht, message, token.line)
+function error(compiler, message, token) {
+    logger.error(compiler, message, token.line)
     return new ParseError(message, token)
 }
 
@@ -70,7 +71,7 @@ function ignoreToken(parser, ...tokens) {
     }
 }
 
-function expectToken(utkrisht, parser, ...tokens) {
+function expectToken(compiler, parser, ...tokens) {
     if (isCurrentTokenType(parser, ...tokens)) {
         return;
     }
@@ -87,7 +88,7 @@ function expectToken(utkrisht, parser, ...tokens) {
             : "got " + getCurrentToken(parser).type
         ;
 
-    throw error(utkrisht, "Expected " + expected + ", but " + found, getCurrentToken(parser))
+    throw error(compiler, "Expected " + expected + ", but " + found, getCurrentToken(parser))
 }
 
 
@@ -116,7 +117,7 @@ function isCurrentTokenTypeExpressionStart(parser) {
 }
 
 
-function parseVariableExpression(utkrisht, parser) {
+function parseVariableExpression(compiler, parser) {
     if (parser.variableExpression !== undefined) {
         parser.position = parser.variableExpressionEndPosition;
 
@@ -131,7 +132,7 @@ function parseVariableExpression(utkrisht, parser) {
     const _arguments = [];
     while (true) {
         if (isCurrentTokenTypeExpressionStart(parser)) {
-            _arguments.push({ type: "Argument", name: undefined, value: parseExpression(utkrisht, parser) });
+            _arguments.push({ type: "Argument", name: undefined, value: parseExpression(compiler, parser) });
 
             if (isCurrentTokenType(parser, "Comma")) {
                 parser.position++;
@@ -144,7 +145,7 @@ function parseVariableExpression(utkrisht, parser) {
         if (isCurrentTokenType(parser, "Identifier") && isNextTokenType(parser, "Colon")) {
             const name = getCurrentToken(parser);
             parser.position++;
-            const value = parseExpression(utkrisht, parser);
+            const value = parseExpression(compiler, parser);
             _arguments.push({ type: "Argument", name, value });
 
             if (isCurrentTokenType(parser, "Comma")) {
@@ -161,7 +162,7 @@ function parseVariableExpression(utkrisht, parser) {
     return { type: "VariableExpression", name, _arguments }
 }
 
-function parsePrimaryExpression(utkrisht, parser) {
+function parsePrimaryExpression(compiler, parser) {
     let expression;
 
     if (isCurrentTokenType(parser, "right")) {
@@ -178,14 +179,14 @@ function parsePrimaryExpression(utkrisht, parser) {
         parser.position++;
     } else if (isCurrentTokenType(parser, "LeftRoundBracket")) {
         parser.position++;
-        expression = { type: "GroupingExpression", expression: parseExpression(utkrisht, parser) };
-        expectToken(utkrisht, parser, "RightRoundBracket");
+        expression = { type: "GroupingExpression", expression: parseExpression(compiler, parser) };
+        expectToken(compiler, parser, "RightRoundBracket");
         parser.position++;
     } else if (isCurrentTokenType(parser, "Identifier")) {
-        expression = parseVariableExpression(utkrisht, parser);
+        expression = parseVariableExpression(compiler, parser);
     } else {
         throw error(
-            utkrisht,
+            compiler,
             isCurrentTokenType(parser, "EndOfFile")
                 ? "Expected an expression but reached end of code"
                 : "Expected an expression but got " + getCurrentToken(parser).type
@@ -197,38 +198,38 @@ function parsePrimaryExpression(utkrisht, parser) {
     return expression;
 }
 
-function parseUnaryExpression(utkrisht, parser) {
+function parseUnaryExpression(compiler, parser) {
     if (isCurrentTokenType(parser, "ExclamationMark", "Minus")) {
         const operator = getCurrentToken(parser);
         parser.position++
-        const right = parseUnaryExpression(utkrisht, parser);
+        const right = parseUnaryExpression(compiler, parser);
         return { type: "UnaryExpression", operator, right };
     }
 
-    return parsePrimaryExpression(utkrisht, parser);
+    return parsePrimaryExpression(compiler, parser);
 }
 
 
-function parseMultiplicationAndDivisionExpression(utkrisht, parser) {
-    let expression = parseUnaryExpression(utkrisht, parser);
+function parseMultiplicationAndDivisionExpression(compiler, parser) {
+    let expression = parseUnaryExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "Asterisk", "Slash")) {
         const operator = getCurrentToken(parser);
         parser.position++;
-        const right = parseUnaryExpression(utkrisht, parser)
+        const right = parseUnaryExpression(compiler, parser)
         expression = { left: expression, operator, right }
     }
 
     return expression;
 }
 
-function parseAdditionAndSubstractionExpression(utkrisht, parser) {
-    let expression = parseMultiplicationAndDivisionExpression(utkrisht, parser);
+function parseAdditionAndSubstractionExpression(compiler, parser) {
+    let expression = parseMultiplicationAndDivisionExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "Plus", "Minus")) {
         const operator = getCurrentToken(parser);
         parser.position++;
-        const right = parseMultiplicationAndDivisionExpression(utkrisht, parser);
+        const right = parseMultiplicationAndDivisionExpression(compiler, parser);
         expression = { left: expression, operator, right }
     }
 
@@ -236,66 +237,66 @@ function parseAdditionAndSubstractionExpression(utkrisht, parser) {
 }
 
 
-function parseComparisonExpression(utkrisht, parser) {
-    let expression = parseAdditionAndSubstractionExpression(utkrisht, parser);
+function parseComparisonExpression(compiler, parser) {
+    let expression = parseAdditionAndSubstractionExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "MoreThan", "LessThan", "ExclamationMarkMoreThan", "ExclamationMarkLessThan")) {
         const operator = getCurrentToken(parser);
         parser.position++;
-        const right = parseAdditionAndSubstractionExpression(utkrisht, parser);
+        const right = parseAdditionAndSubstractionExpression(compiler, parser);
         expression = { left: expression, operator, right }
     }
 
     return expression;
 }
 
-function parseEqualityAndInequalityExpression(utkrisht, parser) {
-    let expression = parseComparisonExpression(utkrisht, parser);
+function parseEqualityAndInequalityExpression(compiler, parser) {
+    let expression = parseComparisonExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "Equal", "ExclamationMarkEqual")) {
         const operator = getCurrentToken(parser);
         parser.position++;
-        const right = parseComparisonExpression(utkrisht, parser);
+        const right = parseComparisonExpression(compiler, parser);
         expression = { left: expression, operator, right };
     }
     return expression;
 }
 
-function parseExpression(utkrisht, parser) {
-    return parseEqualityAndInequalityExpression(utkrisht, parser);
+function parseExpression(compiler, parser) {
+    return parseEqualityAndInequalityExpression(compiler, parser);
 }
 
-function parseExpressionStatement(utkrisht, parser) {
-    const expressionStatement = parseExpression(utkrisht, parser);
-    expectToken(utkrisht, parser, "NewLine", "Dedent", "EndOfFile");
+function parseExpressionStatement(compiler, parser) {
+    const expressionStatement = parseExpression(compiler, parser);
+    expectToken(compiler, parser, "NewLine", "Dedent", "EndOfFile");
     ignoreToken(parser, "NewLine")
     return expressionStatement;
 }
 
-function parseBlock(utkrisht, parser) {
-    expectToken(utkrisht, parser, "Indent");
+function parseBlock(compiler, parser) {
+    expectToken(compiler, parser, "Indent");
     parser.position++;
 
     const statements = [];
 
     while (!isAtEnd(parser) && !isCurrentTokenType(parser, "Dedent")) {
-        statements.push(parseDeclaration(utkrisht, parser));
+        statements.push(parseDeclaration(compiler, parser));
     }
 
-    expectToken(utkrisht, parser, "Dedent");
+    expectToken(compiler, parser, "Dedent");
     parser.position++;
 
     return { type: "Block", statements }
 }
 
-function parseWhenStatement(utkrisht, parser) {
+function parseWhenStatement(compiler, parser) {
     const whenClauses = [];
 
     const whenKeyword = getCurrentToken(parser);
     parser.position++;
 
-    const condition = parseExpression(utkrisht, parser);
-    const block = parseBlock(utkrisht, parser);
+    const condition = parseExpression(compiler, parser);
+    const block = parseBlock(compiler, parser);
 
     whenClauses.push({ type: "WhenClause", keyword: whenKeyword, condition, block });
 
@@ -305,20 +306,20 @@ function parseWhenStatement(utkrisht, parser) {
 
         let condition = undefined;
         if (!isCurrentTokenType(parser, "Indent")) {
-            condition = parseExpression(utkrisht, parser);
+            condition = parseExpression(compiler, parser);
         }
 
-        const block = parseBlock(utkrisht, parser);
+        const block = parseBlock(compiler, parser);
 
         whenClauses.push({ type: "WhenClause", keyword, condition, block });
-    } 
+    }
 
     return { type: "WhenStatement", whenClauses }
 }
 
 
-function parseBinding(utkrisht, parser) {
-    expectToken(utkrisht, parser, "LeftSquareBracket", "Identifier")
+function parseBinding(compiler, parser) {
+    expectToken(compiler, parser, "LeftSquareBracket", "Identifier")
 
     // Destructure
     if (isCurrentTokenType("LeftSquareBracket")) {
@@ -327,7 +328,7 @@ function parseBinding(utkrisht, parser) {
 
         while (!isCurrentTokenType(parser, "RightSquareBracket")) {
             // Nesting allowed for arrays, but groups still forbidden
-            declarations.push(parseBinding(utkrisht, parser));
+            declarations.push(parseBinding(compiler, parser));
 
             if (isCurrentTokenType(parser, "Comma")) {
                 parser.position++;
@@ -336,7 +337,7 @@ function parseBinding(utkrisht, parser) {
             }
         }
 
-        expectToken(utkrisht, parser, "RightSquareBracket");
+        expectToken(compiler, parser, "RightSquareBracket");
         parser.position++; // consume ]
 
         return { type: "Destructure", declarations };
@@ -351,18 +352,18 @@ function parseBinding(utkrisht, parser) {
 
 }
 
-function parseLoopStatement(utkrisht, parser) {
+function parseLoopStatement(compiler, parser) {
     const loopKeyword = getCurrentToken(parser);
     let isGrouping = false
-    
+
     if (isCurrentTokenType(parser, "LeftRoundBracket")) {
         isGrouping = true;
         parser.position++;
     }
 
     const loopClauses = [];
-    while(isCurrentTokenTypeExpressionStart(parser)) {
-        const left = parseExpression(utkrisht, parser);
+    while (isCurrentTokenTypeExpressionStart(parser)) {
+        const left = parseExpression(compiler, parser);
 
         let withKeyword;
         let right;
@@ -370,7 +371,7 @@ function parseLoopStatement(utkrisht, parser) {
             withKeyword = getCurrentToken(parser);
             parser.position++
 
-            right = parseBinding(utkrisht, parser, true);
+            right = parseBinding(compiler, parser, true);
         }
 
         loopClauses.push({ type: "LoopClause", withKeyword, left, right })
@@ -383,49 +384,49 @@ function parseLoopStatement(utkrisht, parser) {
     }
 
     if (isGrouping) {
-        expectToken(utkrisht, parser, "RightRoundBracket");
+        expectToken(compiler, parser, "RightRoundBracket");
         parser.position++;
     }
 
-    const block = parseBlock(utkrisht, parser);
+    const block = parseBlock(compiler, parser);
 
     return { type: "LoopStatement", loopKeyword, loopClauses, block }
 }
 
 
-function parseTryStatement(utkrisht, parser) {
+function parseTryStatement(compiler, parser) {
     const tryKeyword = getCurrentToken(parser);
     parser.position++;
 
-    const tryBlock = parseBlock(utkrisht, parser);
+    const tryBlock = parseBlock(compiler, parser);
 
-    expectToken(utkrisht, parser, "Fix");
+    expectToken(compiler, parser, "Fix");
     const fixKeyword = getCurrentToken(parser);
     parser.position++;
 
-    const fixBlock = parseBlock(utkrisht, parser);
+    const fixBlock = parseBlock(compiler, parser);
 
     return { type: "TryStatement", tryKeyword, tryBlock, fixKeyword, fixBlock };
 }
 
 
-function parseExitStatement(utkrisht, parser) {
+function parseExitStatement(compiler, parser) {
     const keyword = getCurrentToken(parser);
     parser.position++;
 
     let value = undefined;
-    
+
     if (!isCurrentTokenType(parser, "NewLine", "Dedent")) {
-        value = parseExpression(utkrisht, parser);
+        value = parseExpression(compiler, parser);
     }
 
-    expectToken(utkrisht, parser, "NewLine", "Dedent");
+    expectToken(compiler, parser, "NewLine", "Dedent");
     ignoreToken(parser, "NewLine");
 
     return { type: "ExitStatement", keyword, value }
 }
 
-function parseStopOrSkipStatement(utkrisht, parser) {
+function parseStopOrSkipStatement(compiler, parser) {
     const keyword = getCurrentToken(parser);
     parser.position++;
 
@@ -434,24 +435,24 @@ function parseStopOrSkipStatement(utkrisht, parser) {
         label = getCurrentToken(parser);
     }
 
-    expectToken(utkrisht, parser, "NewLine", "Dedent");
+    expectToken(compiler, parser, "NewLine", "Dedent");
     ignoreToken(parser, "NewLine");
 
     if (keyword.type === "Stop") {
-        return { type: "StopStatement", keyword, label}
+        return { type: "StopStatement", keyword, label }
     } else {
-        return { type: "SkipStatement", keyword, label}
+        return { type: "SkipStatement", keyword, label }
     }
 }
 
-function parseVariableAssignmentStatement(utkrisht, parser) {
+function parseVariableAssignmentStatement(compiler, parser) {
     const name = getCurrentToken(parser);
     parser.position++;
 
-    expectToken(utkrisht, parser, "Equal");
+    expectToken(compiler, parser, "Equal");
     parser.position++;
 
-    const value = parseExpression(utkrisht, parser);
+    const value = parseExpression(compiler, parser);
 
     ignoreToken(parser, "NewLine");
 
@@ -460,46 +461,46 @@ function parseVariableAssignmentStatement(utkrisht, parser) {
 
 
 /**  
- * This function behaviour may change with new Utkrisht versions.
+ * This function behaviour may change with new compiler versions.
  */
 function isVariableAssignment(parser) {
     return isNextTokenType(parser, "Equal")
 }
 
-function parseStatement(utkrisht, parser) {
+function parseStatement(compiler, parser) {
     if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(utkrisht, parser);
+        return parseWhenStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Loop")) {
-        return parseLoopStatement(utkrisht, parser);
+        return parseLoopStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Try")) {
-        return parseTryStatement(utkrisht, parser);
+        return parseTryStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Exit")) {
-        return parseExitStatement(utkrisht, parser);
+        return parseExitStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Stop", "Skip")) {
-        return parseStopOrSkipStatement(utkrisht, parser);
+        return parseStopOrSkipStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Identifier") && isVariableAssignment(parser)) {
-        return parseVariableAssignmentStatement(utkrisht, parser);
+        return parseVariableAssignmentStatement(compiler, parser);
     }
     else {
         if (isCurrentTokenType(parser, "Else")) {
-            throw error(utkrisht, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
+            throw error(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
         } else if (isCurrentTokenType(parser, "Fix")) {
-            throw error(utkrisht, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
+            throw error(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
         } else if (isCurrentTokenType(parser, "With")) {
-            throw error(utkrisht, "Can not use `with` statement without `loop` statement", getCurrentToken(parser))
+            throw error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser))
         } else {
-            return parseExpressionStatement(utkrisht, parser);
+            return parseExpressionStatement(compiler, parser);
         }
     }
 }
 
 
-function parseVariableDeclaration(utkrisht, parser) {
+function parseVariableDeclaration(compiler, parser) {
     const name = getCurrentToken(parser);
     parser.position++;
 
@@ -507,14 +508,14 @@ function parseVariableDeclaration(utkrisht, parser) {
     while (isCurrentTokenType(parser, "Identifier")) {
         const name = getCurrentToken(parser);
         parser.position++
-        
+
         let defaultValue = undefined;
         if (isCurrentTokenType(parser, "Colon")) {
             parser.position++;
             defaultValue = parseExpression();
         }
 
-        parameters.push( { type: "Parameter", name, defaultValue })
+        parameters.push({ type: "Parameter", name, defaultValue })
         if (isCurrentTokenType(parser, "Comma")) {
             parser.position++;
         } else {
@@ -522,10 +523,10 @@ function parseVariableDeclaration(utkrisht, parser) {
         }
     }
 
-    expectToken(utkrisht, parser, "Tilde");
+    expectToken(compiler, parser, "Tilde");
     parser.position++;
 
-    const value = parseExpression(utkrisht, parser);
+    const value = parseExpression(compiler, parser);
     ignoreToken(parser, "NewLine");
 
     return { type: "Declaration", name, parameters, value }
@@ -558,12 +559,12 @@ function isVariableDeclaration(parser) {
 }
 
 
-function parseDeclaration(utkrisht, parser) {
+function parseDeclaration(compiler, parser) {
     try {
         if (isCurrentTokenType(parser, "Identifier") && isVariableDeclaration(parser)) {
-            parseVariableDeclaration(utkrisht, parser);
+            parseVariableDeclaration(compiler, parser);
         } else {
-            return parseStatement(utkrisht, parser);
+            return parseStatement(compiler, parser);
         }
     } catch (error) {
         // We are only concerned about parser errors, not bugs in this file.
@@ -577,11 +578,16 @@ function parseDeclaration(utkrisht, parser) {
     }
 }
 
-export function parse(utkrisht, parser) {
+
+/**
+ * Parses the tokens inside `parser` and returns an array of statements.
+ * @returns {Statement[]}
+ */
+export function parse(/** @type {Compiler} */ compiler, /** @type {Parser} */ parser) {
     const statements = [];
 
     while (!isAtEnd(parser)) {
-        statements.push(parseDeclaration(utkrisht, parser));
+        statements.push(parseDeclaration(compiler, parser));
     }
 
     return statements;

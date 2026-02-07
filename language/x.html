@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>MiniTS Playground</title>
+
+    <script type="importmap">
+  {
+    "imports": {
+      "monaco-editor": "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/+esm"
+    }
+  }
+  </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: #0f1117;
+            color: #e6e6e6;
+            font-family: system-ui, sans-serif;
+        }
+
+        #app {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100%;
+        }
+
+        #editor {
+            height: 100%;
+        }
+
+        #right {
+            display: grid;
+            grid-template-rows: 1fr 300px;
+            border-left: 1px solid #2a2d3a;
+        }
+
+        #preview {
+            position: relative;
+            border-bottom: 1px solid #2a2d3a;
+            background: #111;
+        }
+
+        #preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #111;
+        }
+
+        #fullscreen {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            z-index: 10;
+            background: #1e2230;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 4px 6px;
+            cursor: pointer;
+        }
+
+        #tabs {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #tab-buttons {
+            display: flex;
+            background: #161a23;
+            border-bottom: 1px solid #2a2d3a;
+        }
+
+        #tab-buttons button {
+            padding: 6px 10px;
+            border: none;
+            background: transparent;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        #tab-buttons button.active {
+            background: #1e2230;
+            color: #fff;
+        }
+
+        .tab {
+            flex: 1;
+            overflow: auto;
+            display: none;
+            padding: 8px;
+            font-family: monospace;
+            white-space: pre;
+            background: #0f1117;
+            color: #ddd;
+        }
+
+        .tab.active {
+            display: block;
+        }
+
+        .error {
+            color: #ff6b6b;
+        }
+
+        .log {
+            color: #cfcfcf;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="editor"></div>
+
+        <div id="right">
+            <div id="preview">
+                <button id="fullscreen">⛶</button>
+                <iframe id="iframe" sandbox="allow-scripts"></iframe>
+            </div>
+
+            <div id="tabs">
+                <div id="tab-buttons">
+                    <button data-tab="console" class="active">Console</button>
+                    <button data-tab="tokens">Tokens</button>
+                    <button data-tab="ast">AST</button>
+                    <button data-tab="ir">IR</button>
+                    <button data-tab="js">Compiled JS</button>
+                </div>
+
+                <div id="console" class="tab active"></div>
+                <div id="tokens" class="tab"></div>
+                <div id="ast" class="tab"></div>
+                <div id="ir" class="tab"></div>
+                <div id="js" class="tab"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as monaco from "monaco-editor";
+
+        /* -------------------- Editor -------------------- */
+
+        const editor = monaco.editor.create(document.getElementById("editor"), {
+            value: `
+let count = 0
+
+function inc() {
+  count = count + 1
+}
+
+<View>
+  <button on:click={inc}>Clicked {count}</button>
+</View>
+`,
+            language: "typescript",
+            theme: "vs-dark",
+            automaticLayout: true
+        })
+
+        editor.onDidChangeModelContent(run)
+
+        /* -------------------- Tabs -------------------- */
+
+        document.querySelectorAll("#tab-buttons button").forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll("#tab-buttons button").forEach(b => b.classList.remove("active"))
+                document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"))
+                btn.classList.add("active")
+                document.getElementById(btn.dataset.tab).classList.add("active")
+            }
+        })
+
+        /* -------------------- Compiler -------------------- */
+
+        function tokenize(src) {
+            const regex = /\s+|let|function|return|if|else|for|break|continue|[A-Za-z_]\w*|\d+|==|<=|>=|\|\||&&|[+\-*/%<>{}()[\]=.;,:]/g
+            const tokens = []
+            let m
+            while ((m = regex.exec(src))) {
+                if (!m[0].trim()) continue
+                tokens.push({ type: "token", value: m[0] })
+            }
+            return tokens
+        }
+
+        function parse(tokens) {
+            return { type: "Program", body: tokens }
+        }
+
+        function toIR(ast) {
+            return ast.body.map(t => ({ op: "emit", value: t.value }))
+        }
+
+        function transpile(ast) {
+            let out = ""
+            for (const t of ast.body) {
+                out += t.value
+                if (
+                    t.value === "}" ||
+                    t.value === ";" ||
+                    t.value === "0" ||
+                    t.value === "1"
+                ) out += "\n"
+                else out += " "
+            }
+            return out
+        }
+
+
+
+        /* -------------------- Svelte-style UI -------------------- */
+
+        function splitSource(src) {
+            const m = src.match(/<View>([\s\S]*?)<\/View>/)
+            if (!m) return { script: src, view: "" }
+
+            return {
+                script: src.replace(m[0], ""),
+                view: m[1]
+            }
+        }
+
+        function compileView(view) {
+                if (!view) return ""
+
+                return view
+                    .replace(/on:click=\{(.*?)\}/g, 'onclick="$1()"')
+                    .replace(/\{(.*?)\}/g, (_, e) => `<span id="expr-${e}"></span>`)
+            }
+
+
+
+        /* -------------------- Execution -------------------- */
+
+        function run() {
+            clearConsole()
+            const src = editor.getValue()
+
+            try {
+                const { script, view } = splitSource(src)
+
+                const tokens = tokenize(script)
+                const ast = parse(tokens)
+                const ir = toIR(ast)
+                const js = transpile(ast)
+
+                set("tokens", JSON.stringify(tokens, null, 2))
+                set("ast", JSON.stringify(ast, null, 2))
+                set("ir", JSON.stringify(ir, null, 2))
+                set("js", js)
+
+                const html = compileView(view)
+                execute(js, html)
+            } catch (e) {
+                log(e.stack || e.toString(), true)
+            }
+        }
+
+
+        function execute(js, html) {
+            const iframe = document.getElementById("iframe")
+            iframe.srcdoc = `
+<!DOCTYPE html>
+<html>
+<body style="background:#111;color:#eee;font-family:sans-serif">
+${html}
+<script>
+const console = {
+  log: (...a) => parent.postMessage({ t: "log", a }, "*"),
+  error: (...a) => parent.postMessage({ t: "err", a }, "*")
+}
+${js}
+<\/script>
+</body>
+</html>`
+        }
+
+        function set(id, txt) {
+            document.getElementById(id).textContent = txt
+        }
+
+        function clearConsole() {
+            document.getElementById("console").textContent = ""
+        }
+
+        function log(msg, err = false) {
+            const div = document.createElement("div")
+            div.textContent = msg
+            div.className = err ? "error" : "log"
+            document.getElementById("console").appendChild(div)
+        }
+
+        window.addEventListener("message", e => {
+            if (e.data.t === "log") log(e.data.a.join(" "))
+            if (e.data.t === "err") log(e.data.a.join(" "), true)
+        })
+
+        document.getElementById("fullscreen").onclick = () => {
+            document.getElementById("preview").requestFullscreen()
+        }
+
+        run()
+    </script>
+</body>
+
+</html>
