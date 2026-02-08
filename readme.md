@@ -67,13 +67,6 @@ divide a, b ~ {
 ```
 
 
-> [!NOTE]
-> Notation in this tutorial (used wherever necessary):
-> - `#>` is the message logged in the console.
-> - `#->` is the value of the preceding expression.
-> - `#` is a regular comment.
-
-
 ### Data types
 Utkrisht has **5 data types**.
 
@@ -118,12 +111,12 @@ Special characters
 
 A string is represented internally a sequence of UTF-16 code units, identical to JavaScript strings, and thus share the same quirks.
 ```
-write length "😼"       #> 2
-write "😼".1            #> \ud83d
+write length "😼"       # 2
+write "😼".1            # \ud83d
 
-write length "é"        #> 1 (é)
-write length "é"        #> 2 (e + "́")
-write "é" = "é"         #> wrong (no normalization)
+write length "é"        # 1 (é)
+write length "é"        # 2 (e + "́")
+write "é" = "é"         # wrong (no normalization)
 ```
 #### Number
 Number is represented in the double-precision 64-bit floating point format (IEEE 754), just like JavaScript's number type.
@@ -136,52 +129,52 @@ Number is represented in the double-precision 64-bit floating point format (IEEE
 
 infinity
 -infinity    
-1 / 0          #-> infinity
--1 / 0         #-> -infinity
-1 / -0         #-> -infinity
--1 / -0        #-> infinity
+1 / 0          # infinity
+-1 / 0         # -infinity
+1 / -0         # -infinity
+-1 / -0        # infinity
 
 nan                   # stands for "not a number", but this is also a number 
 -nan                  # same as above
-0 / 0                 #-> nan
--0 / 0                #-> nan
-0 / -0                #-> nan
--0 / -0               #-> nan
-infinity / infinity   #-> nan
-infinity - infinity   #-> nan
-0 * infinity          #-> nan
--0 * infinity         #-> nan
+0 / 0                 # nan
+-0 / 0                # nan
+0 / -0                # nan
+-0 / -0               # nan
+infinity / infinity   # nan
+infinity - infinity   # nan
+0 * infinity          # nan
+-0 * infinity         # nan
 ```
 
 ```
-(123 = 123.0)             #-> right
+(123 = 123.0)             # right
 
-(0 = 0)                   #-> right
-(-0 = -0)                 #-> right
-(0 = -0)                  #-> right
+(0 = 0)                   # right
+(-0 = -0)                 # right
+(0 = -0)                  # right
 
-(infinity = infinity)     #-> right
-(infinity = -infinity)    #-> wrong
-(-infinity = -infinity)   #-> right
+(infinity = infinity)     # right
+(infinity = -infinity)    # wrong
+(-infinity = -infinity)   # right
 
-(nan = nan)                #-> wrong (This is not a typo)
-(nan != nan)               #-> right (This is also not a typo)
+(nan = nan)                # wrong (This is not a typo)
+(nan != nan)               # right (This is also not a typo)
 
-is-finite 123             #-> right
-is-finite infinity        #-> wrong
-is-finite -infinity       #-> wrong
-is-nan nan                #-> right
+is-finite 123             # right
+is-finite infinity        # wrong
+is-finite -infinity       # wrong
+is-nan nan                # right
 ```
 
 ```
-write 0.1 + 0.2 = 0.3         #> wrong
-write 0.1 + 0.2               #> 0.30000000000000004
+write 0.1 + 0.2 = 0.3         # wrong
+write 0.1 + 0.2               # 0.30000000000000004
 
-write 0.1 * 10                #> 1
-write 0.14 * 100              #> 14.000000000000002
+write 0.1 * 10                # 1
+write 0.14 * 100              # 14.000000000000002
 
-write 1.0000000000000001      #> 1
-write 9999999999999999        #> 10000000000000000
+write 1.0000000000000001      # 1
+write 9999999999999999        # 10000000000000000
 ```
 
 #### Boolean
@@ -222,22 +215,36 @@ In Utkrisht, symbols are grouped by their role into **operators**, **separators*
 
 Operators are symbols used to perform operations on values.
 
-| Operator                              | Type                                      | Description                                             |
-|---------------------------------------|-------------------------------------------|---------------------------------------------------------|
-| `:` `=`                               | Infix                                     | Variable declaration and reassignment                   |
-| `+` `-` `*` `/`                       | Infix                                     | Arithmetic operations                                   |
-| `=` `<` `>` <br />`!=` `!<` `!>`      | Infix                                     | Comparison operations                                   |
-| `&` `\|` `!`                          | Infix (except `!`, which is prefix)       | Logical operations                                      |
-| `_`                                   | Infix                                     | Range construction                                      |
-| `.`                                   | Infix                                     | Access operator                                         |
-| `!`                                   | Postfix                                   | Procedure call                                          |
-| `/`                                   | Prefix                                    | Module access operator                                  |
-| `@`                                   | Prefix                                    | Async operator                                          |
-| `$`                                   | Prefix                                    | Reactivity operator                                     |
-| `~`                                   | Infix                                     | Default values for parameters and named arguments       |
-| `\`                                   | Prefix                                    | Escape operator                                         |
 
+| Operator          | Position | Description    |
+|-------------------|----------|----------------|
+| `:`               | Infix    | Declaration    |
+| `=`               | Infix    | Assignment     |
+| `=`               | Infix    | Equal          |
+| `<`               | Infix    | Less Than      |
+| `>`               | Infix    | More Than      |
+| `+`               | Infix    | Addition       |
+| `-`               | Infix    | Substraction   |
+| `*`               | Infix    | Multiplication |
+| `/`               | Infix    | Division       |
+| `-`               | Prefix   | Unary Minus    |
+| `+`<sup>[1]</sup> | Prefix   | Unary Plus     |
+| `&`               | Infix    | And            |
+| `^`               | Infix    | Or             |
+| `!`               | Prefix   | Not            |
+| `!`               | Postfix  | Call           |
+| `.`               | Postfix  | Accessor       |
+| `/`               | Prefix   | Specifier      |
+| `\`               | Prefix   | Escape         |
+| `$`               | Prefix   | Reactivity     |
+| `@`               | Prefix   | Async          |
+| `#`               | Prefix   | Meta           |
+| `:`               | Infix    | Label          |
+| `..`              | Infix    | Range          |
+| `...`             | Prefix   | Spread         |
+| `___`             | Prefix   | Blank 
 
+> [1] Unary Plus does not perform any operation. It is simply there for symmetry with unary minus.  
 
 #### Separators
 
@@ -405,34 +412,34 @@ loop 5 with i
     # `i` is the iterator
     # `i` starts a 1 and ends at 5
 
-    #> 1
-    #> 2
-    #> 3
-    #> 4
-    #> 5
+    # 1
+    # 2
+    # 3
+    # 4
+    # 5
 
 fruits: ["apple", "mango", "banana"]
 loop fruits with fruit
     write "I love \(fruit)"
     
-    #> I love apple
-    #> I love mango
-    #> I love banana
+    # I love apple
+    # I love mango
+    # I love banana
 
 # multiple iterators can be declared
 loop fruits with [i, fruit]
     write "\(i). I love \(fruit)"
     
-    #> 1. I love apple
-    #> 2. I love mango 
-    #> 3. I love banana
+    # 1. I love apple
+    # 2. I love mango 
+    # 3. I love banana
 
 
 loop "hi" with [index, character]
     write "The character at position \(index) is \(character)"
 
-    #> The character at position 1 is h
-    #> The character at position 2 is i
+    # The character at position 1 is h
+    # The character at position 2 is i
 
 
 
@@ -450,9 +457,9 @@ loop 50 with i
         stop
     write i
     
-    #> 1 
-    #> 2 
-    #> 3
+    # 1 
+    # 2 
+    # 3
 
 # skip statement, skips the iteration 
 loop 4 with i
@@ -460,9 +467,9 @@ loop 4 with i
         skip
     write i
     
-    #> 1
-    #> 3
-    #> 4
+    # 1
+    # 3
+    # 4
 
 
 # iterators can be used as labels in nested loops for skip and stop statements
@@ -472,12 +479,12 @@ loop 3 with i
             skip i
         write "\(i) \(j)"
     
-    #> 1 1
-    #> 1 2
-    #> 1 3
-    #> 3 1
-    #> 3 2
-    #> 3 3
+    # 1 1
+    # 1 2
+    # 1 3
+    # 3 1
+    # 3 2
+    # 3 3
 ```
 
 
