@@ -40,215 +40,6 @@ Compile a input.uki file to output.js file:
 uki input.uki output.js
 ```
 
-## In a Nutshell
-```
-# This is a comment
-
-
-# Hello World Program
-write "Hello, World"
-
-
-# -----------------
-# Strings
-# -----------------
-# Single line string
-"This is a string"     
-
-# Multiline string
-"
-    This is a multiline string
-    * These strings are allowed to span multiple lines.
-    * They must be properly indented.
-    * Indentation spaces, spaces and the newline after the starting quote and the newline after ending quote are all ignored.
-"                     
-
-
-# -----------------
-# Numbers
-# -----------------
-0
--0
-123
-123.456
-nan
-infinity
--infinity
-
-
-# -----------------
-# Booleans
-# -----------------
-right
-wrong
-
-
-# -----------------
-# Structures
-# -----------------
-# Single line
-[1, 2, 3]    
-
-# Multi line, commas are not allowed
-[
-    1
-    2
-    3
-]            
-
-# Mixed, commas are not allowed only at the ends
-[
-    1, 2, 3
-    4, 5, 6
-    7, 8
-]            
-
-# Structures containing only elements behave like a JS Array
-["apple", "banana", mango"]    
-
-# Structures containing only key-value pair behaves like a JS Map.
-# If key is string and a valid identifier, quotes can be omitted.
-[name = "uki", age = 3, "email id" = "example@mail.com"]    
-
- 
-# For structures containing both, behaviour depends upon whether you loop through this structure as a whole or not.
-# If you do, then it will behave like a JS Map with "auto-indexing" feature
-# else map and array part will be kept separate.
-[
-    "input.txt"
-    "output.txt"
-    flags = ["compile", "emit", 5]
-]                              
-
-
-# -----------------
-# Procedures
-# -----------------
-# Just lying there, doing nothing
-{write "hi"}         
-
-# `!` is the call operator
-{write "hi"}!                            # > hi
-
-# If you give it any arguments, it does not need to called with `!`
-{write arguments.1 + argument.2} 2, 3    # > 5
-
-
-# -----------------
-# Variables
-# -----------------
-# Declaration
-x ~ 1     
-
-# Assignment
-x = 2     
-
-# -----------------
-# Conditionals
-# -----------------
-# Conditional statement
-when age < 13 
-    write "You're a child"
-else age > 19
-    write "You're an adult"
-else
-    write "You're a teen"
-
-
-# Multiline conditional expression
-status ~ 
-    when age < 13 
-        "child"
-    else age > 19
-        "adult"
-    else
-        "teen"
-    
-# Singleline conditional expression
-status ~ when (age < 13) "child" else (age > 19) "adult" else "teen"
-
-
-# -----------------
-# Loops (You are going to love them 😼)
-# -----------------
-# loops infinitely
-loop
-    write "hi"
-
-    # > hi
-    # > hi
-    # > hi
-    # ...
-    # Error: Stack Overflow
-
-x ~ 1
-loop x < 4
-    write x
-    x = x + 1
-
-    # > 1
-    # > 2
-    # > 3
-
-
-# loops 5 times
-loop 5 
-    write "hi"
-
-    # > hi
-    # > hi
-    # > hi
-    # > hi
-    # > hi
-
-
-loop "uki" 
-    write "hi"
-    
-    # loops 3 times because there are 3 characters in "uki": "u", "k" and "i"
-
-    # > hi
-    # > hi
-    # > hi
-
-
-# with statement declares iteration variables
-loop 3 with i 
-    write i
-
-    # > 1
-    # > 2
-    # > 3
-
-fruits ~ ["apple", "mango", "banana"]
-
-loop fruits with fruit
-    write "I love \(fruit)"
-    
-    # > I love apple
-    # > I love mango
-    # > I love banana
-
-
-loop fruits with [i, fruit]
-    write "\(i). I love \(fruit)"
-    
-    # > 1. I love apple
-    # > 2. I love mango 
-    # > 3. I love banana
-
-
-# If you do not need the value, omit it
-loop fruits with [i]
-    write i
-
-    # > 1
-    # > 2
-    # > 3
-
-
-
-```
 ## Reference
 
 ### Comments
@@ -626,7 +417,8 @@ loop 5 with i
     # 4
     # 5
 
-fruits: ["apple", "mango", "banana"]
+fruits ~ ["apple", "mango", "banana"]
+
 loop fruits with fruit
     write "I love \(fruit)"
     
@@ -651,14 +443,6 @@ loop "hi" with [index, character]
 
 
 
-```
-
-
-> [!NOTE]
-> Some looping constructs are still under consideration and not included here.
-
-
-```
 # stop statement, stops the loop
 loop 50 with i
     when i = 4
@@ -680,7 +464,7 @@ loop 4 with i
     # 4
 
 
-# iterators can be used as labels in nested loops for skip and stop statements
+# Iteration variables can be used as labels in nested loops for skip and stop statements
 loop 3 with i
     loop 3 with j
         when i = 2
