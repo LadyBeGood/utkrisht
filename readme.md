@@ -63,6 +63,7 @@ write "Hello, World"
     * Indentation spaces, spaces and the newline after the starting quote and the newline after ending quote are all ignored.
 "                     
 
+
 # -----------------
 # Numbers
 # -----------------
@@ -110,9 +111,9 @@ wrong
 [name = "uki", age = 3, "email id" = "example@mail.com"]    
 
  
-# Behaviour depends upon whether you loop through this structure as a whole or not.
-# If you don't, then map and array part will be kept separate.
-# else, it will behave like a JS Map with "auto-indexing" feature
+# For structures containing both, behaviour depends upon whether you loop through this structure as a whole or not.
+# If you do, then it will behave like a JS Map with "auto-indexing" feature
+# else map and array part will be kept separate.
 [
     "input.txt"
     "output.txt"
@@ -127,10 +128,10 @@ wrong
 {write "hi"}         
 
 # `!` is the call operator
-{write "hi"}!               # > hi
+{write "hi"}!                            # > hi
 
-# If you give procedure any arguments, it does not need to called with `!`
-{write arguments.1 + argument.2} 1, 2    # > 3
+# If you give it any arguments, it does not need to called with `!`
+{write arguments.1 + argument.2} 2, 3    # > 5
 
 
 # -----------------
@@ -165,6 +166,147 @@ status ~
     
 # Singleline conditional expression
 status ~ when (age < 13) "child" else (age > 19) "adult" else "teen"
+
+
+# -----------------
+# Loops (You are going to love them 😼)
+# -----------------
+# loop keyword not followed by any data type
+# loops infinitely
+loop
+    write "hi"
+
+    # > hi
+    # > hi
+    # > hi
+    # ...
+    # Error: Stack Overflow
+
+
+# loop keyword followed by a boolean
+# loops infinitely if right
+loop right
+    write "hi"
+
+    # > hi
+    # > hi
+    # > hi
+    # ...
+    # Error: Stack Overflow
+
+# doesn't loop if wrong
+loop wrong
+    write "hello"
+
+
+# loop keyword followed by a number
+# loops that many times (basically index starts at 0, and runs while given number is LESS THAN or EQUAL to current index)
+loop 5 # loops 5 times
+    write "hi"
+
+    # > hi
+    # > hi
+    # > hi
+    # > hi
+    # > hi
+
+loop infinity
+    write "hi"
+
+    # > hi
+    # > hi
+    # > hi
+    # > ...
+    # > Error: Stack Overflow
+
+loop 0 # Runs 0 times
+    write "hi"
+
+loop -5 # also does not run
+    write "hi"
+
+loop nan # also does not run
+    write "hi"
+
+
+loop 
+# loop keyword followed by a string or structure
+# loops `length iterable` times 
+loop "uki" 
+    write "hi"
+    
+    # loops 3 times because there are 3 characters in "uki": "u", "k" and "i"
+
+    # > hi
+    # > hi
+    # > hi
+
+loop [id = 567, "orange"] 
+    write "hi"
+
+    # loops 2 times
+
+    # > hi
+    # > hi
+
+
+# with statement declares iteration variables
+loop 5 with i 
+    write i
+
+    # `i` is the iteration variable
+    # `i` starts a 1 and ends at 5
+
+    # > 1
+    # > 2
+    # > 3
+    # > 4
+    # > 5
+
+fruits: ["apple", "mango", "banana"]
+loop fruits with fruit
+    write "I love \(fruit)"
+    
+    # `fruit` is the iteration variable
+    # `fruit` is iteratively set to value of each element in the structure
+
+    # > I love apple
+    # > I love mango
+    # > I love banana
+
+
+loop fruits with [i, fruit]
+    write "\(i). I love \(fruit)"
+    
+    # `i` and `fruit` are the iteration variables
+    # `i`, the first variable, is iteratively set to index of each element in the structure
+    # `fruit`, the second variable, is iteratively set to value of each element in the structure
+
+    # > 1. I love apple
+    # > 2. I love mango 
+    # > 3. I love banana
+
+
+loop "hi" with [position, character]
+    write "The character at position \(position) is \(character)"
+
+    # > The character at position 1 is h
+    # > The character at position 2 is i
+
+
+loop [user = "uki, age = 3] with [key, value]
+    write "\(key) => \(value)"
+
+    # > name => uki
+    # > age => 3
+
+# If you do not need the value, omit it
+loop [user = "uki, age = 3] with [key]
+    write key
+
+    # > name
+    # > age
+
 
 
 ```
