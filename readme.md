@@ -40,7 +40,81 @@ Compile a input.uki file to output.js file:
 uki input.uki output.js
 ```
 
+## In a Nutshell
+```
+# This is a comment
 
+
+# Hello World Program
+write "Hello, World"
+
+
+# -----------------
+# Data Types
+# -----------------
+
+
+# Strings
+"This is a string"     # Single line string
+
+"
+    This is a multiline string
+    * These strings are allowed to span multiple lines.
+    * They must be properly indented.
+    * Indentation spaces, spaces and the newline after the starting quote and the newline after ending quote are all ignored.
+"                     # Multiline string
+
+ 
+# Numbers
+0
+-0
+123
+123.456
+nan
+infinity
+-infinity
+
+
+# Booleans
+right
+wrong
+
+# Structures
+[1, 2, 3]    # Single line
+[
+    1
+    2
+    3
+]            # Multi line, commas are not allowed
+[
+    1, 2, 3
+    4, 5, 6
+    7, 8
+]            # Mixed
+
+["apple", "banana", mango"]    # Behaves like a JS Array
+["name" = "uki", "age" = 3]    # Behaves like a JS Map
+[name = "uki", age = 3]        # If key is string and a valid identifier, quotes can be omitted.
+[
+    "input.txt"
+    "output.txt"
+    flags = ["compile", "emit"]
+]                              # Behaviour depends upon whether you loop through this structure as a whole or not.
+                               # If you don't, then map and array part will be kept separate.
+                               # else, it will behave like a JS Map with "auto-indexing" feature
+
+# Procedures
+{write "hi"}                # Just lying there
+{write "hi"}!               # hi
+                            # `!` is the call operator
+{write arguments.1} "hi"    # hi
+                            # If the procedure takes an argument, it does not need to called with `!`
+{
+    exit arguments.1 + arguments.2 
+} 3, 2                      # 5
+
+
+```
 ## Reference
 
 ### Comments
@@ -157,8 +231,8 @@ infinity - infinity   # nan
 (infinity = -infinity)    # wrong
 (-infinity = -infinity)   # right
 
-(nan = nan)                # wrong (This is not a typo)
-(nan != nan)               # right (This is also not a typo)
+(nan = nan)               # wrong (This is not a typo)
+(nan != nan)              # right (This is also not a typo)
 
 is-finite 123             # right
 is-finite infinity        # wrong
