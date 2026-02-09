@@ -50,22 +50,22 @@ write "Hello, World"
 
 
 # -----------------
-# Data Types
-# -----------------
-
-
 # Strings
-"This is a string"     # Single line string
+# -----------------
+# Single line string
+"This is a string"     
 
+# Multiline string
 "
     This is a multiline string
     * These strings are allowed to span multiple lines.
     * They must be properly indented.
     * Indentation spaces, spaces and the newline after the starting quote and the newline after ending quote are all ignored.
-"                     # Multiline string
+"                     
 
- 
+# -----------------
 # Numbers
+# -----------------
 0
 -0
 123
@@ -75,43 +75,96 @@ infinity
 -infinity
 
 
+# -----------------
 # Booleans
+# -----------------
 right
 wrong
 
+
+# -----------------
 # Structures
-[1, 2, 3]    # Single line
+# -----------------
+# Single line
+[1, 2, 3]    
+
+# Multi line, commas are not allowed
 [
     1
     2
     3
-]            # Multi line, commas are not allowed
+]            
+
+# Mixed, commas are not allowed only at the ends
 [
     1, 2, 3
     4, 5, 6
     7, 8
-]            # Mixed
+]            
 
-["apple", "banana", mango"]    # Behaves like a JS Array
-["name" = "uki", "age" = 3]    # Behaves like a JS Map
-[name = "uki", age = 3]        # If key is string and a valid identifier, quotes can be omitted.
+# Structures containing only elements behave like a JS Array
+["apple", "banana", mango"]    
+
+# Structures containing only key-value pair behaves like a JS Map.
+# If key is string and a valid identifier, quotes can be omitted.
+[name = "uki", age = 3, "email id" = "example@mail.com"]    
+
+ 
+# Behaviour depends upon whether you loop through this structure as a whole or not.
+# If you don't, then map and array part will be kept separate.
+# else, it will behave like a JS Map with "auto-indexing" feature
 [
     "input.txt"
     "output.txt"
-    flags = ["compile", "emit"]
-]                              # Behaviour depends upon whether you loop through this structure as a whole or not.
-                               # If you don't, then map and array part will be kept separate.
-                               # else, it will behave like a JS Map with "auto-indexing" feature
+    flags = ["compile", "emit", 5]
+]                              
 
+
+# -----------------
 # Procedures
-{write "hi"}                # Just lying there
-{write "hi"}!               # hi
-                            # `!` is the call operator
-{write arguments.1} "hi"    # hi
-                            # If the procedure takes an argument, it does not need to called with `!`
-{
-    exit arguments.1 + arguments.2 
-} 3, 2                      # 5
+# -----------------
+# Just lying there, doing nothing
+{write "hi"}         
+
+# `!` is the call operator
+{write "hi"}!               # > hi
+
+# If you give procedure any arguments, it does not need to called with `!`
+{write arguments.1 + argument.2} 1, 2    # > 3
+
+
+# -----------------
+# Variables
+# -----------------
+# Declaration
+x ~ 1     
+
+# Assignment
+x = 2     
+
+# -----------------
+# Conditionals
+# -----------------
+# Conditional statement
+when age < 13 
+    write "You're a child"
+else age > 19
+    write "You're an adult"
+else
+    write "You're a teen"
+
+
+# Multiline conditional expression
+status ~ 
+    when age < 13 
+        "child"
+    else age > 19
+        "adult"
+    else
+        "teen"
+    
+# Singleline conditional expression
+status ~ when (age < 13) "child" else (age > 19) "adult" else "teen"
 
 
 ```
