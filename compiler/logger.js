@@ -11,11 +11,13 @@ export function error(compiler, message, line) {
     if (compiler.emitError) {
         const red = "\x1b[31m";
         const reset = "\x1b[0m";
-        console.error(`${red}Error on line ${line}${reset}: ${message}`)
-    }
+        console.error(`${red}Error on line ${line}${reset}: ${message}`);
+        process.exit(1);
 
-    compiler.errors.push({ line, message })
-    compiler.hadError = true;
+    } else {
+        compiler.hadError = true;
+        compiler.errors.push({ line, message })
+    }
 }
 
 

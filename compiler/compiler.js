@@ -3,7 +3,7 @@
 import "./types.js"
 import { createLexer, lex } from "./lexer.js";
 import { createParser, parse } from "./parser.js";
-
+import { readFileSync } from "node:fs"
 
 
 /**
@@ -28,14 +28,14 @@ function compile(compiler, source) {
     const lexer = createLexer(source);
     const tokens = lex(compiler, lexer);
 
-    console.log(JSON.stringify(tokens, null, 4))
+    //console.log(JSON.stringify(tokens, null, 4))
     if (compiler.hadError) {
         return;
     }
-    // const parser = createParser(tokens);
-    // const statements = parse(utkrisht, parser);
+    const parser = createParser(tokens);
+    const statements = parse(compiler, parser);
 
-    // console.log(JSON.stringify(statements, null, 4));
+    console.log(JSON.stringify(statements, null, 4));
 }
 
 
@@ -45,35 +45,27 @@ function compile(compiler, source) {
  * @param {string} path The relative system path to the `.uki` file.
  */
 async function compileFile(path) {
-    const file = Bun.file(path);
-
-    // Check if file exists using Bun API
-    if (!(await file.exists())) {
-        console.error(`Error: File not found at "${path}"`);
-        Bun.exit(1);
-    }
-
     let source;
     try {
-        source = await file.text();
+        source = readFileSync(path, "utf8");
     } catch (err) {
         console.error("Error reading file: ", err.message);
-        Bun.exit(0);
+        process.exit(0);
     }
 
     const compiler = createCompiler();
-
     compile(compiler, source);
 }
 
 
 
+
 export async function main() {
-    const args = Bun.argv.slice(2);
+    const args = process.argv.slice(2);
 
     if (args.length !== 1) {
         console.error("Usage node uki <input.uki>");
-        Bun.exit(0);
+        process.exit(0);
     }
 
     await compileFile(args[0]);

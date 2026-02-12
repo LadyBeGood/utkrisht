@@ -29,7 +29,7 @@ function getNextToken(parser) {
     return parser.tokens[parser.position + 1];
 }
 
-function getTokenTypeAtPosition(parser, position) {
+function getTokenAtPosition(parser, position) {
     return parser.tokens[position];
 }
 
@@ -53,16 +53,19 @@ function isNextTokenType(parser, ...types) {
 
 function isTokenTypeAtPosition(parser, position, ...types) {
     for (const type of types) {
-        if (getTokenTypeAtPosition(parser, position).type === type) {
+        if (getTokenAtPosition(parser, position).type === type) {
             return true;
         }
     }
     return false;
 }
 
-
 function isAtEnd(parser) {
-    return parser.tokens[parser.position].type === "EndOfFile";
+    return getCurrentToken(parser).type === "EndOfFile";
+}
+
+function isPositionAtEnd(parser, position) {
+    return getTokenAtPosition(parser, position).type === "EndOfFile";
 }
 
 function ignoreToken(parser, ...tokens) {
@@ -118,14 +121,6 @@ function isCurrentTokenTypeExpressionStart(parser) {
 
 
 function parseVariableExpression(compiler, parser) {
-    if (parser.variableExpression !== undefined) {
-        parser.position = parser.variableExpressionEndPosition;
-
-        parser.variableExpression = undefined;
-        parser.variableExpressionEndPosition = undefined;
-
-        return parser.variableExpression;
-    }
     const name = getCurrentToken(parser);
     parser.position++;
 
@@ -159,7 +154,7 @@ function parseVariableExpression(compiler, parser) {
         break;
     }
 
-    return { type: "VariableExpression", name, _arguments }
+    return { type: "VariableExpression", name, arguments: _arguments }
 }
 
 function parsePrimaryExpression(compiler, parser) {
@@ -209,7 +204,6 @@ function parseUnaryExpression(compiler, parser) {
     return parsePrimaryExpression(compiler, parser);
 }
 
-
 function parseMultiplicationAndDivisionExpression(compiler, parser) {
     let expression = parseUnaryExpression(compiler, parser);
 
@@ -235,7 +229,6 @@ function parseAdditionAndSubstractionExpression(compiler, parser) {
 
     return expression;
 }
-
 
 function parseComparisonExpression(compiler, parser) {
     let expression = parseAdditionAndSubstractionExpression(compiler, parser);
@@ -317,7 +310,6 @@ function parseWhenStatement(compiler, parser) {
     return { type: "WhenStatement", whenClauses }
 }
 
-
 function parseBinding(compiler, parser) {
     expectToken(compiler, parser, "LeftSquareBracket", "Identifier")
 
@@ -393,7 +385,6 @@ function parseLoopStatement(compiler, parser) {
     return { type: "LoopStatement", loopKeyword, loopClauses, block }
 }
 
-
 function parseTryStatement(compiler, parser) {
     const tryKeyword = getCurrentToken(parser);
     parser.position++;
@@ -408,7 +399,6 @@ function parseTryStatement(compiler, parser) {
 
     return { type: "TryStatement", tryKeyword, tryBlock, fixKeyword, fixBlock };
 }
-
 
 function parseExitStatement(compiler, parser) {
     const keyword = getCurrentToken(parser);
@@ -459,7 +449,6 @@ function parseVariableAssignmentStatement(compiler, parser) {
     return { type: "Assignment", name, value };
 }
 
-
 /**  
  * This function behaviour may change with new compiler versions.
  */
@@ -499,7 +488,6 @@ function parseStatement(compiler, parser) {
     }
 }
 
-
 function parseVariableDeclaration(compiler, parser) {
     const name = getCurrentToken(parser);
     parser.position++;
@@ -532,29 +520,39 @@ function parseVariableDeclaration(compiler, parser) {
     return { type: "Declaration", name, parameters, value }
 }
 
-
 function isVariableDeclaration(parser) {
+    let position = parser.position;
+
     let curlyBracketNestingDepth = 0;
     let squareBracketNestingDepth = 0;
+    let nestingDepth = 0;
 
-    while (!isAtEnd(parser)) {
-        if (isCurrentTokenType(parser, "LeftCurlyBracket")) {
-            curlyBracketNestingDepth++;
-        } else if (isCurrentTokenType(parser, "LeftSquareBracket")) {
-            squareBracketNestingDepth++;
-        } else if (isCurrentTokenType(parser, "RightCurlyBracket")) {
-            curlyBracketNestingDepth--;
-        } else if (isCurrentTokenType(parser, "RightSquareBracket")) {
-            squareBracketNestingDepth--;
-        }
+    const statementTerminatorTypes = ["NewLine", "Dedent", "EndOfFile"];
 
-        if (curlyBracketNestingDepth === 0 && squareBracketNestingDepth === 0) {
-            if (isCurrentTokenType(parser, "NewLine")) {
+    while (true) {
+        if (curlyBracketNestingDepth === 0 && squareBracketNestingDepth === 0 && nestingDepth === 0) {
+            if (isTokenTypeAtPosition(parser, position, ...statementTerminatorTypes)) {
                 return false;
-            } else if (isCurrentTokenType(parser, "Tilde")) {
+            } else if (isTokenTypeAtPosition(parser, position, "Tilde")) {
                 return true;
             }
         }
+        
+        if (isTokenTypeAtPosition(parser, position, "LeftCurlyBracket")) {
+            curlyBracketNestingDepth++;
+        } else if (isTokenTypeAtPosition(parser, position, "LeftSquareBracket")) {
+            squareBracketNestingDepth++;
+        } else if (isTokenTypeAtPosition(parser, position, "RightCurlyBracket")) {
+            curlyBracketNestingDepth--;
+        } else if (isTokenTypeAtPosition(parser, position, "RightSquareBracket")) {
+            squareBracketNestingDepth--;
+        } else if (isTokenTypeAtPosition(parser, position, "Indent")) {
+            nestingDepth++;
+        } else if (isTokenTypeAtPosition(parser, position, "Dedent")) {
+            nestingDepth--;
+        }
+
+        position++;
     }
 }
 
