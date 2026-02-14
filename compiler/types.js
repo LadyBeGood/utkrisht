@@ -1,7 +1,7 @@
 
 
 /**
- * @typedef  {Object}  Compiler Compiler state
+ * @typedef  {Object } Compiler Compiler state
  * @property {boolean} hadError Set to `true` when an error occurs during compilation
  * @property {boolean} emitError Should the logger emit errors? Yes during compilation, no duing testing.
  */
@@ -18,6 +18,6 @@
 
 
 /**
- * @typedef {Object} Parser Stores the state of the parser
+ * @typedef {Object} Parser Parser state
  * 
  */

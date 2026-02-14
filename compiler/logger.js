@@ -1,7 +1,7 @@
 import "./types.js";
 
 /**
- * Reports a syntax or runtime error to the console.
+ * Reports errors to the console.
  * @param {Compiler} compiler Compiler state
  * @param {string} message The error message.
  * @param {number} line Error location.
@@ -15,7 +15,6 @@ export function error(compiler, message, line) {
         process.exit(1);
 
     } else {
-        compiler.hadError = true;
         compiler.errors.push({ line, message })
     }
 }

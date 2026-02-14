@@ -3,11 +3,17 @@ import { createCompiler } from "../compiler.js";
 import { createLexer, lex } from "../lexer.js";
 
 
-function tokenise(source) {
-    const compiler = createCompiler();
-    const lexer = createLexer(source);
+function tokenise(source, returnCompiler = false) {
+    const compiler = createCompiler(source, /* logErrors */ false);
+    const lexer = createLexer(compiler.sources[0]);
     const tokens = lex(compiler, lexer);
-    return tokens;
+    
+    if (returnCompiler) {
+        return [compiler, tokens];
+    } else {
+        return tokens;
+    }
+    
 }
 
 test("Empty file", function () {
@@ -59,12 +65,30 @@ test("Empty file, with leading whitespaces and comments", function () {
     expect(tokens[0].type).toBe("EndOfFile");
 })
 
+test("Leading spaces before an identifier", function () {
+    const [compiler, tokens] = tokenise("   aaa", /* returnCompiler */ true);
+
+    expect(tokens.length).toBe(1);
+    expect(tokens[0].type).toBe("EndOfFile");
+})
+
+
+
 test("Lexing a variable declaration", function () {
     const tokens = tokenise("x ~ 10");
 
     expect(tokens.length).toBe(4);
     expect(tokens[0].type).toBe("Identifier");
     expect(tokens[1].type).toBe("Tilde");
+    expect(tokens[2].type).toBe("NumericLiteral");
+});
+
+test("Lexing a variable declaration", function () {
+    const tokens = tokenise("x = 10");
+
+    expect(tokens.length).toBe(4);
+    expect(tokens[0].type).toBe("Identifier");
+    expect(tokens[1].type).toBe("Equal");
     expect(tokens[2].type).toBe("NumericLiteral");
 });
 

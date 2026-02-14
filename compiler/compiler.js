@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 
 import "./types.js"
 import { createLexer, lex } from "./lexer.js";
@@ -10,72 +9,84 @@ import { readFileSync } from "node:fs"
  * Creates an `Compiler` object
  * @returns {Compiler}
  */
-export function createCompiler(logError = true) {
+export function createCompiler(path, logErrors = true, moduleMode = true) {
     return {
+        paths: [path],
         errors: [],
-        logError,
+        logErrors,
+        moduleMode,
+        isModule: false,
     };
 }
 
 
 
 /**
- * Compile the utkrisht file
+ * Compiles an utkrisht file and its imports.
  * @param {Compiler} compiler Compiler state
- * @param {string} source The source code of the utkrisht file
  */
-function compile(compiler, source) {
-    const lexer = createLexer(source);
-    const tokens = lex(compiler, lexer);
-
-    //console.log(JSON.stringify(tokens, null, 4))
-    if (compiler.hadError) {
-        return;
-    }
-    const parser = createParser(tokens);
-    const statements = parse(compiler, parser);
-
-    console.log(JSON.stringify(statements, null, 4));
-}
-
-
-
-/**
- * Reads a file from the disk and compiles it through the Utkrisht compiler.  
- * @param {string} path The relative system path to the `.uki` file.
- */
-async function compileFile(path) {
+export async function compile(compiler) {
+    /* =================== *\
+    |*       Input         *|
+    \* =================== */
+    
     let source;
     try {
-        source = readFileSync(path, "utf8");
+        source = readFileSync(compiler.paths.at(-1), "utf8");
     } catch (err) {
         console.error("Error reading file: ", err.message);
         process.exit(0);
     }
 
-    const compiler = createCompiler();
-    compile(compiler, source);
-}
+    /* =================== *\
+    |*     Processing      *|
+    \* =================== */
 
+    /* Lexical Analysis */
+    const lexer = createLexer(source);
+    const tokens = lex(compiler, lexer);
 
+    /* Parsing */
+    const parser = createParser(tokens);
+    const abstractSyntaxTree = parse(compiler, parser, moduleMode);
 
+    if (abstractSyntaxTree.imports !== undefined) {
+        compiler.isModule = true;
+        
+        for (const _import of abstractSyntaxTree.imports) {
+            compiler.paths.push(_import.path);
 
-export async function main() {
-    const args = process.argv.slice(2);
+            const moduleAbstractSyntaxTree = compile(compiler);
+            abstractSyntaxTree.modules.push(moduleAbstractSyntaxTree);
 
-    if (args.length !== 1) {
-        console.error("Usage node uki <input.uki>");
-        process.exit(0);
+            compiler.paths.pop();
+        }
+
+        compiler.isModule = false;
     }
 
-    await compileFile(args[0]);
+    if (abstractSyntaxTree.type === "Module") {
+        return abstractSyntaxTree;
+    }
+
+    /* Resolving */
+
+
+    /* Semantic Analysis */
+
+
+    /* Transforming */
+
+
+    /* Generation */
+
+
+    /* =================== *\
+    |*       Output        *|
+    \* =================== */
+    
+
 }
 
-if (import.meta.main) {
-    main()
-}
 
 
-export function _utkrisht() {
-
-}
