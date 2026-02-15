@@ -1,21 +1,21 @@
 
+// Local imports
 import "./types.js"
 import { createLexer, lex } from "./lexer.js";
 import { createParser, parse } from "./parser.js";
-import { readFileSync } from "node:fs"
+import { createResolver, resolve } from "./resolver.js";
+import { createExecutor, interpret } from "./executor.js";
 
 
 /**
  * Creates an `Compiler` object
- * @returns {Compiler}
+ * @returns {Interpreter}
  */
-export function createCompiler(path, logErrors = true, moduleMode = true) {
+export function createInterpreter(source, logErrors = true) {
     return {
-        paths: [path],
-        errors: [],
-        logErrors,
-        moduleMode,
-        isModule: false,
+        source,
+        compileTimeErrors: [],
+        runTimeErrors: [],
     };
 }
 
@@ -23,68 +23,25 @@ export function createCompiler(path, logErrors = true, moduleMode = true) {
 
 /**
  * Compiles an utkrisht file and its imports.
- * @param {Compiler} compiler Compiler state
+ * @param {Interpreter} interpreter Compiler state
  */
-export async function compile(compiler) {
-    /* =================== *\
-    |*       Input         *|
-    \* =================== */
-    
-    let source;
-    try {
-        source = readFileSync(compiler.paths.at(-1), "utf8");
-    } catch (err) {
-        console.error("Error reading file: ", err.message);
-        process.exit(0);
-    }
-
-    /* =================== *\
-    |*     Processing      *|
-    \* =================== */
+export async function interpret(interpreter) {
 
     /* Lexical Analysis */
     const lexer = createLexer(source);
-    const tokens = lex(compiler, lexer);
+    const tokens = lex(interpreter, lexer);
 
     /* Parsing */
     const parser = createParser(tokens);
-    const abstractSyntaxTree = parse(compiler, parser, moduleMode);
-
-    if (abstractSyntaxTree.imports !== undefined) {
-        compiler.isModule = true;
-        
-        for (const _import of abstractSyntaxTree.imports) {
-            compiler.paths.push(_import.path);
-
-            const moduleAbstractSyntaxTree = compile(compiler);
-            abstractSyntaxTree.modules.push(moduleAbstractSyntaxTree);
-
-            compiler.paths.pop();
-        }
-
-        compiler.isModule = false;
-    }
-
-    if (abstractSyntaxTree.type === "Module") {
-        return abstractSyntaxTree;
-    }
+    const statements = parse(interpreter, parser, moduleMode);
 
     /* Resolving */
+    const resolver = createResolver(statements);
+    resolve(resolver);
 
-
-    /* Semantic Analysis */
-
-
-    /* Transforming */
-
-
-    /* Generation */
-
-
-    /* =================== *\
-    |*       Output        *|
-    \* =================== */
-    
+    /* Interpreting */
+    const executor = createExecutor(statements);
+    execute(executor);
 
 }
 

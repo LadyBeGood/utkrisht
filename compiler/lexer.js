@@ -1,12 +1,14 @@
+
+// Local imports
 import "./types.js"
-import { error } from "./logger.js";
-import { keywords } from "./keywords.js";
+import { compileTimeError } from "./logger.js";
 
 /**
  * Creates a lexer object
+ * @param {string} source Source code of the Utkrisht file
  * @returns {Lexer}
  */
-export function createLexer(/** @type string */ source) {
+export function createLexer(source) {
     return {
         source,
         position: 0,
@@ -15,6 +17,26 @@ export function createLexer(/** @type string */ source) {
         nestingDepth: 0,
     };
 }
+
+/**
+ * A collection of reserved keywords used by the Utkrisht.
+ * These tokens are restricted from being used as identifiers for now.
+ */
+export const keywords = new Set([
+    "try",
+    "fix",
+    "when",
+    "else",
+    "loop",
+    "with",
+    "right",
+    "wrong",
+    // "import", // Not implemented
+    // "export", // Not implemented
+    "exit",
+    "stop",
+    "skip",
+]);
 
 function isAtEnd(lexer) {
     return lexer.position >= lexer.source.length;
@@ -48,8 +70,26 @@ function isAlphaNumeric(character) {
     return isSmallAlphabet(character) || isDigit(character) || character === "-";
 }
 
-function lexString(compiler, lexer) {
+/**
+ * Lexes a string and returns a Token of `StringLiteral` type, with literal value
+ * of the string.
+ * 
+ * There are 2 types of strings:
+ * - Single line string: Easy to lex, no indentation laws are applied
+ * - Multiline string: Requires proper indentation and hence makes it more complex to lex.
+ * 
+ * Compile time errors are logged when:
+ * - String does not have a closing double quote
+ * - Single line string contains a line break
+ * - Multiline string is not properly indented relative to opening quote
+ * 
+ * @param {Interpreter} interpreter Compiler state
+ * @param {Lexer} lexer Lexer state
+ * @returns {Token | undefined}
+ */
+function lexString(interpreter, lexer) {
     const stringStartLine = lexer.line;
+    const stringStartPosition = lexer.position;
     // Skip opening quote
     lexer.position++;
 
@@ -69,28 +109,26 @@ function lexString(compiler, lexer) {
     }
 
     if (isSingleLine) {
-        const start = lexer.position;
-
         while (!isCurrentCharacter(lexer, '"')) {
             if (isAtEnd(lexer)) {
-                error(compiler, "Unterminated string", stringStartLine);
+                compileTimeError(interpreter, "Unterminated string", stringStartLine);
                 return undefined;
             }
 
             if (lexer.source[lexer.position] === "\n") {
-                error(compiler, "Single line strings cannot contain a new line.", stringStartLine);
+                compileTimeError(interpreter, "Single line strings cannot contain a new line.", stringStartLine);
                 return undefined;
             }
 
             lexer.position++;
         }
 
-        const lexeme = lexer.source.slice(start, lexer.position);
-
+        const literal = lexer.source.slice(stringStartPosition + 1, lexer.position);
         // Skip closing "
         lexer.position++;
+        const lexeme = lexer.source.slice(stringStartPosition, lexer.position);
 
-        return { type: "StringLiteral", lexeme, line: stringStartLine };
+        return { type: "StringLiteral", lexeme, literal, line: stringStartLine };
     }
 
     else { // !isSingleLine
@@ -111,7 +149,7 @@ function lexString(compiler, lexer) {
 
         while (true) {
             if (isAtEnd(lexer)) {
-                error(compiler, "Unterminated multiline string", stringStartLine);
+                compileTimeError(interpreter, "Unterminated multiline string", stringStartLine);
                 return undefined;
             }
 
@@ -126,7 +164,7 @@ function lexString(compiler, lexer) {
                 // Ensure the closing quote is indented correctly (matching parent)
                 const closingQuoteOffset = closingCandidate - lexer.position;
                 if (closingQuoteOffset !== requiredClosingQuoteOffset) {
-                    error(compiler, "Closing quote indentation must match the block level.", lexer.line);
+                    compileTimeError(interpreter, "Closing quote indentation must match the block level.", lexer.line);
                     return undefined;
                 }
                 // Move past the quote
@@ -141,7 +179,7 @@ function lexString(compiler, lexer) {
             }
 
             if (spaceCount < requiredContentOffset) {
-                error(compiler, `Insufficient indentation for multiline string. Expected ${requiredContentOffset} spaces.`, lexer.line);
+                compileTimeError(interpreter, `Insufficient indentation for multiline string. Expected ${requiredContentOffset} spaces.`, lexer.line);
                 return undefined;
             }
 
@@ -150,7 +188,7 @@ function lexString(compiler, lexer) {
             const lineStart = lexer.position;
             while (!isAtEnd(lexer) && lexer.source[lexer.position] !== "\n") {
                 if (lexer.source[lexer.position] === '"') {
-                    error(compiler, "Closing quote must be on its own line for multiline strings.", lexer.line);
+                    compileTimeError(interpreter, "Closing quote must be on its own line for multiline strings.", lexer.line);
                     return undefined;
                 }
                 lexer.position++;
@@ -164,12 +202,24 @@ function lexString(compiler, lexer) {
             }
         }
 
-        return { type: "StringLiteral", lexeme: lines.join("\n"), line: stringStartLine };
+        const literal = lines.join("\n");
+        const lexeme = lexer.source.slice(stringStartPosition, lexer.position);
+
+        return { type: "StringLiteral", lexeme, literal, line: stringStartLine };
     }
 }
 
+/**
+ * Lexes a Number, and returns a `Token` of `NumicLiteral` type with literal value 
+ * of the number.
+ *
+ * @param {Lexer} lexer Lexer state
+ * @param {boolean} [isNegative=false] 
+ * @returns {Token}
+ */
 function lexNumber(lexer, isNegative = false) {
     const numberStartPosition = lexer.position;
+
     while (isCurrentCharacter(lexer, isDigit)) {
         lexer.position++;
     }
@@ -183,9 +233,18 @@ function lexNumber(lexer, isNegative = false) {
 
     const numberEndPosition = lexer.position;
 
-    return { type: "NumericLiteral", lexeme: (isNegative ? "-" : "") + lexer.source.slice(numberStartPosition, numberEndPosition), line: lexer.line }
+    const lexeme = (isNegative ? "-" : "") + lexer.source.slice(numberStartPosition, numberEndPosition);
+    const literal = parseFloat(lexeme);
+
+    return { type: "NumericLiteral", lexeme, literal, line: lexer.line }
 }
 
+/**
+ * Lexes an Identifier which may or may not be a keyword.
+ * 
+ * @param {Lexer} lexer Lexer state 
+ * @returns {Token} Can be of type `Keyword` or `Identifier`
+ */
 function lexIdentifier(lexer) {
     const identifierStartPosition = lexer.position;
     while (isCurrentCharacter(lexer, isAlphaNumeric)) {
@@ -203,7 +262,26 @@ function lexIdentifier(lexer) {
     return { type, lexeme, line: lexer.line };
 }
 
-function lexNewLine(compiler, lexer) {
+/**
+ * Lexes a NewLine and spaces after it, and also handle indentation tracking.
+ * 
+ * Indentation Rules:
+ * - Indentation must be consistent (same number of spaces per level). No more, no less.
+ * - Only one indentation level increase is allowed at a time
+ * - Multiple dedents may occur at once
+ * - Blank lines and comment-only lines are ignored
+ * 
+ * Returns:
+ * - `{ type: "Indent" }` when indentation increases by one level
+ * - `{ type: "Dedent" }[]` when indentation decreases (possibly multiple levels)
+ * - `{ type: "NewLine" }` when staying at the same indentation level
+ * - `undefined` when the newline should be ignored (blank line, comment, EOF)
+ * 
+ * @param {Interpreter} interpreter Compiler state
+ * @param {Lexer} lexer Lexer state
+ * @returns {Token | Token[] | undefined}
+ */
+function lexNewLine(interpreter, lexer) {
     const currentLine = lexer.line; // Capture current line before incrementing
     lexer.line++;
     lexer.position++;
@@ -222,7 +300,7 @@ function lexNewLine(compiler, lexer) {
     if (isCurrentCharacter(lexer, "\r")) {
         lexer.position++;
         if (!isCurrentCharacter(lexer, "\n")) {
-            error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+            compileTimeError(interpreter, "Carriage return must be followed by a NewLine character.", lexer.line);
         }
         return undefined;
     }
@@ -251,22 +329,34 @@ function lexNewLine(compiler, lexer) {
 
     // Error if indentation level is not a multiple of `indentWidth`
     if (!Number.isInteger(indentLevel)) {
-        error(compiler, "Invalid indentation level. Please indent your code consistently with " + lexer.indentWidth + " spaces.", lexer.line);
+        compileTimeError(interpreter, "Invalid indentation level. Please indent your code consistently with " + lexer.indentWidth + " spaces.", lexer.line);
         return undefined;
     }
 
 
-    // Handle Indentation Logic
+    /*
+     * Handle Indentation Logic
+     */
+
+    // Case 1: Increased indentation
     if (indentLevel > lexer.nestingDepth) {
         if (indentLevel > lexer.nestingDepth + 1) {
-            error(compiler, "Cannot indent multiple levels at once.", lexer.line);
+            compileTimeError(interpreter, "Cannot indent multiple levels at once.", lexer.line);
             return undefined;
         }
 
         lexer.nestingDepth++;
         return { type: "Indent", lexeme: "++++", line: lexer.line };
     }
+
+    // Case 2: Decreased indentation (possibly multiple levels)
     else if (indentLevel < lexer.nestingDepth) {
+        /**
+         * Please also note, there is no newline produced as a statement terminator for the statement
+         * when it is immediately followed by a decrease in `indentLevel`. The `Dedent` tokens here act as the
+         * statement terminator.
+         */
+
         const tokens = []
         while (indentLevel < lexer.nestingDepth) {
             lexer.nestingDepth--;
@@ -274,6 +364,8 @@ function lexNewLine(compiler, lexer) {
         }
         return tokens;
     }
+
+    // Case 3: Same Indentation level
     else {
         // Since they are on the same level, newline acts as a terminator
         return { type: "NewLine", lexeme: "\n", line: currentLine };
@@ -287,7 +379,7 @@ function lexComent(lexer) {
     }
 }
 
-function lexComma(compiler, lexer) {
+function lexComma(interpreter, lexer) {
     const tokens = [{ type: "Comma", lexeme: ",", line: lexer.line }];
     lexer.position++;
 
@@ -306,12 +398,12 @@ function lexComma(compiler, lexer) {
         if (isCurrentCharacter(lexer, "\r")) {
             lexer.position++;
             if (!isCurrentCharacter(lexer, "\n")) {
-                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+                compileTimeError(interpreter, "Carriage return must be followed by a NewLine character.", lexer.line);
             }
         }
 
         if (isCurrentCharacter(lexer, "\n")) {
-            const whiteSpaceTokens = lexNewLine(compiler, lexer);
+            const whiteSpaceTokens = lexNewLine(interpreter, lexer);
             if (Array.isArray(whiteSpaceTokens)) {
                 tokens.push(...whiteSpaceTokens);
                 break;
@@ -329,7 +421,7 @@ function lexComma(compiler, lexer) {
     return tokens;
 }
 
-function lexOpenBracket(compiler, lexer, type, character) {
+function lexOpenBracket(interpreter, lexer, type, character) {
     const tokens = [{ type, lexeme: character, line: lexer.line }];
     lexer.position++;
 
@@ -348,12 +440,12 @@ function lexOpenBracket(compiler, lexer, type, character) {
         if (isCurrentCharacter(lexer, "\r")) {
             lexer.position++;
             if (!isCurrentCharacter(lexer, "\n")) {
-                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+                compileTimeError(interpreter, "Carriage return must be followed by a NewLine character.", lexer.line);
             }
         }
 
         if (isCurrentCharacter(lexer, "\n")) {
-            const whiteSpaceTokens = lexNewLine(compiler, lexer);
+            const whiteSpaceTokens = lexNewLine(interpreter, lexer);
             if (Array.isArray(whiteSpaceTokens)) {
                 tokens.push(...whiteSpaceTokens);
                 break;
@@ -367,25 +459,31 @@ function lexOpenBracket(compiler, lexer, type, character) {
         }
     }
 
-    return tokens
+    return tokens;
 }
 
-function lexToken(compiler, lexer) {
+/**
+ * 
+ * @param {Interpreter} interpreter Compiler state
+ * @param {Lexer} lexer Lexer state
+ * @returns {Token | Token[] | undefined}
+ */
+function lexToken(interpreter, lexer) {
     let character = lexer.source[lexer.position];
 
     switch (character) {
         case "(":
-            return lexOpenBracket(compiler, lexer, "LeftRoundBracket", "(")
+            return lexOpenBracket(interpreter, lexer, "LeftRoundBracket", "(")
         case ")":
             lexer.position++;
             return { type: "RightRoundBracket", lexeme: character, line: lexer.line };
         case "[":
-            return lexOpenBracket(compiler, lexer, "LeftSquareBracket", "[")
+            return lexOpenBracket(interpreter, lexer, "LeftSquareBracket", "[")
         case "]":
             lexer.position++;
             return { type: "RightSquareBracket", lexeme: character, line: lexer.line };
         case "{":
-            return lexOpenBracket(compiler, lexer, "LeftCurlyBracket", "{");
+            return lexOpenBracket(interpreter, lexer, "LeftCurlyBracket", "{");
         case "}":
             lexer.position++;
             return { type: "RightCurlyBracket", lexeme: character, line: lexer.line };
@@ -393,7 +491,7 @@ function lexToken(compiler, lexer) {
             lexer.position++;
             return { type: "Dot", lexeme: character, line: lexer.line };
         case ",":
-            return lexComma(compiler, lexer);
+            return lexComma(interpreter, lexer);
         case ":":
             lexer.position++;
             return { type: "Colon", lexeme: character, line: lexer.line };
@@ -453,16 +551,16 @@ function lexToken(compiler, lexer) {
         case "\r":
             lexer.position++;
             if (isCurrentCharacter(lexer, "\n")) {
-                return lexNewLine(compiler, lexer);
+                return lexNewLine(interpreter, lexer);
             } else {
-                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+                compileTimeError(interpreter, "Carriage return must be followed by a NewLine character.", lexer.line);
                 lexer.position++
                 return undefined;
             }
         case "\n":
-            return lexNewLine(compiler, lexer)
+            return lexNewLine(interpreter, lexer)
         case "\t":
-            error(compiler, "compiler does not support tabs for indentation. Please use spaces.", lexer.line);
+            compileTimeError(interpreter, "Utkrisht does not support tabs for indentation. Please use spaces.", lexer.line);
             lexer.position++
             return undefined;
         case "!":
@@ -484,7 +582,7 @@ function lexToken(compiler, lexer) {
                 return { type: "ExclamationMark", lexeme: character, line: lexer.line };
             }
         case '"':
-            return lexString(compiler, lexer);
+            return lexString(interpreter, lexer);
         default:
             if (isDigit(character)) {
                 return lexNumber(lexer);
@@ -493,27 +591,21 @@ function lexToken(compiler, lexer) {
                 return lexIdentifier(lexer);
             }
             else if (isBigAlphabet(character)) {
-                error(compiler, "Big Letters are not allowed in identifiers", lexer.line);
+                compileTimeError(interpreter, "Big Letters are not allowed in identifiers", lexer.line);
                 lexer.position++;
                 return undefined;
             }
-            error(compiler, "Invalid character `" + character + "`", lexer.line);
+            compileTimeError(interpreter, "Invalid character `" + character + "`", lexer.line);
             lexer.position++
 
     }
 }
 
 
-
-/**
- * Scans source code and converts it into a flat array of tokens.
- * @param {Compiler} compiler Compiler state
- * @param {Lexer} lexer Lexer state
- * @returns {Token[]} Array of tokens
- */
-export function lex(compiler, lexer) {
-    const tokens = [];
-
+/** 
+ * Handle leading whitespaces and comments
+ */ 
+function handleBeforeLexing(interpreter, lexer) {
     let leadingSpaces = 0;
     while (true) {
         if (isCurrentCharacter(lexer, " ")) {
@@ -530,7 +622,7 @@ export function lex(compiler, lexer) {
                 lexer.position++
                 leadingSpaces = 0;
             } else {
-                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+                compileTimeError(interpreter, "Carriage return must be followed by a NewLine character.", lexer.line);
                 lexer.position++;
             }
         } else if (isCurrentCharacter(lexer, "#")) {
@@ -547,11 +639,43 @@ export function lex(compiler, lexer) {
     }
 
     if (leadingSpaces !== 0) {
-        error(compiler, "Invalid Indentation at the start of the file", lexer.line)
+        compileTimeError(interpreter, "Invalid Indentation at the start of the file", lexer.line)
+    }
+}
+
+/**
+ * Adds the remaining `Dedent` tokens and finally the `EndOfFile` Token.
+ * 
+ * The `EndOfFile` token is helpful in determining the end when parsing these tokens.
+ * @param {Interpreter} interpreter Interpreter state
+ * @param {Lexer} lexer Lexer state
+ * @param {Token[]} tokens 
+ */
+function handleAfterLexing(interpreter, lexer, tokens) {
+    // Add remaining dedents
+    while (lexer.nestingDepth > 0) {
+        tokens.push({ type: "Dedent", lexeme: "----", line: lexer.line });
+        lexer.nestingDepth--;
     }
 
+    // Add the last token, i.e. EndOfFile
+    tokens.push({ type: "EndOfFile", line: lexer.line });
+}
+
+/**
+ * Scans source code and converts it into an array of tokens.
+ * 
+ * @param {Interpreter} interpreter Compiler state
+ * @param {Lexer} lexer Lexer state
+ * @returns {Token[]} Array of tokens
+ */
+export function lex(interpreter, lexer) {
+    const tokens = [];
+
+    handleBeforeLexing(interpreter, lexer);
+
     while (!isAtEnd(lexer)) {
-        const token = lexToken(compiler, lexer);
+        const token = lexToken(interpreter, lexer);
         if (token === undefined) {
             continue;
         } else if (Array.isArray(token)) {
@@ -561,14 +685,7 @@ export function lex(compiler, lexer) {
         }
     }
 
-    // Add dedents
-    while (lexer.nestingDepth > 0) {
-        tokens.push({ type: "Dedent", lexeme: "----", line: lexer.line });
-        lexer.nestingDepth--;
-    }
-
-    // Add the last token, i.e. EndOfFile
-    tokens.push({ type: "EndOfFile", line: lexer.line });
+    handleAfterLexing(interpreter, lexer, tokens);
 
     return tokens;
 }
