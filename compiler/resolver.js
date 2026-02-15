@@ -21,10 +21,10 @@ function endScope(resolver) {
 /**
  * Declares the name variable `name` in the outermost scope of `resolver`. If
  * the same variable is declared in the same scope, an error will be reported.
- * @param {*} utkrisht 
+ * @param {*} compiler 
  * @param {*} resolver 
  */
-function declare(utkrisht, resolver, name) {
+function declare(compiler, resolver, name) {
     if (resolver.scope.length > 0) {
 
     }
@@ -39,9 +39,9 @@ function resolveStatement() {
 
 }
 
-export function resolve(utkrisht, resolver, statements) {
+export function resolve(compiler, resolver, statements) {
     for (const statement of statements) {
-        resolveStatement(utkrisht, resolver, statement);
+        resolveStatement(compiler, resolver, statement);
     }
 }
 

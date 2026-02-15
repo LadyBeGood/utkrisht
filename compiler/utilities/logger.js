@@ -1,6 +1,5 @@
 import "./types.js";
 
-
 export function styledLog(type, message, line) {
     const red = "\x1b[31m";
     const reset = "\x1b[0m";
@@ -19,12 +18,12 @@ export function styledLog(type, message, line) {
             throw new Error("Unknown error type");
     }
 
-    process.exit(1);
+    throw new End();
 }
 
 /**
  * Reports errors to the console.
- * @param {Interpreter} interpreter Compiler state
+ * @param {Compiler} interpreter Compiler state
  * @param {string} message The error message.
  * @param {number} line Error location.
  * @returns {void}
@@ -39,7 +38,7 @@ export function compileTimeError(interpreter, message, line) {
 
 /**
  * 
- * @param {Interpreter} interpreter Compiler state
+ * @param {Compiler} interpreter Compiler state
  * @param {RuntimeError} error 
  */
 export function runTimeError(interpreter, error) {

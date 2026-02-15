@@ -1,6 +1,9 @@
+// Bun imports
 import { test, expect, describe } from "bun:test";
-import { createCompiler } from "../compiler.js";
-import { createLexer, lex } from "../lexer.js";
+
+// Local Imports
+import { createCompiler } from "../compiler/compiler.js";
+import { createLexer, lex } from "../compiler/lexer.js";
 
 
 function tokenise(source, returnCompiler = false) {

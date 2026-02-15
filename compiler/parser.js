@@ -1,5 +1,5 @@
-import "./types.js"
-import * as logger from "./logger.js";
+import "./utilities/types.js"
+import * as logger from "./utilities/logger.js";
 
 /**
  * Creates the state of parser
@@ -29,13 +29,13 @@ class ParseError extends Error {
 
 /**
  * Creates and returns a ParseError which will be used for parser synchronisation.
- * @param {Interpreter} interpreter Interpreter State
+ * @param {Compiler} compiler Compiler State
  * @param {string} message The error message 
  * @param {Token} token 
  * @returns {ParseError}
  */
-function error(interpreter, message, token) {
-    logger.compileTimeError(interpreter, message, token.line)
+function error(compiler, message, token) {
+    logger.compileTimeError(compiler, message, token.line)
     return new ParseError(message, token)
 }
 
@@ -127,11 +127,11 @@ function ignore(parser, ...types) {
 /**
  * If the type of token at the current position of the parser is NOT among the given types, then throw a `ParserError`.
  * Otherwise do nothing.
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @param  {...string} types Expected types
  */
-function expect(interpreter, parser, ...types) {
+function expect(compiler, parser, ...types) {
     if (isCurrentTokenType(parser, ...types)) {
         return;
     }
@@ -148,19 +148,19 @@ function expect(interpreter, parser, ...types) {
             : "got " + getCurrentToken(parser).type
         ;
 
-    throw error(interpreter, "Expected " + expected + ", but " + found, getCurrentToken(parser))
+    throw error(compiler, "Expected " + expected + ", but " + found, getCurrentToken(parser))
 }
 
 /**
  * If the type of token at the current position of the parser is of the given type, then increase the position of the parser, and return the token.
  * Otherwise throw a `ParserError`.
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @param  {...string} type Expected type
  * @returns {Token} Token at the current position of parser
  */
-function consume(interpreter, parser, type) {
-    expect(interpreter, parser, type);
+function consume(compiler, parser, type) {
+    expect(compiler, parser, type);
     const token = getCurrentToken(parser);
     parser.position++;
     return token
@@ -199,14 +199,14 @@ function isCurrentTokenTypeExpressionStart(parser) {
 }
 
 
-function parseVariableExpression(interpreter, parser) {
+function parseVariableExpression(compiler, parser) {
     const name = getCurrentToken(parser);
     parser.position++;
 
     const _arguments = [];
     while (true) {
         if (isCurrentTokenTypeExpressionStart(parser)) {
-            _arguments.push({ type: "Argument", name: undefined, value: parseExpression(interpreter, parser) });
+            _arguments.push({ type: "Argument", name: undefined, value: parseExpression(compiler, parser) });
 
             if (isCurrentTokenType(parser, "Comma")) {
                 parser.position++;
@@ -219,7 +219,7 @@ function parseVariableExpression(interpreter, parser) {
         if (isCurrentTokenType(parser, "Identifier") && isNextTokenType(parser, "Colon")) {
             const name = getCurrentToken(parser);
             parser.position++;
-            const value = parseExpression(interpreter, parser);
+            const value = parseExpression(compiler, parser);
             _arguments.push({ type: "Argument", name, value });
 
             if (isCurrentTokenType(parser, "Comma")) {
@@ -236,7 +236,7 @@ function parseVariableExpression(interpreter, parser) {
     return { type: "VariableExpression", name, arguments: _arguments }
 }
 
-function parsePrimaryExpression(interpreter, parser) {
+function parsePrimaryExpression(compiler, parser) {
     let expression;
 
     if (isCurrentTokenType(parser, "right")) {
@@ -253,14 +253,14 @@ function parsePrimaryExpression(interpreter, parser) {
         parser.position++;
     } else if (isCurrentTokenType(parser, "LeftRoundBracket")) {
         parser.position++;
-        expression = { type: "GroupingExpression", expression: parseExpression(interpreter, parser) };
-        expect(interpreter, parser, "RightRoundBracket");
+        expression = { type: "GroupingExpression", expression: parseExpression(compiler, parser) };
+        expect(compiler, parser, "RightRoundBracket");
         parser.position++;
     } else if (isCurrentTokenType(parser, "Identifier")) {
-        expression = parseVariableExpression(interpreter, parser);
+        expression = parseVariableExpression(compiler, parser);
     } else {
         throw error(
-            interpreter,
+            compiler,
             isCurrentTokenType(parser, "EndOfFile")
                 ? "Expected an expression but reached end of code"
                 : "Expected an expression but got " + getCurrentToken(parser).type
@@ -272,103 +272,103 @@ function parsePrimaryExpression(interpreter, parser) {
     return expression;
 }
 
-function parseUnaryExpression(interpreter, parser) {
+function parseUnaryExpression(compiler, parser) {
     if (isCurrentTokenType(parser, "ExclamationMark", "Minus")) {
         const operator = getCurrentToken(parser);
         parser.position++
-        const right = parseUnaryExpression(interpreter, parser);
+        const right = parseUnaryExpression(compiler, parser);
         return { type: "UnaryExpression", operator, right };
     }
 
-    return parsePrimaryExpression(interpreter, parser);
+    return parsePrimaryExpression(compiler, parser);
 }
 
-function parseMultiplicationAndDivisionExpression(interpreter, parser) {
-    let expression = parseUnaryExpression(interpreter, parser);
+function parseMultiplicationAndDivisionExpression(compiler, parser) {
+    let expression = parseUnaryExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "Asterisk", "Slash")) {
         const operator = getCurrentToken(parser);
         parser.position++;
-        const right = parseUnaryExpression(interpreter, parser)
+        const right = parseUnaryExpression(compiler, parser)
         expression = { type: "BinaryExpression", left: expression, operator, right }
     }
 
     return expression;
 }
 
-function parseAdditionAndSubstractionExpression(interpreter, parser) {
-    let expression = parseMultiplicationAndDivisionExpression(interpreter, parser);
+function parseAdditionAndSubstractionExpression(compiler, parser) {
+    let expression = parseMultiplicationAndDivisionExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "Plus", "Minus")) {
         const operator = getCurrentToken(parser);
         parser.position++;
-        const right = parseMultiplicationAndDivisionExpression(interpreter, parser);
+        const right = parseMultiplicationAndDivisionExpression(compiler, parser);
         expression = { type: "BinaryExpression", left: expression, operator, right }
     }
 
     return expression;
 }
 
-function parseComparisonExpression(interpreter, parser) {
-    let expression = parseAdditionAndSubstractionExpression(interpreter, parser);
+function parseComparisonExpression(compiler, parser) {
+    let expression = parseAdditionAndSubstractionExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "MoreThan", "LessThan", "ExclamationMarkMoreThan", "ExclamationMarkLessThan")) {
         const operator = getCurrentToken(parser);
         parser.position++;
-        const right = parseAdditionAndSubstractionExpression(interpreter, parser);
+        const right = parseAdditionAndSubstractionExpression(compiler, parser);
         expression = { type: "BinaryExpression", left: expression, operator, right }
     }
 
     return expression;
 }
 
-function parseEqualityAndInequalityExpression(interpreter, parser) {
-    let expression = parseComparisonExpression(interpreter, parser);
+function parseEqualityAndInequalityExpression(compiler, parser) {
+    let expression = parseComparisonExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "Equal", "ExclamationMarkEqual")) {
         const operator = getCurrentToken(parser);
         parser.position++;
-        const right = parseComparisonExpression(interpreter, parser);
+        const right = parseComparisonExpression(compiler, parser);
         expression = { type: "BinaryExpression", left: expression, operator, right };
     }
     return expression;
 }
 
-function parseExpression(interpreter, parser) {
-    return parseEqualityAndInequalityExpression(interpreter, parser);
+function parseExpression(compiler, parser) {
+    return parseEqualityAndInequalityExpression(compiler, parser);
 }
 
-function parseExpressionStatement(interpreter, parser) {
-    const expression = parseExpression(interpreter, parser);
-    expect(interpreter, parser, "NewLine", "Dedent", "EndOfFile");
+function parseExpressionStatement(compiler, parser) {
+    const expression = parseExpression(compiler, parser);
+    expect(compiler, parser, "NewLine", "Dedent", "EndOfFile");
     ignore(parser, "NewLine")
     return { type: "ExpressionStatement", expression };
 }
 
-function parseBlock(interpreter, parser) {
-    expect(interpreter, parser, "Indent");
+function parseBlock(compiler, parser) {
+    expect(compiler, parser, "Indent");
     parser.position++;
 
     const statements = [];
 
     while (!isCurrentTokenType(parser, "EndOfFile") && !isCurrentTokenType(parser, "Dedent")) {
-        statements.push(parseDeclaration(interpreter, parser));
+        statements.push(parseDeclaration(compiler, parser));
     }
 
-    expect(interpreter, parser, "Dedent");
+    expect(compiler, parser, "Dedent");
     parser.position++;
 
     return { type: "Block", statements }
 }
 
-function parseWhenStatement(interpreter, parser) {
+function parseWhenStatement(compiler, parser) {
     const whenClauses = [];
 
     const whenKeyword = getCurrentToken(parser);
     parser.position++;
 
-    const condition = parseExpression(interpreter, parser);
-    const block = parseBlock(interpreter, parser);
+    const condition = parseExpression(compiler, parser);
+    const block = parseBlock(compiler, parser);
 
     whenClauses.push({ type: "WhenClause", keyword: whenKeyword, condition, block });
 
@@ -378,10 +378,10 @@ function parseWhenStatement(interpreter, parser) {
 
         let condition = undefined;
         if (!isCurrentTokenType(parser, "Indent")) {
-            condition = parseExpression(interpreter, parser);
+            condition = parseExpression(compiler, parser);
         }
 
-        const block = parseBlock(interpreter, parser);
+        const block = parseBlock(compiler, parser);
 
         whenClauses.push({ type: "WhenClause", keyword, condition, block });
     }
@@ -389,8 +389,8 @@ function parseWhenStatement(interpreter, parser) {
     return { type: "WhenStatement", whenClauses }
 }
 
-function parseBinding(interpreter, parser) {
-    expect(interpreter, parser, "LeftSquareBracket", "Identifier")
+function parseBinding(compiler, parser) {
+    expect(compiler, parser, "LeftSquareBracket", "Identifier")
 
     // Destructure
     if (isCurrentTokenType("LeftSquareBracket")) {
@@ -399,7 +399,7 @@ function parseBinding(interpreter, parser) {
 
         while (!isCurrentTokenType(parser, "RightSquareBracket")) {
             // Nesting allowed for arrays, but groups still forbidden
-            declarations.push(parseBinding(interpreter, parser));
+            declarations.push(parseBinding(compiler, parser));
 
             if (isCurrentTokenType(parser, "Comma")) {
                 parser.position++;
@@ -408,7 +408,7 @@ function parseBinding(interpreter, parser) {
             }
         }
 
-        expect(interpreter, parser, "RightSquareBracket");
+        expect(compiler, parser, "RightSquareBracket");
         parser.position++; // consume ]
 
         return { type: "Destructure", declarations };
@@ -423,7 +423,7 @@ function parseBinding(interpreter, parser) {
 
 }
 
-function parseLoopStatement(interpreter, parser) {
+function parseLoopStatement(compiler, parser) {
     const loopKeyword = getCurrentToken(parser);
     let isGrouping = false
 
@@ -434,7 +434,7 @@ function parseLoopStatement(interpreter, parser) {
 
     const loopClauses = [];
     while (isCurrentTokenTypeExpressionStart(parser)) {
-        const left = parseExpression(interpreter, parser);
+        const left = parseExpression(compiler, parser);
 
         let withKeyword;
         let right;
@@ -442,7 +442,7 @@ function parseLoopStatement(interpreter, parser) {
             withKeyword = getCurrentToken(parser);
             parser.position++
 
-            right = parseBinding(interpreter, parser, true);
+            right = parseBinding(compiler, parser, true);
         }
 
         loopClauses.push({ type: "LoopClause", withKeyword, left, right })
@@ -455,41 +455,41 @@ function parseLoopStatement(interpreter, parser) {
     }
 
     if (isGrouping) {
-        expect(interpreter, parser, "RightRoundBracket");
+        expect(compiler, parser, "RightRoundBracket");
         parser.position++;
     }
 
-    const block = parseBlock(interpreter, parser);
+    const block = parseBlock(compiler, parser);
 
     return { type: "LoopStatement", loopKeyword, loopClauses, block }
 }
 
-function parseTryStatement(interpreter, parser) {
+function parseTryStatement(compiler, parser) {
     const tryKeyword = getCurrentToken(parser);
     parser.position++;
 
-    const tryBlock = parseBlock(interpreter, parser);
+    const tryBlock = parseBlock(compiler, parser);
 
-    expect(interpreter, parser, "Fix");
+    expect(compiler, parser, "Fix");
     const fixKeyword = getCurrentToken(parser);
     parser.position++;
 
-    const fixBlock = parseBlock(interpreter, parser);
+    const fixBlock = parseBlock(compiler, parser);
 
     return { type: "TryStatement", tryKeyword, tryBlock, fixKeyword, fixBlock };
 }
 
-function parseExitStatement(interpreter, parser) {
+function parseExitStatement(compiler, parser) {
     const keyword = getCurrentToken(parser);
     parser.position++;
 
     let value = undefined;
 
     if (!isCurrentTokenType(parser, "NewLine", "Dedent")) {
-        value = parseExpression(interpreter, parser);
+        value = parseExpression(compiler, parser);
     }
 
-    expect(interpreter, parser, "NewLine", "Dedent");
+    expect(compiler, parser, "NewLine", "Dedent");
     ignore(parser, "NewLine");
 
     return { type: "ExitStatement", keyword, value }
@@ -497,11 +497,11 @@ function parseExitStatement(interpreter, parser) {
 
 /**
  * 
- * @param {Interpreter} interpreter 
+ * @param {Compiler} compiler 
  * @param {Parser} parser 
  * @returns {Statement}
  */
-function parseStopOrSkipStatement(interpreter, parser) {
+function parseStopOrSkipStatement(compiler, parser) {
     const keyword = getCurrentToken(parser);
     parser.position++;
 
@@ -510,7 +510,7 @@ function parseStopOrSkipStatement(interpreter, parser) {
         label = getCurrentToken(parser);
     }
 
-    expect(interpreter, parser, "NewLine", "Dedent");
+    expect(compiler, parser, "NewLine", "Dedent");
     ignore(parser, "NewLine");
 
     if (keyword.type === "Stop") {
@@ -522,18 +522,18 @@ function parseStopOrSkipStatement(interpreter, parser) {
 
 /**
  * 
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement} Variable assignment statement
  */
-function parseVariableAssignmentStatement(interpreter, parser) {
+function parseVariableAssignmentStatement(compiler, parser) {
     const name = getCurrentToken(parser);
     parser.position++;
 
-    expect(interpreter, parser, "Equal");
+    expect(compiler, parser, "Equal");
     parser.position++;
 
-    const value = parseExpression(interpreter, parser);
+    const value = parseExpression(compiler, parser);
 
     ignore(parser, "NewLine");
 
@@ -541,7 +541,7 @@ function parseVariableAssignmentStatement(interpreter, parser) {
 }
 
 /**  
- * This function behaviour may change with new interpreter versions.
+ * This function behaviour may change with new compiler versions.
  */
 function isVariableAssignment(parser) {
     return isNextTokenType(parser, "Equal")
@@ -549,58 +549,58 @@ function isVariableAssignment(parser) {
 
 /**
  * 
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
  */
-function parseStatement(interpreter, parser) {
-    if (interpreter.isModule) {
+function parseStatement(compiler, parser) {
+    if (compiler.isModule) {
         return undefined;
     }
 
     if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(interpreter, parser);
+        return parseWhenStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Loop")) {
-        return parseLoopStatement(interpreter, parser);
+        return parseLoopStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Try")) {
-        return parseTryStatement(interpreter, parser);
+        return parseTryStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Exit")) {
-        return parseExitStatement(interpreter, parser);
+        return parseExitStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Stop", "Skip")) {
-        return parseStopOrSkipStatement(interpreter, parser);
+        return parseStopOrSkipStatement(compiler, parser);
     }
     else if (isCurrentTokenType(parser, "Identifier") && isVariableAssignment(parser)) {
-        return parseVariableAssignmentStatement(interpreter, parser);
+        return parseVariableAssignmentStatement(compiler, parser);
     }
     else {
         if (isCurrentTokenType(parser, "Else")) {
-            throw error(interpreter, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
+            throw error(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
         } else if (isCurrentTokenType(parser, "Fix")) {
-            throw error(interpreter, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
+            throw error(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
         } else if (isCurrentTokenType(parser, "With")) {
-            throw error(interpreter, "Can not use `with` statement without `loop` statement", getCurrentToken(parser))
+            throw error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser))
         } else {
-            return parseExpressionStatement(interpreter, parser);
+            return parseExpressionStatement(compiler, parser);
         }
     }
 }
 
 /**
  * 
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
  */
-function parseVariableDeclaration(interpreter, parser) {
-    const name = consume(interpreter, parser, "Identifier");
+function parseVariableDeclaration(compiler, parser) {
+    const name = consume(compiler, parser, "Identifier");
 
     const parameters = [];
     while (isCurrentTokenType(parser, "Identifier")) {
-        const name = consume(interpreter, parser, "Identifier");
+        const name = consume(compiler, parser, "Identifier");
 
         let defaultValue = undefined;
         if (isCurrentTokenType(parser, "Colon")) {
@@ -616,9 +616,9 @@ function parseVariableDeclaration(interpreter, parser) {
         }
     }
 
-    consume(interpreter, parser, "Tilde");
+    consume(compiler, parser, "Tilde");
 
-    const value = parseExpression(interpreter, parser);
+    const value = parseExpression(compiler, parser);
     ignore(parser, "NewLine");
 
     return { type: "Declaration", name, parameters, value }
@@ -626,7 +626,7 @@ function parseVariableDeclaration(interpreter, parser) {
 
 /**
  * 
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
  */
@@ -668,22 +668,22 @@ function isVariableDeclaration(parser) {
 
 /**
  * @todo
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
  */
-function parseImportDeclaration(interpreter, parser) {
-    if (!interpreter.moduleMode) {
-        error(interpreter, "You cannot import or export modules in this environment", getCurrentToken(parser));
+function parseImportDeclaration(compiler, parser) {
+    if (!compiler.moduleMode) {
+        error(compiler, "You cannot import or export modules in this environment", getCurrentToken(parser));
     }
 
-    const importKeyword = consume(interpreter, parser, "Import");
+    const importKeyword = consume(compiler, parser, "Import");
 
     let path = ""
     while (!isCurrentTokenType(parser, "NewLine", "EndOfFile")) {
-        path += consume(interpreter, parser, "Identifier").name + "/";
+        path += consume(compiler, parser, "Identifier").name + "/";
 
-        expect(interpreter, parser, "Slash", "NewLine", "EndOfFile");
+        expect(compiler, parser, "Slash", "NewLine", "EndOfFile");
         ignore(parser, "Slash");
     }
 
@@ -692,40 +692,40 @@ function parseImportDeclaration(interpreter, parser) {
 
 /**
  * @todo
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
  */
-function parseExportDeclaration(interpreter, parser) {
-    if (!interpreter.moduleMode) {
-        error(interpreter, "You cannot import or export modules in this environment", getCurrentToken(parser));
+function parseExportDeclaration(compiler, parser) {
+    if (!compiler.moduleMode) {
+        error(compiler, "You cannot import or export modules in this environment", getCurrentToken(parser));
     }
-    const exportKeyword = consume(interpreter, parser, "Export");
+    const exportKeyword = consume(compiler, parser, "Export");
 
-    const variable = parseVariableDeclaration(interpreter, parser);
+    const variable = parseVariableDeclaration(compiler, parser);
 
     return { type: "ExportDeclaration", exportKeyword, variable }
 }
 
 /**
  * 
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
  */
-function parseDeclaration(interpreter, parser) {
+function parseDeclaration(compiler, parser) {
     try {
         if (isCurrentTokenType(parser, "Identifier") && isVariableDeclaration(parser)) {
-            parseVariableDeclaration(interpreter, parser);
+            parseVariableDeclaration(compiler, parser);
 
             // These will be implemented in the future
             // } else if (isCurrentTokenType(parser, "Import")) {
-            //     parseImportDeclaration(interpreter, parser);
+            //     parseImportDeclaration(compiler, parser);
             // } else if (isCurrentTokenType(parser, "Export")) {
-            //     parseExportDeclaration(interpreter, parser);
+            //     parseExportDeclaration(compiler, parser);
 
         } else {
-            return parseStatement(interpreter, parser);
+            return parseStatement(compiler, parser);
         }
     } catch (error) {
         // Synchronise only if it is a ParserError
@@ -742,15 +742,15 @@ function parseDeclaration(interpreter, parser) {
 
 /**
  * Parses the tokens inside `parser` and returns the abstract syntax tree.
- * @param {Interpreter} interpreter Interpreter state
+ * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {AbstractSyntaxTree}
  */
-export function parse(interpreter, parser) {
+export function parse(compiler, parser) {
     const statements = [];
 
     while (!isCurrentTokenType(parser, "EndOfFile")) {
-        const declaration = parseDeclaration(interpreter, parser);
+        const declaration = parseDeclaration(compiler, parser);
 
         if (declaration !== undefined) {
             statements.push(declaration);
@@ -758,7 +758,7 @@ export function parse(interpreter, parser) {
     }
 
     return {
-        type: interpreter.isModule ? "Module" : "Program",
+        type: compiler.isModule ? "Module" : "Program",
         imports: parser.imports,
         exports: parser.exports,
         statements
