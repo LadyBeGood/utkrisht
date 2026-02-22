@@ -1,7 +1,7 @@
 
 // Local imports
 import "./utilities/types.js"
-import { compileTimeError } from "./utilities/logger.js";
+import { error } from "./utilities/logger.js";
 
 /**
  * Creates a lexer object
@@ -78,7 +78,7 @@ function isAlphaNumeric(character) {
  * - Single line string: Easy to lex, no indentation laws are applied
  * - Multiline string: Requires proper indentation and hence makes it more complex to lex.
  * 
- * Compile time errors are logged when:
+ * Compile time errors are produced when:
  * - String does not have a closing double quote
  * - Single line string contains a line break
  * - Multiline string is not properly indented relative to opening quote
@@ -111,12 +111,12 @@ function lexString(compiler, lexer) {
     if (isSingleLine) {
         while (!isCurrentCharacter(lexer, '"')) {
             if (isAtEnd(lexer)) {
-                compileTimeError(compiler, "Unterminated string", stringStartLine);
+                error(compiler, "Unterminated string", stringStartLine);
                 return undefined;
             }
 
             if (lexer.source[lexer.position] === "\n") {
-                compileTimeError(compiler, "Single line strings cannot contain a new line.", stringStartLine);
+                error(compiler, "Single line strings cannot contain a new line.", stringStartLine);
                 return undefined;
             }
 
@@ -149,7 +149,7 @@ function lexString(compiler, lexer) {
 
         while (true) {
             if (isAtEnd(lexer)) {
-                compileTimeError(compiler, "Unterminated multiline string", stringStartLine);
+                error(compiler, "Unterminated multiline string", stringStartLine);
                 return undefined;
             }
 
@@ -164,7 +164,7 @@ function lexString(compiler, lexer) {
                 // Ensure the closing quote is indented correctly (matching parent)
                 const closingQuoteOffset = closingCandidate - lexer.position;
                 if (closingQuoteOffset !== requiredClosingQuoteOffset) {
-                    compileTimeError(compiler, "Closing quote indentation must match the block level.", lexer.line);
+                    error(compiler, "Closing quote indentation must match the block level.", lexer.line);
                     return undefined;
                 }
                 // Move past the quote
@@ -179,7 +179,7 @@ function lexString(compiler, lexer) {
             }
 
             if (spaceCount < requiredContentOffset) {
-                compileTimeError(compiler, `Insufficient indentation for multiline string. Expected ${requiredContentOffset} spaces.`, lexer.line);
+                error(compiler, `Insufficient indentation for multiline string. Expected ${requiredContentOffset} spaces.`, lexer.line);
                 return undefined;
             }
 
@@ -188,7 +188,7 @@ function lexString(compiler, lexer) {
             const lineStart = lexer.position;
             while (!isAtEnd(lexer) && lexer.source[lexer.position] !== "\n") {
                 if (lexer.source[lexer.position] === '"') {
-                    compileTimeError(compiler, "Closing quote must be on its own line for multiline strings.", lexer.line);
+                    error(compiler, "Closing quote must be on its own line for multiline strings.", lexer.line);
                     return undefined;
                 }
                 lexer.position++;
@@ -300,7 +300,7 @@ function lexNewLine(compiler, lexer) {
     if (isCurrentCharacter(lexer, "\r")) {
         lexer.position++;
         if (!isCurrentCharacter(lexer, "\n")) {
-            compileTimeError(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+            error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
         }
         return undefined;
     }
@@ -329,7 +329,7 @@ function lexNewLine(compiler, lexer) {
 
     // Error if indentation level is not a multiple of `indentWidth`
     if (!Number.isInteger(indentLevel)) {
-        compileTimeError(compiler, "Invalid indentation level. Please indent your code consistently with " + lexer.indentWidth + " spaces.", lexer.line);
+        error(compiler, "Invalid indentation level. Please indent your code consistently with " + lexer.indentWidth + " spaces.", lexer.line);
         return undefined;
     }
 
@@ -341,7 +341,7 @@ function lexNewLine(compiler, lexer) {
     // Case 1: Increased indentation
     if (indentLevel > lexer.nestingDepth) {
         if (indentLevel > lexer.nestingDepth + 1) {
-            compileTimeError(compiler, "Cannot indent multiple levels at once.", lexer.line);
+            error(compiler, "Cannot indent multiple levels at once.", lexer.line);
             return undefined;
         }
 
@@ -398,7 +398,7 @@ function lexComma(compiler, lexer) {
         if (isCurrentCharacter(lexer, "\r")) {
             lexer.position++;
             if (!isCurrentCharacter(lexer, "\n")) {
-                compileTimeError(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
             }
         }
 
@@ -440,7 +440,7 @@ function lexOpenBracket(compiler, lexer, type, character) {
         if (isCurrentCharacter(lexer, "\r")) {
             lexer.position++;
             if (!isCurrentCharacter(lexer, "\n")) {
-                compileTimeError(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
             }
         }
 
@@ -553,14 +553,14 @@ function lexToken(compiler, lexer) {
             if (isCurrentCharacter(lexer, "\n")) {
                 return lexNewLine(compiler, lexer);
             } else {
-                compileTimeError(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
                 lexer.position++
                 return undefined;
             }
         case "\n":
             return lexNewLine(compiler, lexer)
         case "\t":
-            compileTimeError(compiler, "Utkrisht does not support tabs for indentation. Please use spaces.", lexer.line);
+            error(compiler, "Utkrisht does not support tabs for indentation. Please use spaces.", lexer.line);
             lexer.position++
             return undefined;
         case "!":
@@ -591,11 +591,11 @@ function lexToken(compiler, lexer) {
                 return lexIdentifier(lexer);
             }
             else if (isBigAlphabet(character)) {
-                compileTimeError(compiler, "Big Letters are not allowed in identifiers", lexer.line);
+                error(compiler, "Big Letters are not allowed in identifiers", lexer.line);
                 lexer.position++;
                 return undefined;
             }
-            compileTimeError(compiler, "Invalid character `" + character + "`", lexer.line);
+            error(compiler, "Invalid character \"" + character + "\"", lexer.line);
             lexer.position++
 
     }
@@ -622,7 +622,7 @@ function handleBeforeLexing(compiler, lexer) {
                 lexer.position++
                 leadingSpaces = 0;
             } else {
-                compileTimeError(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
                 lexer.position++;
             }
         } else if (isCurrentCharacter(lexer, "#")) {
@@ -639,7 +639,7 @@ function handleBeforeLexing(compiler, lexer) {
     }
 
     if (leadingSpaces !== 0) {
-        compileTimeError(compiler, "Invalid Indentation at the start of the file", lexer.line)
+        error(compiler, "Invalid Indentation at the start of the file", lexer.line)
     }
 }
 

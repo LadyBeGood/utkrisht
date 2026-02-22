@@ -3,48 +3,67 @@
 import "./utilities/types.js"
 import { createLexer, lex } from "./lexer.js";
 import { createParser, parse } from "./parser.js";
-import { createResolver, resolve } from "./resolver.js";
+// import { createResolver, resolve } from "./resolver.js";
 import { createAnalyser, analyse } from "./analyser.js"
-import { createTransformer, transform } from "./transformer.js"
-import { createGenerater, generate } from "./generater.js";
-
+// import { createTransformer, transform } from "./transformer.js"
+// import { createGenerator, generate } from "./generator.js";
+import { EndProgram } from "./utilities/logger.js"
 
 /**
  * Creates an `Compiler` object
- * @returns {Compiler}
+ * @returns {Compiler} Compiler state
  */
-export function createInterpreter(source, logErrors = true) {
+export function createCompiler(source, isErrorTolerant = false) {
     return {
         source,
-        compileTimeErrors: [],
-        runTimeErrors: [],
+        diagnostics: [],
+        isErrorTolerant,
     };
 }
 
 
-
 /**
- * Compiles an utkrisht file and its imports.
+ * Compiles utkrisht code into javascript code.
  * @param {Compiler} compiler Compiler state
  */
 export function compile(compiler) {
+    try {
+        const input = compiler.source;
 
-    /* Lexical Analysis */
-    const lexer = createLexer(source);
-    const tokens = lex(compiler, lexer);
+        /* Lexing */
+        const lexer = createLexer(input);
+        const tokens = lex(compiler, lexer);
 
-    /* Parsing */
-    const parser = createParser(tokens);
-    const statements = parse(compiler, parser, moduleMode);
+        /* Parsing */
+        const parser = createParser(tokens);
+        const statements = parse(compiler, parser);
 
-    /* Resolving */
-    const resolver = createResolver(statements);
-    resolve(resolver);
+        /* Resolving */
+        const resolver = createResolver(statements);
+        resolve(compiler, resolver);
 
-    /* Interpreting */
-    const executor = createExecutor(statements);
-    execute(executor);
+        /* Analysing */
+        const analyser = createAnalyser(statements);
+        analyse(compiler, analyser);
 
+        /* Transforming */
+        const transformer = createTransformer(statements);
+        const javascriptStatements = transform(compiler, transformer);
+
+        /* Generating */
+        const generator = createGenerator(javascriptStatements);
+        const output = generate(compiler, generator);
+
+        return output;
+    } catch (error) {
+        if (error instanceof EndProgram) {
+            // No operations
+            console.log(error)
+        } else {
+            // rethrow it if it is a different error
+            throw error
+        }
+    }
 }
 
 

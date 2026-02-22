@@ -1,0 +1,64 @@
+.left {
+    display: grid;
+    grid-template-rows: 45px 1fr;
+
+    .ribbon {
+        background-color: #161a23;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        padding-inline: 16px;
+
+        .examples {
+            margin-right: auto;
+            align-self: center;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            display: flex;
+            justify-content: space-between;
+
+            select {
+                appearance: none;
+                height: 100%;
+                background-color: #161a23;
+                padding: 10px 35px 10px 10px;
+                background-image: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="%23e3e3e3"/></svg>');
+                background-repeat: no-repeat;
+                background-position: right 10px center;
+                background-size: 20px;
+                cursor: pointer;
+            }
+        }
+
+        .actions {
+            /* background-color: pink; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            cursor: pointer;
+        }
+    }
+
+    #editor {
+        overflow: hidden;
+        height: 100%;
+        font-size: 1.6rem;
+        line-height: 1.5;
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+    }
+
+}
+
+
+.right {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    overflow: scroll;
+
+
+}
+
+
+
+

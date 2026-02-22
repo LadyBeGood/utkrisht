@@ -1,56 +1,79 @@
 import "./types.js";
 
+/**
+ * Browser Javascript does not have any function equivalent to nodejs' `process.exit()`.
+ * Hence we try to mimic that behaviour by throwing an object of this class and catching it.
+ */
+export class EndProgram {
+    constructor(code = 0) {
+        this.code = code // This code might be helpful in the future
+    }
+}
+
+
 export function styledLog(type, message, line) {
     const red = "\x1b[31m";
     const reset = "\x1b[0m";
 
     switch (type) {
         case "Error":
-            console.error("Error: " + data)
+            console.error("Error: " + message)
             break;
         case "Warning":
-            console.warn("Warning: " + data)
+            console.warn("Warning: " + message)
             break;
         case "Information":
-            console.info("Information: " + data)
+            console.info("Information: " + message)
             break;
         default:
             throw new Error("Unknown error type");
     }
 
-    throw new End();
+    throw new EndProgram()
 }
 
 /**
- * Reports errors to the console.
- * @param {Compiler} interpreter Compiler state
+ * Reports errors to the console or stores it inside `compiler.diagnostics`
+ * @param {Compiler} compiler Compiler state
  * @param {string} message The error message.
  * @param {number} line Error location.
  * @returns {void}
  */
-export function compileTimeError(interpreter, message, line) {
-    if (interpreter.emitError) {
+export function error(compiler, message, line) {
+    compiler.diagnostics.push({ type: "Error", line, message })
+
+    if (!compiler.isErrorTolerant) {
         styledLog("Error", message, line)
-    } else {
-        interpreter.errors.push({ line, message })
     }
 }
 
 /**
- * 
- * @param {Compiler} interpreter Compiler state
- * @param {RuntimeError} error 
+ * Reports warnings to the console or stores it inside `compiler.diagnostics`
+ * @param {Compiler} compiler Compiler state
+ * @param {string} message The error message.
+ * @param {number} line Error location.
+ * @returns {void}
  */
-export function runTimeError(interpreter, error) {
-    const line = error.token.line;
-    const message = error.message;
+export function warn(compiler, message, line) {
+    compiler.diagnostics.push({ type: "Warning", line, message })
 
-    if (interpreter.emitError) {
-        styledLog("Error", message, line)
-    } else {
-        interpreter.errors.push({ line, message })
+    if (!compiler.isErrorTolerant) {
+        styledLog("Warn", message, line)
     }
 }
 
+/**
+ * Reports information to the console or stores it inside `compiler.diagnostics`
+ * @param {Compiler} compiler Compiler state
+ * @param {string} message The error message.
+ * @param {number} line Error location.
+ * @returns {void}
+ */
+export function info(compiler, message, line) {
+    compiler.diagnostics.push({ type: "Information", line, message })
 
+    if (!compiler.isErrorTolerant) {
+        styledLog("Information", message, line)
+    }
+}
 

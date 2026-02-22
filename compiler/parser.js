@@ -1,5 +1,7 @@
+
+// Local imports
 import "./utilities/types.js"
-import * as logger from "./utilities/logger.js";
+import { error } from "./utilities/logger.js";  
 
 /**
  * Creates the state of parser
@@ -10,34 +12,22 @@ export function createParser(tokens) {
     return {
         tokens,
         position: 0,
-        imports: [],
-        exports: [],
-        modules: []
     };
 }
 
 /**
  * Used to synchronise the parser
  */
-class ParseError extends Error {
-    constructor(message, token) {
+class ParserError extends Error {
+    constructor(compiler, message, token) {
         super(message);
         this.token = token;
-        this.name = "ParseError";
+        this.name = "ParserError";
+
+        error(compiler, message, token.line)
     }
 }
 
-/**
- * Creates and returns a ParseError which will be used for parser synchronisation.
- * @param {Compiler} compiler Compiler State
- * @param {string} message The error message 
- * @param {Token} token 
- * @returns {ParseError}
- */
-function error(compiler, message, token) {
-    logger.compileTimeError(compiler, message, token.line)
-    return new ParseError(message, token)
-}
 
 /**
  * Returns the token at current position of parser
@@ -148,7 +138,7 @@ function expect(compiler, parser, ...types) {
             : "got " + getCurrentToken(parser).type
         ;
 
-    throw error(compiler, "Expected " + expected + ", but " + found, getCurrentToken(parser))
+    throw new ParserError(compiler, "Expected " + expected + ", but " + found, getCurrentToken(parser))
 }
 
 /**
@@ -547,82 +537,6 @@ function isVariableAssignment(parser) {
     return isNextTokenType(parser, "Equal")
 }
 
-/**
- * 
- * @param {Compiler} compiler Compiler state
- * @param {Parser} parser Parser state
- * @returns {Statement}  statement
- */
-function parseStatement(compiler, parser) {
-    if (compiler.isModule) {
-        return undefined;
-    }
-
-    if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Loop")) {
-        return parseLoopStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Try")) {
-        return parseTryStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Exit")) {
-        return parseExitStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Stop", "Skip")) {
-        return parseStopOrSkipStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Identifier") && isVariableAssignment(parser)) {
-        return parseVariableAssignmentStatement(compiler, parser);
-    }
-    else {
-        if (isCurrentTokenType(parser, "Else")) {
-            throw error(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
-        } else if (isCurrentTokenType(parser, "Fix")) {
-            throw error(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
-        } else if (isCurrentTokenType(parser, "With")) {
-            throw error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser))
-        } else {
-            return parseExpressionStatement(compiler, parser);
-        }
-    }
-}
-
-/**
- * 
- * @param {Compiler} compiler Compiler state
- * @param {Parser} parser Parser state
- * @returns {Statement}  statement
- */
-function parseVariableDeclaration(compiler, parser) {
-    const name = consume(compiler, parser, "Identifier");
-
-    const parameters = [];
-    while (isCurrentTokenType(parser, "Identifier")) {
-        const name = consume(compiler, parser, "Identifier");
-
-        let defaultValue = undefined;
-        if (isCurrentTokenType(parser, "Colon")) {
-            parser.position++;
-            defaultValue = parseExpression();
-        }
-
-        parameters.push({ type: "Parameter", name, defaultValue })
-        if (isCurrentTokenType(parser, "Comma")) {
-            parser.position++;
-        } else {
-            break;
-        }
-    }
-
-    consume(compiler, parser, "Tilde");
-
-    const value = parseExpression(compiler, parser);
-    ignore(parser, "NewLine");
-
-    return { type: "Declaration", name, parameters, value }
-}
 
 /**
  * 
@@ -666,46 +580,82 @@ function isVariableDeclaration(parser) {
     }
 }
 
+
+
 /**
- * @todo
+ * 
  * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
  */
-function parseImportDeclaration(compiler, parser) {
-    if (!compiler.moduleMode) {
-        error(compiler, "You cannot import or export modules in this environment", getCurrentToken(parser));
+function parseVariableDeclaration(compiler, parser) {
+    const name = consume(compiler, parser, "Identifier");
+
+    const parameters = [];
+    while (isCurrentTokenType(parser, "Identifier")) {
+        const name = consume(compiler, parser, "Identifier");
+
+        let defaultValue = undefined;
+        if (isCurrentTokenType(parser, "Colon")) {
+            parser.position++;
+            defaultValue = parseExpression();
+        }
+
+        parameters.push({ type: "Parameter", name, defaultValue })
+        if (isCurrentTokenType(parser, "Comma")) {
+            parser.position++;
+        } else {
+            break;
+        }
     }
 
-    const importKeyword = consume(compiler, parser, "Import");
+    consume(compiler, parser, "Tilde");
 
-    let path = ""
-    while (!isCurrentTokenType(parser, "NewLine", "EndOfFile")) {
-        path += consume(compiler, parser, "Identifier").name + "/";
+    const value = parseExpression(compiler, parser);
+    ignore(parser, "NewLine");
 
-        expect(compiler, parser, "Slash", "NewLine", "EndOfFile");
-        ignore(parser, "Slash");
-    }
-
-    return { type: "ImportDeclaration", importKeyword, path }
+    return { type: "VariableDeclaration", name, parameters, value }
 }
 
 /**
- * @todo
+ * 
  * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
  */
-function parseExportDeclaration(compiler, parser) {
-    if (!compiler.moduleMode) {
-        error(compiler, "You cannot import or export modules in this environment", getCurrentToken(parser));
+function parseStatement(compiler, parser) {
+
+    if (isCurrentTokenType(parser, "When")) {
+        return parseWhenStatement(compiler, parser);
     }
-    const exportKeyword = consume(compiler, parser, "Export");
-
-    const variable = parseVariableDeclaration(compiler, parser);
-
-    return { type: "ExportDeclaration", exportKeyword, variable }
+    else if (isCurrentTokenType(parser, "Loop")) {
+        return parseLoopStatement(compiler, parser);
+    }
+    else if (isCurrentTokenType(parser, "Try")) {
+        return parseTryStatement(compiler, parser);
+    }
+    else if (isCurrentTokenType(parser, "Exit")) {
+        return parseExitStatement(compiler, parser);
+    }
+    else if (isCurrentTokenType(parser, "Stop", "Skip")) {
+        return parseStopOrSkipStatement(compiler, parser);
+    }
+    else if (isCurrentTokenType(parser, "Identifier") && isVariableAssignment(parser)) {
+        return parseVariableAssignmentStatement(compiler, parser);
+    }
+    else {
+        if (isCurrentTokenType(parser, "Else")) {
+            throw new ParserError(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
+        } else if (isCurrentTokenType(parser, "Fix")) {
+            throw new ParserError(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
+        } else if (isCurrentTokenType(parser, "With")) {
+            throw new ParserError(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser))
+        } else {
+            return parseExpressionStatement(compiler, parser);
+        }
+    }
 }
+
 
 /**
  * 
@@ -717,19 +667,12 @@ function parseDeclaration(compiler, parser) {
     try {
         if (isCurrentTokenType(parser, "Identifier") && isVariableDeclaration(parser)) {
             parseVariableDeclaration(compiler, parser);
-
-            // These will be implemented in the future
-            // } else if (isCurrentTokenType(parser, "Import")) {
-            //     parseImportDeclaration(compiler, parser);
-            // } else if (isCurrentTokenType(parser, "Export")) {
-            //     parseExportDeclaration(compiler, parser);
-
         } else {
             return parseStatement(compiler, parser);
         }
     } catch (error) {
         // Synchronise only if it is a ParserError
-        if (error instanceof ParseError) {
+        if (error instanceof ParserError) {
             synchronise(parser);
             return undefined;
         }
@@ -750,20 +693,9 @@ export function parse(compiler, parser) {
     const statements = [];
 
     while (!isCurrentTokenType(parser, "EndOfFile")) {
-        const declaration = parseDeclaration(compiler, parser);
-
-        if (declaration !== undefined) {
-            statements.push(declaration);
-        }
+        statements.push(parseDeclaration(compiler, parser));
     }
 
-    return {
-        type: compiler.isModule ? "Module" : "Program",
-        imports: parser.imports,
-        exports: parser.exports,
-        statements
-    };
+    return statements
 }
-
-
 

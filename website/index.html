@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utkrisht Playground</title>
+    <link rel="icon" href="./assets/icon.png" type="image/png">
+
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#1A1A1A">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/style.css">
+
+    <!-- Scripts -->
+    <script src="./ace/src-min-noconflict/ace.js" defer></script>
+    <script src="./scripts/mode-utkrisht.js" defer></script>
+    <script src="./scripts/script.js" defer type="module"></script>
+
+</head>
+
+<body>
+
+    <div class="left">
+        <div class="ribbon">
+            <div class="examples">
+                <div>
+                    <img src="./assets/folder.svg" height="22px" width="22px" alt="examples" >
+                </div>
+                <select name="examples">
+                    <option value="prime">Prime Finder</option>
+                    <option value="fibonacci">Fibonacci</option>
+                    <option value="Bubble Sort">Bubble Sort</option>
+                    <option value="...">...</option>
+                </select>
+            </div>
+            <div class="actions">
+                <div class="reference">
+                    <img src="./assets/reference.svg" alt="reference" height="22px" width="22px">
+                </div>
+                <div class="debug">
+                    <img src="./assets/tree3.svg" alt="debug" height="22px" width="22px">
+                </div>
+                <div class="play">
+                    <img src="./assets/play4.svg" alt="play" height="22px" width="22px">
+                </div>
+                <div class="more">
+                    <img src="./assets/settings.svg" alt="settings" height="22px" width="22px">
+                </div>
+            </div>
+        </div>
+
+        <!-- Ace Editor -->
+        <div id="editor"></div>
+    </div>
+
+    <div class="right">
+        <div class="console">Console</div>
+        <div class="reference">Reference</div>
+    </div>
+</body>
+
+</html>
