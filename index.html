@@ -11,11 +11,10 @@
     <meta name="theme-color" content="#1A1A1A">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="./website/css/reset.css">
-    <link rel="stylesheet" href="./website/css/style.css">
+    <link rel="stylesheet" href="./website/styles/reset.css">
+    <link rel="stylesheet" href="./website/styles/style.css">
 
     <!-- Scripts -->
-    <!-- <script src="./website/ace/src-min-noconflict/ace.js" defer></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.js"></script>
     <script src="./website/scripts/mode-utkrisht.js" defer></script>
     <script src="./website/scripts/script.js" defer type="module"></script>
@@ -30,10 +29,10 @@
                 <!-- <div>
                     <img src="./assets/folder.svg" height="22px" width="22px" alt="examples" >
                 </div> -->
-                <select name="examples">
-                    <option value="prime">Prime Finder</option>
+                <select name="examples" data-examples>
+                    <option value="prime-finder" selected>Prime Finder</option>
                     <option value="fibonacci">Fibonacci</option>
-                    <option value="Bubble Sort">Bubble Sort</option>
+                    <option value="bubble-sort">Bubble Sort</option>
                 </select>
             </div>
             <div class="actions">
@@ -58,14 +57,18 @@
     </div>
 
 
+
+
+    <!-- 
+     - Ace Editor Settings
+     -->
     <div data-settings-overlay class="overlay" style="display: none;"></div>
     <div data-settings-menu class="settings-menu" style="display: none;">
-        <!-- <h2>Settings</h2> -->
         <div class="entries">
 
             <div class="entry">
                 <div>Theme</div>
-                <select name="theme" id="theme">
+                <select data-settings-theme name="theme">
                     <optgroup label="Dark">
                         <option value="ace/theme/ambiance">Ambiance</option>
                         <option value="ace/theme/chaos">Chaos</option>
@@ -120,18 +123,18 @@
             <div class="entry">
                 <div>Keybinding</div>
                 <div class="keybindings">
-                    <button data-keybinding="active" value="null">Ace</button>
-                    <button data-keybinding value="ace/keyboard/vim">Vim</button>
-                    <button data-keybinding value="ace/keyboard/emacs">Emacs</button>
-                    <button data-keybinding value="ace/keyboard/sublime">Sublime</button>
-                    <button data-keybinding value="ace/keyboard/vscode">VSCode</button>
+                    <button data-settings-keybinding="active" value="null">Ace</button>
+                    <button data-settings-keybinding value="ace/keyboard/vim">Vim</button>
+                    <button data-settings-keybinding value="ace/keyboard/emacs">Emacs</button>
+                    <button data-settings-keybinding value="ace/keyboard/sublime">Sublime</button>
+                    <button data-settings-keybinding value="ace/keyboard/vscode">VSCode</button>
                 </div>
             </div>
 
             <div class="entry">
                 <div>Font Size</div>
                 <div>
-                    <input type="number" value="16">
+                    <input data-settings-font-size type="number" value="16" min="1">
                 </div>
             </div>
 
@@ -139,7 +142,7 @@
 
             <div class="entry">
                 <div>Cursor Style</div>
-                <select id="cursor-style">
+                <select data-settings-cursor-style id="cursor-style">
                     <option value="ace">Ace</option>
                     <option value="slim">Slim</option>
                     <option value="smooth">Smooth</option>
@@ -152,28 +155,28 @@
             <div class="entry">
                 <div>Tab Size</div>
                 <div>
-                    <input type="number" value="4">
+                    <input data-settings-tab-size type="number" value="4" min="1">
                 </div>
             </div>
 
             <div class="entry">
                 <div>Insert spaces</div>
                 <div>
-                    <input type="checkbox" checked>
+                    <input data-settings-insert-spaces type="checkbox" checked>
                 </div>
             </div>
 
             <div class="entry">
                 <div>Show Invisible Characters</div>
                 <div>
-                    <input type="checkbox">
+                    <input data-settings-show-invisible-characters type="checkbox">
                 </div>
             </div>
 
             <div class="entry">
                 <div>Keyboard Accessibility Mode</div>
                 <div>
-                    <input type="checkbox">
+                    <input data-settings-keyboard-accessibility-mode type="checkbox">
                 </div>
             </div>
         </div>

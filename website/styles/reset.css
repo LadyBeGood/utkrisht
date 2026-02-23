@@ -60,7 +60,7 @@ html {
     scroll-behavior: smooth;
     line-height: 1.6;
     font-family: Pretendard, sans-serif;
-    overflow-x: scroll;
+    /* overflow-x: scroll; */
     font-weight: 450;
     letter-spacing: 0.4px;
 }

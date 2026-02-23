@@ -53,7 +53,6 @@
     #editor {
         overflow: hidden;
         height: 100%;
-        font-size: 1.6rem;
         line-height: 1.5;
         font-family: "JetBrains Mono", "Fira Code", monospace;
     }
@@ -64,37 +63,10 @@
 .right {
     display: grid;
     grid-template-rows: 1fr 1fr;
-    overflow: scroll;
+    /* overflow: scroll; */
 
 
 }
-
-/* 
-.settings-menu {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    display: grid;
-    z-index: 5;
-    place-items: center;
-    background-color: #282a36;
-    padding: 10px 40px;
-    width: max-content;
-    
-    .entry {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 120px;
-
-        > div {
-            flex-shrink: 0;
-        }
-
-       
-    }
-} */
 
 .overlay {
     position: absolute;
@@ -146,10 +118,8 @@
             width: min-content;
         }
 
-
     }
 
-    /* Standardizing heights for all inputs */
     select,
     input[type="number"],
     button {
@@ -162,6 +132,9 @@
         padding: 0 10px;
     }
 
+    input:invalid {
+        border: 2px solid red;
+    }
 
     input[type="checkbox"] {
         width: 18px;
