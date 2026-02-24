@@ -1,7 +1,7 @@
 
 export const examples = {
     "prime-finder": `
-# Checks if a number is prime or not
+# Checks if a number is prime
 is-prime number ~ {
     when number < 2
         exit wrong
@@ -43,4 +43,9 @@ write fibonacci 8
 
 `
 
+}
+
+
+for (const example of Object.keys(examples)) {
+    examples[example] = examples[example].replaceAll("    ", "\t");
 }

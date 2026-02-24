@@ -10,6 +10,11 @@
     <link rel="manifest" href="./website/manifest.json">
     <meta name="theme-color" content="#1A1A1A">
 
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+
     <!-- Styles -->
     <link rel="stylesheet" href="./website/styles/reset.css">
     <link rel="stylesheet" href="./website/styles/style.css">
@@ -50,6 +55,43 @@
 
         <!-- Ace Editor -->
         <div id="editor"></div>
+
+        <div class="shortcut-buttons">
+            <div class="up">
+                <div>
+                    <img src="./website/assets/tab.svg" alt="tab">
+                </div>
+                <div>
+                    <img src="./website/assets/undo.svg" alt="undo">
+                </div>
+                <div>
+                    <img src="./website/assets/redo.svg" alt="redo">
+                </div>
+                <div>  
+                    <img src="./website/assets/search.svg" alt="search">
+                </div>
+                <div>
+                    <img src="./website/assets/arrow-up.svg" alt="up arrow">
+                </div>
+                <div>
+                    <img src="./website/assets/more2.svg" alt="more">
+                </div>
+            </div>
+            <div class="down">
+                <div>CTRL</div>
+                <div>SHFT</div>
+                <div>ALT</div>
+                <div>
+                    <img src="./website/assets/arrow-left.svg" alt="left arrow">
+                </div>
+                <div>
+                    <img src="./website/assets/arrow-down.svg" alt="down arrow">
+                </div>
+                <div>
+                    <img src="./website/assets/arrow-right.svg" alt="right arrow">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="right">
@@ -214,6 +256,10 @@
         </div>
     </template>
 
+
+
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
 </body>
 
 </html>

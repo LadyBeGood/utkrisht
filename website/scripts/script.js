@@ -13,8 +13,8 @@ function hideSettingsMenu() {
 }
 
 
-function spacesToTab(editor, tabWidth) {
-    const source = editor.getValue();
+function spacesToTab(editor, tabWidth, value) {
+    const source = value ?? editor.getValue();
 
     const updatedSource = source.replace(/^( +)/gm, (match) => {
         const count = match.length;
@@ -28,12 +28,11 @@ function spacesToTab(editor, tabWidth) {
     editor.clearSelection();
 }
 
-function tabToSpaces(editor, tabWidth) {
-    const source = editor.getValue();
+function tabToSpaces(editor, tabWidth, value) {
+    const source = value ?? editor.getValue();
     const spaceString = " ".repeat(tabWidth);
 
     const updatedSource = source.replace(/\t/g, spaceString);
-
 
     editor.setValue(updatedSource, 0);
     editor.clearSelection();
@@ -64,19 +63,19 @@ function setupSettings(editor) {
     })
 
 
-    const newSize = Number(elements.settingsTabSize.value);
-    const oldSize = editor.session.getTabSize();
+    // const newSize = Number(elements.settingsTabSize.value);
+    // const oldSize = editor.session.getTabSize();
 
-    if (elements.settingsInsertSpaces.checked && oldSize !== newSize && newSize > 0) {
-        const source = editor.getValue();
-        const updatedSource = source.replace(/^( +)/gm, (match) => {
-            return " ".repeat(Math.round(match.length / oldSize) * newSize);
-        });
-        editor.setValue(updatedSource, 0);
-        editor.clearSelection();
-    }
+    // if (elements.settingsInsertSpaces.checked && oldSize !== newSize && newSize > 0) {
+    //     const source = editor.getValue();
+    //     const updatedSource = source.replace(/^( +)/gm, (match) => {
+    //         return " ".repeat(Math.round(match.length / oldSize) * newSize);
+    //     });
+    //     editor.setValue(updatedSource, 0);
+    //     editor.clearSelection();
+    // }
 
-    editor.session.setTabSize(newSize);
+    // editor.session.setTabSize(newSize);
     elements.settingsTabSize.addEventListener("change", function () {
         const newSize = Number(this.value);
         console.log(newSize)
@@ -97,12 +96,12 @@ function setupSettings(editor) {
 
 
 
-    editor.session.setUseSoftTabs(elements.settingsInsertSpaces.checked);
-    if (elements.settingsInsertSpaces.checked) {
-        tabToSpaces(editor, Number(elements.settingsTabSize.value))
-    } else {
-        spacesToTab(editor, Number(elements.settingsTabSize.value))
-    }
+    // editor.session.setUseSoftTabs(elements.settingsInsertSpaces.checked);
+    // if (elements.settingsInsertSpaces.checked) {
+    //     tabToSpaces(editor, Number(elements.settingsTabSize.value))
+    // } else {
+    //     spacesToTab(editor, Number(elements.settingsTabSize.value))
+    // }
     elements.settingsInsertSpaces.addEventListener("click", function () {
         editor.session.setUseSoftTabs(elements.settingsInsertSpaces.checked);
         if (elements.settingsInsertSpaces.checked) {
@@ -126,16 +125,30 @@ function setupSettings(editor) {
 
 function setupExampleSelection(editor) {
     function setText() {
-        editor.setValue(examples[elements.examples.value], 0)
-        editor.clearSelection();
+        let source = examples[elements.examples.value];
+        const tabWidth = Number(elements.settingsTabSize.value);
+        const insertSpaces = elements.settingsInsertSpaces.checked;
+
+        // For safety
+        if (tabWidth < 1) {
+            tabWidth = 1;
+        }
+
+        if (insertSpaces) {
+            source = source.replaceAll("\t", " ".repeat(tabWidth));
+        }
+
+        editor.setValue(source);
+        editor.clearSelection()
+        editor.session.setTabSize(tabWidth);
+        editor.session.setUseSoftTabs(insertSpaces);
     }
 
     setText();
     elements.examples.addEventListener("change", setText);
 }
 
-function setupAceEditor() {
-    const editor = ace.edit("editor");
+function setupAceEditor(editor) {
     editor.getSession().setMode("ace/mode/utkrisht");
 
     setupExampleSelection(editor);
@@ -143,9 +156,33 @@ function setupAceEditor() {
 }
 
 
+function setupResponsiveness() {
+    const mobileQuery = window.matchMedia("(max-width: 480px)");
 
+    function handleTabletChange(event) {
+        let fontSize = 16;
+        let tabSize = 4;
+        
+        if (event.matches) {
+            fontSize = 14;
+            tabSize = 2;
+        }
+
+        elements.settingsFontSize.value = fontSize;
+        elements.settingsTabSize.value = tabSize;
+
+        const changeEvent = new Event('change', { bubbles: true });
+        elements.settingsFontSize.dispatchEvent(changeEvent);
+        elements.settingsTabSize.dispatchEvent(changeEvent);
+    }
+
+    mobileQuery.addEventListener("change", handleTabletChange);
+    handleTabletChange(mobileQuery);
+}
 function main() {
-    setupAceEditor()
+    const editor = ace.edit("editor");
+    setupResponsiveness(editor);
+    setupAceEditor(editor);
 }
 
 
