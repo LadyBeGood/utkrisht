@@ -58,22 +58,18 @@
     }
 
     .shortcut-buttons {
-        padding: 8px 0px;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 30;
-        background-color: #161a23;
         display: flex;
+        display: none;
+        padding: 8px 0px;
+        background-color: #161a23;
         flex-direction: column;
         gap: 16px;
-        font-size: 14px;
+        font-size: 12px;
 
         div {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-            
+
             div {
                 /* background: pink; */
                 display: flex;
@@ -145,6 +141,10 @@
         input,
         button {
             padding: 0 10px;
+        }
+
+        select {
+            padding-left: 6px;
         }
 
     }
@@ -249,15 +249,18 @@
 }
 
 @media all and (max-width: 360px) {
-    body {
-        /* font-size: 14px; */
-    }
-
     .settings-menu {
         padding: 20px 12px;
-    }
 
-    .entry {
-        gap: 8px;
+        .entry {
+            gap: 4px;
+        }
+    }
+}
+
+
+@media (pointer: coarse) {
+    .mobile-shortcuts {
+        display: flex;
     }
 }
