@@ -59,12 +59,25 @@
 
     .shortcut-buttons {
         display: flex;
-        display: none;
+        /* display: none; */
         padding: 8px 0px;
         background-color: #161a23;
         flex-direction: column;
         gap: 16px;
         font-size: 12px;
+        position: relative;
+        
+        .shortcut-toggle {
+            position: absolute;
+            /* background-color: red; */
+            right: 0;
+            top: 0;
+            transform: translateY(calc(-100% - 20px));
+            width: min-content;
+            padding: 10px;
+            background-color: #161a23;
+            margin: 10px;
+        }
 
         div {
             display: grid;
@@ -76,6 +89,7 @@
                 place-content: center;
                 text-align: center;
             }
+
         }
     }
 }
@@ -258,9 +272,9 @@
     }
 }
 
-
+/* 
 @media (pointer: coarse) {
     .mobile-shortcuts {
         display: flex;
     }
-}
+} */

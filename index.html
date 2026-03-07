@@ -57,6 +57,9 @@
         <div id="editor"></div>
 
         <div class="shortcut-buttons">
+            <div class="shortcut-toggle">
+                <img src="./website/assets/arrow-down-2.svg" alt="close shortcut buttons">
+            </div>
             <div class="up">
                 <div>
                     <img src="./website/assets/tab.svg" alt="tab" height="22px" width="22px">
@@ -67,7 +70,7 @@
                 <div>
                     <img src="./website/assets/redo.svg" alt="redo" height="22px" width="22px">
                 </div>
-                <div>  
+                <div>
                     <img src="./website/assets/search.svg" alt="search" height="22px" width="22px">
                 </div>
                 <div>
@@ -106,6 +109,7 @@
      -->
     <div data-settings-overlay class="overlay" style="display: none;"></div>
     <div data-settings-menu class="settings-menu" style="display: none;">
+
         <div class="entries">
 
             <div class="entry">
@@ -239,7 +243,7 @@
 
 
 
-    <template>
+    <template data-template-result>
         <div class="console">
             <div>Console</div>
             <div class="content">Some Output</div>
@@ -250,7 +254,7 @@
         </div>
     </template>
 
-    <template>
+    <template data-template-reference>
         <div class="reference">
             Stuff
         </div>
@@ -258,8 +262,8 @@
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script> -->
 </body>
 
 </html>
