@@ -5,6 +5,10 @@
 .left {
     display: grid;
     grid-template-rows: 45px 1fr;
+    position: relative;
+    padding-bottom: 72px;
+    overflow: hidden;
+    transition: padding 0.25s;
 
     .ribbon {
         background-color: #161a23;
@@ -35,13 +39,11 @@
         }
 
         .actions {
-            /* background-color: pink; */
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
 
-            div {
+            button {
                 height: 100%;
                 padding-inline: 12px;
                 display: grid;
@@ -58,38 +60,51 @@
     }
 
     .shortcut-buttons {
-        display: flex;
-        /* display: none; */
-        padding: 8px 0px;
-        background-color: #161a23;
-        flex-direction: column;
-        gap: 16px;
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        align-items: center;
         font-size: 12px;
-        position: relative;
-        
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 72px;
+        transition-duration: 0.25s;
+        transition-property: transform;
+        background-color: #161a23;
+
+
         .shortcut-toggle {
             position: absolute;
-            /* background-color: red; */
             right: 0;
             top: 0;
-            transform: translateY(calc(-100% - 20px));
-            width: min-content;
-            padding: 10px;
+            transform: translate(-8px, calc(-100% - 8px));
+            padding: 8px;
             background-color: #161a23;
-            margin: 10px;
+
+            &:hover {
+                background-color: #ffffff20;
+            }
+
+            img {
+                transition: transform 0.25s;
+            }
         }
 
         div {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            height: 100%;
 
-            div {
-                /* background: pink; */
-                display: flex;
-                place-content: center;
-                text-align: center;
+            button {
+                height: 100%;
+                display: grid;
+                place-items: center;
+
+                &:hover {
+                    background-color: #ffffff20;
+                }
             }
-
         }
     }
 }

@@ -179,10 +179,34 @@ function setupResponsiveness() {
     mobileQuery.addEventListener("change", handleTabletChange);
     handleTabletChange(mobileQuery);
 }
+
+function setupShortcutButtonsToggle() {
+    function handleClick() {
+        console.log(elements.shortcutButtons.dataset.isVisible)
+        if (elements.shortcutButtons.dataset.isVisible === "no") {
+            elements.shortcutButtons.style.transform = "translateY(100%)";
+            elements.shortcutButtons.dataset.isVisible = "yes";
+            elements.left.style.paddingBottom = "0";
+            elements.shortcutButtonsToggler.querySelector("img").style.transform = "rotate(180deg)";
+        } else {
+            elements.shortcutButtons.style.transform = "translateY(0%)"
+            elements.shortcutButtons.dataset.isVisible = "no";
+            elements.left.style.paddingBottom = "72px";
+            elements.shortcutButtonsToggler.querySelector("img").style.transform = "rotate(0deg)";
+        }
+    }
+
+    elements.shortcutButtonsToggler.addEventListener("click", function () {
+        handleClick();
+    })
+    handleClick()
+}
+
 function main() {
     const editor = ace.edit("editor");
     setupResponsiveness(editor);
     setupAceEditor(editor);
+    setupShortcutButtonsToggle();
 }
 
 

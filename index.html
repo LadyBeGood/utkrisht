@@ -28,11 +28,11 @@
 
 <body>
 
-    <div class="left">
+    <div class="left" data-left>
         <div class="ribbon">
             <div class="examples">
                 <!-- <div>
-                    <img src="./assets/folder.svg" height="22px" width="22px" alt="examples" >
+                    <img src="./assets/folder.svg" height="20px" width="20px" alt="examples" >
                 </div> -->
                 <select name="examples" data-examples>
                     <option value="prime-finder" selected>Prime Finder</option>
@@ -41,58 +41,67 @@
                 </select>
             </div>
             <div class="actions">
-                <div class="reference">
-                    <img src="./website/assets/reference.svg" alt="reference" height="22px" width="22px">
-                </div>
-                <div class="play">
-                    <img src="./website/assets/play4.svg" alt="play" height="22px" width="22px">
-                </div>
-                <div data-settings class="settings">
-                    <img src="./website/assets/settings.svg" alt="settings" height="22px" width="22px">
-                </div>
+                <button class="reference">
+                    <img src="./website/assets/reference.svg" alt="reference" height="20px" width="20px">
+                </button>
+
+                <button class="play">
+                    <img src="./website/assets/play4.svg" alt="play" height="20px" width="20px">
+                </button>
+
+                <button data-settings class="settings">
+                    <img src="./website/assets/settings.svg" alt="settings" height="20px" width="20px">
+                </button>
             </div>
         </div>
 
         <!-- Ace Editor -->
         <div id="editor"></div>
 
-        <div class="shortcut-buttons">
-            <div class="shortcut-toggle">
+        <div class="shortcut-buttons" data-shortcut-buttons data-is-visible="no">
+            <button class="shortcut-toggle" data-shortcut-buttons-toggler>
                 <img src="./website/assets/arrow-down-2.svg" alt="close shortcut buttons">
-            </div>
+            </button>
+
             <div class="up">
-                <div>
-                    <img src="./website/assets/tab.svg" alt="tab" height="22px" width="22px">
-                </div>
-                <div>
-                    <img src="./website/assets/undo.svg" alt="undo" height="22px" width="22px">
-                </div>
-                <div>
-                    <img src="./website/assets/redo.svg" alt="redo" height="22px" width="22px">
-                </div>
-                <div>
-                    <img src="./website/assets/search.svg" alt="search" height="22px" width="22px">
-                </div>
-                <div>
-                    <img src="./website/assets/arrow-up.svg" alt="up arrow" height="22px" width="22px">
-                </div>
-                <div>
-                    <img src="./website/assets/more2.svg" alt="more" height="22px" width="22px">
-                </div>
+                <button>
+                    <img src="./website/assets/tab.svg" alt="tab" height="20px" width="20px">
+                </button>
+
+                <button>
+                    <img src="./website/assets/undo.svg" alt="undo" height="20px" width="20px">
+                </button>
+
+                <button>
+                    <img src="./website/assets/redo.svg" alt="redo" height="20px" width="20px">
+                </button>
+
+                <button>
+                    <img src="./website/assets/search.svg" alt="search" height="20px" width="20px">
+                </button>
+
+                <button>
+                    <img src="./website/assets/arrow-up.svg" alt="up arrow" height="20px" width="20px">
+                </button>
+
+                <button>
+                    <img src="./website/assets/more2.svg" alt="more" height="20px" width="20px">
+                </button>
             </div>
+
             <div class="down">
-                <div>CTRL</div>
-                <div>SHFT</div>
-                <div>ALT</div>
-                <div>
-                    <img src="./website/assets/arrow-left.svg" alt="left arrow" height="22px" width="22px">
-                </div>
-                <div>
-                    <img src="./website/assets/arrow-down.svg" alt="down arrow" height="22px" width="22px">
-                </div>
-                <div>
-                    <img src="./website/assets/arrow-right.svg" alt="right arrow" height="22px" width="22px">
-                </div>
+                <button>CTRL</button>
+                <button>SHFT</button>
+                <button>ALT</button>
+                <button>
+                    <img src="./website/assets/arrow-left.svg" alt="left arrow" height="20px" width="20px">
+                </button>
+                <button>
+                    <img src="./website/assets/arrow-down.svg" alt="down arrow" height="20px" width="20px">
+                </button>
+                <button>
+                    <img src="./website/assets/arrow-right.svg" alt="right arrow" height="20px" width="20px">
+                </button>
             </div>
         </div>
     </div>

@@ -1,5 +1,7 @@
 
 export const elements = {
+    left: document.querySelector("[data-left]"),
+
     examples: document.querySelector("[data-examples]"),
 
     settings: document.querySelector("[data-settings]"),
@@ -13,5 +15,8 @@ export const elements = {
     settingsInsertSpaces: document.querySelector("[data-settings-insert-spaces"),
     settingsShowInvisibleCharacters: document.querySelector("[data-settings-show-invisible-characters"),
     settingsKeyboardAccessibilityMode: document.querySelector("[data-settings-keyboard-accessibility-mode"),
+
+    shortcutButtons: document.querySelector("[data-shortcut-buttons]"),
+    shortcutButtonsToggler: document.querySelector("[data-shortcut-buttons-toggler]"),
 }
 
