@@ -194,11 +194,15 @@ function setupShortcutButtonsToggle() {
             elements.left.style.paddingBottom = "72px";
             elements.shortcutButtonsToggler.querySelector("img").style.transform = "rotate(0deg)";
         }
+
+        // Prevents engine from batching this styling
+        setTimeout(() => elements.left.style.setProperty("--transition-duration", "0.25s"));
     }
 
     elements.shortcutButtonsToggler.addEventListener("click", function () {
         handleClick();
     })
+
     handleClick()
 }
 
@@ -207,6 +211,10 @@ function main() {
     setupResponsiveness(editor);
     setupAceEditor(editor);
     setupShortcutButtonsToggle();
+
+
+
+
 }
 
 

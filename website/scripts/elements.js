@@ -1,6 +1,7 @@
 
 export const elements = {
     left: document.querySelector("[data-left]"),
+    right: document.querySelector("[data-right]"),
 
     examples: document.querySelector("[data-examples]"),
 
@@ -18,5 +19,9 @@ export const elements = {
 
     shortcutButtons: document.querySelector("[data-shortcut-buttons]"),
     shortcutButtonsToggler: document.querySelector("[data-shortcut-buttons-toggler]"),
+
+
+    // Templates
+    referenceTemplate: document.querySelector("[data-template-reference]"),
 }
 

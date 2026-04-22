@@ -3,12 +3,14 @@
 }
 
 .left {
+    --transition-duration: 0s;
+
     display: grid;
     grid-template-rows: 45px 1fr;
     position: relative;
     padding-bottom: 72px;
     overflow: hidden;
-    transition: padding 0.25s;
+    transition: padding var(--transition-duration);
 
     .ribbon {
         background-color: #161a23;
@@ -69,10 +71,9 @@
         left: 0;
         right: 0;
         height: 72px;
-        transition-duration: 0.25s;
+        transition-duration: var(--transition-duration);
         transition-property: transform;
         background-color: #161a23;
-
 
         .shortcut-toggle {
             position: absolute;
@@ -87,7 +88,7 @@
             }
 
             img {
-                transition: transform 0.25s;
+                transition: transform var(--transition-duration);
             }
         }
 
@@ -111,12 +112,12 @@
 
 
 .right {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    /* overflow: scroll; */
-
+    overflow-y: auto;
+    height: 100svh;
+    background-color: #161a23;
 
 }
+
 
 .overlay {
     position: absolute;
