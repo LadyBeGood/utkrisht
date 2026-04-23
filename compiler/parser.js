@@ -661,7 +661,7 @@ function parseStatement(compiler, parser) {
  * 
  * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
- * @returns {Statement}  statement
+ * @returns {Statement | undefined}  statement
  */
 function parseDeclaration(compiler, parser) {
     try {
@@ -693,7 +693,11 @@ export function parse(compiler, parser) {
     const statements = [];
 
     while (!isCurrentTokenType(parser, "EndOfFile")) {
-        statements.push(parseDeclaration(compiler, parser));
+        const declaration = parseDeclaration(compiler, parser);
+        
+        if (declaration !== undefined) {
+            statements.push(declaration);
+        }
     }
 
     return statements

@@ -156,6 +156,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 32px;
+        user-select: none;
 
         >div:first-child {
             flex: 1;
