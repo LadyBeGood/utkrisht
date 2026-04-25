@@ -342,7 +342,7 @@ function parseBlock(compiler, parser) {
     const statements = [];
 
     while (!isCurrentTokenType(parser, "EndOfFile") && !isCurrentTokenType(parser, "Dedent")) {
-        statements.push(parseDeclaration(compiler, parser));
+        statements.push(parseStatement(compiler, parser));
     }
 
     expect(compiler, parser, "Dedent");
@@ -617,45 +617,6 @@ function parseVariableDeclaration(compiler, parser) {
     return { type: "VariableDeclaration", name, parameters, value }
 }
 
-/**
- * 
- * @param {Compiler} compiler Compiler state
- * @param {Parser} parser Parser state
- * @returns {Statement}  statement
- */
-function parseStatement(compiler, parser) {
-
-    if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Loop")) {
-        return parseLoopStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Try")) {
-        return parseTryStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Exit")) {
-        return parseExitStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Stop", "Skip")) {
-        return parseStopOrSkipStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Identifier") && isVariableAssignment(parser)) {
-        return parseVariableAssignmentStatement(compiler, parser);
-    }
-    else {
-        if (isCurrentTokenType(parser, "Else")) {
-            throw new ParserError(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
-        } else if (isCurrentTokenType(parser, "Fix")) {
-            throw new ParserError(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
-        } else if (isCurrentTokenType(parser, "With")) {
-            throw new ParserError(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser))
-        } else {
-            return parseExpressionStatement(compiler, parser);
-        }
-    }
-}
-
 
 /**
  * 
@@ -663,12 +624,36 @@ function parseStatement(compiler, parser) {
  * @param {Parser} parser Parser state
  * @returns {Statement | undefined}  statement
  */
-function parseDeclaration(compiler, parser) {
+function parseStatement(compiler, parser) {
     try {
-        if (isCurrentTokenType(parser, "Identifier") && isVariableDeclaration(parser)) {
-            parseVariableDeclaration(compiler, parser);
-        } else {
-            return parseStatement(compiler, parser);
+        if (isCurrentTokenType(parser, "When")) {
+            return parseWhenStatement(compiler, parser);
+        }
+        else if (isCurrentTokenType(parser, "Loop")) {
+            return parseLoopStatement(compiler, parser);
+        }
+        else if (isCurrentTokenType(parser, "Try")) {
+            return parseTryStatement(compiler, parser);
+        }
+        else if (isCurrentTokenType(parser, "Exit")) {
+            return parseExitStatement(compiler, parser);
+        }
+        else if (isCurrentTokenType(parser, "Stop", "Skip")) {
+            return parseStopOrSkipStatement(compiler, parser);
+        }
+        else if (isCurrentTokenType(parser, "Identifier") && isVariableAssignment(parser)) {
+            return parseVariableAssignmentStatement(compiler, parser);
+        }
+        else {
+            if (isCurrentTokenType(parser, "Else")) {
+                throw new ParserError(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser));
+            } else if (isCurrentTokenType(parser, "Fix")) {
+                throw new ParserError(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser));
+            } else if (isCurrentTokenType(parser, "With")) {
+                throw new ParserError(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser))
+            } else {
+                return parseExpressionStatement(compiler, parser);
+            }
         }
     } catch (error) {
         // Synchronise only if it is a ParserError
@@ -693,10 +678,10 @@ export function parse(compiler, parser) {
     const statements = [];
 
     while (!isCurrentTokenType(parser, "EndOfFile")) {
-        const declaration = parseDeclaration(compiler, parser);
+        const statement = parseStatement(compiler, parser);
         
-        if (declaration !== undefined) {
-            statements.push(declaration);
+        if (statement !== undefined) {
+            statements.push(statement);
         }
     }
 
