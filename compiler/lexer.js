@@ -1,4 +1,3 @@
-
 // Local imports
 import "./utilities/types.js"
 import { error } from "./utilities/logger.js";
@@ -38,10 +37,21 @@ export const keywords = new Set([
     "skip",
 ]);
 
+/**
+ * Return true if lexer has gone through all the characters in the source code
+ * @param {Lexer} lexer 
+ * @returns {boolean}
+ */
 function isAtEnd(lexer) {
     return lexer.position >= lexer.source.length;
 }
 
+/**
+ * Checks if the character at the current lexer position matches the expected criteria.
+ * @param {Lexer} lexer Lexer state
+ * @param {string | ((character: string) => boolean)} expected The exact character to match or a predicate function.
+ * @returns {boolean}
+ */
 function isCurrentCharacter(lexer, expected) {
     if (isAtEnd(lexer)) {
         return false;
@@ -54,18 +64,38 @@ function isCurrentCharacter(lexer, expected) {
     }
 }
 
+/**
+ * 
+ * @param {string} character 
+ * @returns {boolean}
+ */
 function isDigit(character) {
     return "0123456789".includes(character);
 }
 
+/**
+ * 
+ * @param {string} character 
+ * @returns {boolean}
+ */
 function isSmallAlphabet(character) {
     return "abcdefghijklmnopqrstuvwxyz".includes(character);
 }
 
+/**
+ * 
+ * @param {string} character 
+ * @returns {boolean}
+ */
 function isBigAlphabet(character) {
     return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(character);
 }
 
+/**
+ * 
+ * @param {string} character 
+ * @returns {boolean}
+ */
 function isAlphaNumeric(character) {
     return isSmallAlphabet(character) || isDigit(character) || character === "-";
 }

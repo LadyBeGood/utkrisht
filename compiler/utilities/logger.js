@@ -11,6 +11,12 @@ export class EndProgram {
 }
 
 
+/**
+ * 
+ * @param {DiagnosticType} type 
+ * @param {string} message 
+ * @param {number} line 
+ */
 export function styledLog(type, message, line) {
     const red = "\x1b[31m";
     const reset = "\x1b[0m";
@@ -58,7 +64,7 @@ export function warn(compiler, message, line) {
     compiler.diagnostics.push({ type: "Warning", line, message })
 
     if (!compiler.isErrorTolerant) {
-        styledLog("Warn", message, line)
+        styledLog("Warning", message, line)
     }
 }
 

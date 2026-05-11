@@ -25,6 +25,9 @@
         },
         {
             "include": "#variable"
+        },
+        {
+            "include": "#meta"
         }
     ],
     "repository": {
@@ -36,7 +39,7 @@
                 },
                 {
                     "name": "constant.language",
-                    "match": "(right|wrong|nan|infinity|-infinity)"
+                    "match": "(?<!-|\\w|\\d)(yes|no|nan|infinity|-infinity)(?!-|\\w|\\d)"
                 }
             ]
         },
@@ -101,8 +104,8 @@
         "number": {
             "patterns": [
                 {
-                    "name": "constant.numeric",
-                    "match": "(?<=^|[^\\w-])-?\\d+(?:\\.\\d+)?(?=$|[^\\w-])"
+                    "name": "constant.numeric.utkrisht",
+                    "match": "(?<![a-zA-Z])\\b\\d+(?:[.-]\\d+)*\\b"
                 }
             ]
         },
@@ -135,6 +138,14 @@
                 {
                     "name": "",
                     "match": "[a-z](?:[a-z0-9-]*[a-z0-9])?(\\.)?[a-z](?:[a-z0-9-]*[a-z0-9])?(?=:)"
+                }
+            ]
+        },
+        "meta": {
+            "patterns": [
+                {
+                    "name": "meta.preprocessor.macro",
+                    "match": "#[a-z](?:[a-z0-9-]*[a-z0-9])?"
                 }
             ]
         }

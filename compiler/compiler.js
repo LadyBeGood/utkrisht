@@ -1,4 +1,3 @@
-
 // Local imports
 import "./utilities/types.js"
 import { createLexer, lex } from "./lexer.js";
@@ -11,6 +10,8 @@ import { EndProgram } from "./utilities/logger.js"
 
 /**
  * Creates an `Compiler` object
+ * @param {string} source 
+ * @param {boolean} [isErrorTolerant=false]
  * @returns {Compiler} Compiler state
  */
 export function createCompiler(source, isErrorTolerant = false) {
