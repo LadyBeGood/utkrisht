@@ -5,6 +5,7 @@ import { error } from "./utilities/logger.js";
 
 /**
  * Creates the state of parser
+ * 
  * @param {Token[]} tokens Tokens produced by the lexer
  * @returns {Parser}
  */
@@ -19,6 +20,11 @@ export function createParser(tokens) {
  * Used to synchronise the parser
  */
 class ParserError extends Error {
+    /**
+     * @param {Compiler} compiler 
+     * @param {string} message 
+     * @param {Token} token 
+     */
     constructor(compiler, message, token) {
         super(message);
         this.token = token;
@@ -31,6 +37,7 @@ class ParserError extends Error {
 
 /**
  * Returns the token at current position of parser
+ * 
  * @param {Parser} parser Parser State
  * @returns {Token}
  */
@@ -40,6 +47,7 @@ function getCurrentToken(parser) {
 
 /**
  * Returns the token immediately after current position of parser
+ * 
  * @param {Parser} parser Parser State
  * @returns {Token}
  */
@@ -49,6 +57,7 @@ function getNextToken(parser) {
 
 /**
  * Returns the token at a given position
+ * 
  * @param {Parser} parser Parser State
  * @param {number} position Position of token
  * @returns {Token}
@@ -59,8 +68,9 @@ function getTokenAtPosition(parser, position) {
 
 /**
  * Checks if type of token at the current position of parser is among given types. 
+ * 
  * @param {Parser} parser Parser state
- * @param  {...string} types Expected types
+ * @param  {...TokenType} types Expected types
  * @returns 
  */
 function isCurrentTokenType(parser, ...types) {
@@ -74,8 +84,9 @@ function isCurrentTokenType(parser, ...types) {
 
 /**
  * Checks if type of token immediately after the current position of parser is among given types. 
+ * 
  * @param {Parser} parser Parser state
- * @param  {...string} types Expected types
+ * @param  {...TokenType} types Expected types
  * @returns 
  */
 function isNextTokenType(parser, ...types) {
@@ -89,8 +100,10 @@ function isNextTokenType(parser, ...types) {
 
 /**
  * Checks if type of token at a given position is among given types. 
+ * 
  * @param {Parser} parser Parser state
- * @param  {...string} types Expected types
+ * @param {number} position 
+ * @param  {...TokenType} types Expected types
  * @returns 
  */
 function isTokenTypeAtPosition(parser, position, ...types) {
@@ -106,7 +119,7 @@ function isTokenTypeAtPosition(parser, position, ...types) {
  * If the type of token at the current position of the parser is among the given types, then increase the position of the parser.
  * Otherwise do nothing.
  * @param {Parser} parser Parser state
- * @param  {...string} types Expected types
+ * @param  {...TokenType} types Expected types
  */
 function ignore(parser, ...types) {
     if (isCurrentTokenType(parser, ...types)) {
@@ -119,7 +132,7 @@ function ignore(parser, ...types) {
  * Otherwise do nothing.
  * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
- * @param  {...string} types Expected types
+ * @param  {...TokenType} types Expected types
  */
 function expect(compiler, parser, ...types) {
     if (isCurrentTokenType(parser, ...types)) {
@@ -146,7 +159,7 @@ function expect(compiler, parser, ...types) {
  * Otherwise throw a `ParserError`.
  * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
- * @param  {...string} type Expected type
+ * @param  {TokenType} type Expected type
  * @returns {Token} Token at the current position of parser
  */
 function consume(compiler, parser, type) {
@@ -188,7 +201,12 @@ function isCurrentTokenTypeExpressionStart(parser) {
     )
 }
 
-
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns 
+ */
 function parseVariableExpression(compiler, parser) {
     const name = getCurrentToken(parser);
     parser.position++;
@@ -335,7 +353,7 @@ function parseExpressionStatement(compiler, parser) {
     return { type: "ExpressionStatement", expression };
 }
 
-function parseBlock(compiler, parser) {
+function parseBlockStatement(compiler, parser) {
     expect(compiler, parser, "Indent");
     parser.position++;
 
@@ -348,7 +366,7 @@ function parseBlock(compiler, parser) {
     expect(compiler, parser, "Dedent");
     parser.position++;
 
-    return { type: "Block", statements }
+    return { type: "BlockStatement", statements }
 }
 
 function parseWhenStatement(compiler, parser) {
@@ -358,7 +376,7 @@ function parseWhenStatement(compiler, parser) {
     parser.position++;
 
     const condition = parseExpression(compiler, parser);
-    const block = parseBlock(compiler, parser);
+    const block = parseBlockStatement(compiler, parser);
 
     whenClauses.push({ type: "WhenClause", keyword: whenKeyword, condition, block });
 
@@ -371,7 +389,7 @@ function parseWhenStatement(compiler, parser) {
             condition = parseExpression(compiler, parser);
         }
 
-        const block = parseBlock(compiler, parser);
+        const block = parseBlockStatement(compiler, parser);
 
         whenClauses.push({ type: "WhenClause", keyword, condition, block });
     }
@@ -449,7 +467,7 @@ function parseLoopStatement(compiler, parser) {
         parser.position++;
     }
 
-    const block = parseBlock(compiler, parser);
+    const block = parseBlockStatement(compiler, parser);
 
     return { type: "LoopStatement", loopKeyword, loopClauses, block }
 }
@@ -458,13 +476,13 @@ function parseTryStatement(compiler, parser) {
     const tryKeyword = getCurrentToken(parser);
     parser.position++;
 
-    const tryBlock = parseBlock(compiler, parser);
+    const tryBlock = parseBlockStatement(compiler, parser);
 
     expect(compiler, parser, "Fix");
     const fixKeyword = getCurrentToken(parser);
     parser.position++;
 
-    const fixBlock = parseBlock(compiler, parser);
+    const fixBlock = parseBlockStatement(compiler, parser);
 
     return { type: "TryStatement", tryKeyword, tryBlock, fixKeyword, fixBlock };
 }
@@ -527,7 +545,7 @@ function parseVariableAssignmentStatement(compiler, parser) {
 
     ignore(parser, "NewLine");
 
-    return { type: "Assignment", name, value };
+    return { type: "VariableAssignmentStatement", name, value };
 }
 
 /**  
@@ -614,7 +632,7 @@ function parseVariableDeclaration(compiler, parser) {
     const value = parseExpression(compiler, parser);
     ignore(parser, "NewLine");
 
-    return { type: "VariableDeclaration", name, parameters, value }
+    return { type: "VariableDeclarationStatement", name, parameters, value }
 }
 
 
@@ -672,7 +690,7 @@ function parseStatement(compiler, parser) {
  * Parses the tokens inside `parser` and returns the abstract syntax tree.
  * @param {Compiler} compiler Compiler state
  * @param {Parser} parser Parser state
- * @returns {AbstractSyntaxTree}
+ * @returns {Statement[]}
  */
 export function parse(compiler, parser) {
     const statements = [];
