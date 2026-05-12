@@ -4,6 +4,7 @@ import { error } from "./utilities/logger.js";
 
 /**
  * Creates a lexer object
+ * 
  * @param {string} source Source code of the Utkrisht file
  * @returns {Lexer}
  */
@@ -38,7 +39,8 @@ export const keywords = new Set([
 ]);
 
 /**
- * Return true if lexer has gone through all the characters in the source code
+ * Return true if lexer has gone through all the characters in the source code.
+ * 
  * @param {Lexer} lexer 
  * @returns {boolean}
  */
@@ -48,6 +50,7 @@ function isAtEnd(lexer) {
 
 /**
  * Checks if the character at the current lexer position matches the expected criteria.
+ * 
  * @param {Lexer} lexer Lexer state
  * @param {string | ((character: string) => boolean)} expected The exact character to match or a predicate function.
  * @returns {boolean}
@@ -65,7 +68,6 @@ function isCurrentCharacter(lexer, expected) {
 }
 
 /**
- * 
  * @param {string} character 
  * @returns {boolean}
  */
@@ -74,7 +76,6 @@ function isDigit(character) {
 }
 
 /**
- * 
  * @param {string} character 
  * @returns {boolean}
  */
@@ -83,7 +84,6 @@ function isSmallAlphabet(character) {
 }
 
 /**
- * 
  * @param {string} character 
  * @returns {boolean}
  */
@@ -92,7 +92,6 @@ function isBigAlphabet(character) {
 }
 
 /**
- * 
  * @param {string} character 
  * @returns {boolean}
  */
@@ -284,10 +283,8 @@ function lexIdentifier(lexer) {
 
     const lexeme = lexer.source.slice(identifierStartPosition, identifierEndPosition);
 
-    let type = "Identifier";
-    if (keywords.has(lexeme)) {
-        type = lexeme[0].toUpperCase() + lexeme.slice(1);
-    }
+    /** @type {TokenType} */
+    const type = keywords.has(lexeme) ? /** @type {TokenType} */ (lexeme[0].toUpperCase() + lexeme.slice(1)) : "Identifier"
 
     return { type, lexeme, line: lexer.line };
 }
@@ -364,9 +361,9 @@ function lexNewLine(compiler, lexer) {
     }
 
 
-    /*
-     * Handle Indentation Logic
-     */
+    /*==========================*/
+    /* Handle Indentation Logic */
+    /*==========================*/
 
     // Case 1: Increased indentation
     if (indentLevel > lexer.nestingDepth) {
@@ -381,12 +378,11 @@ function lexNewLine(compiler, lexer) {
 
     // Case 2: Decreased indentation (possibly multiple levels)
     else if (indentLevel < lexer.nestingDepth) {
-        /**
-         * Please also note, there is no newline produced as a statement terminator for the statement
-         * when it is immediately followed by a decrease in `indentLevel`. The `Dedent` tokens here act as the
-         * statement terminator.
-         */
+        // Please also note, there is no newline produced as a statement terminator for the statement
+        // when it is immediately followed by a decrease in `indentLevel`. The `Dedent` tokens here act as the
+        // statement terminator.
 
+        /** @type {Token[]} */
         const tokens = []
         while (indentLevel < lexer.nestingDepth) {
             lexer.nestingDepth--;
@@ -403,13 +399,22 @@ function lexNewLine(compiler, lexer) {
 
 }
 
+/**
+ * @param {Lexer} lexer 
+ */
 function lexComent(lexer) {
     while (!isCurrentCharacter(lexer, "\n") && !isAtEnd(lexer)) {
         lexer.position++
     }
 }
 
+/**
+ * @param {Compiler} compiler 
+ * @param {Lexer} lexer 
+ * @returns {Token[]}
+ */
 function lexComma(compiler, lexer) {
+    /** @type {Token[]} */
     const tokens = [{ type: "Comma", lexeme: ",", line: lexer.line }];
     lexer.position++;
 
@@ -451,7 +456,15 @@ function lexComma(compiler, lexer) {
     return tokens;
 }
 
+/**
+ * @param {Compiler} compiler 
+ * @param {Lexer} lexer 
+ * @param {TokenType} type 
+ * @param {string} character 
+ * @returns {Token[]}
+ */
 function lexOpenBracket(compiler, lexer, type, character) {
+    /** @type {Token[]} */
     const tokens = [{ type, lexeme: character, line: lexer.line }];
     lexer.position++;
 
@@ -493,7 +506,6 @@ function lexOpenBracket(compiler, lexer, type, character) {
 }
 
 /**
- * 
  * @param {Compiler} compiler Compiler state
  * @param {Lexer} lexer Lexer state
  * @returns {Token | Token[] | undefined}
@@ -634,6 +646,9 @@ function lexToken(compiler, lexer) {
 
 /** 
  * Handle leading whitespaces and comments
+ * 
+ * @param {Compiler} compiler
+ * @param {Lexer} lexer  
  */
 function handleBeforeLexing(compiler, lexer) {
     let leadingSpaces = 0;
@@ -677,6 +692,7 @@ function handleBeforeLexing(compiler, lexer) {
  * Adds the remaining `Dedent` tokens and finally the `EndOfFile` Token.
  * 
  * The `EndOfFile` token is helpful in determining the end when parsing these tokens.
+ * 
  * @param {Compiler} compiler Compiler state
  * @param {Lexer} lexer Lexer state
  * @param {Token[]} tokens 
