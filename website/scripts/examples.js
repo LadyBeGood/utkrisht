@@ -4,13 +4,13 @@ export const examples = {
 # Checks if a number is prime
 is-prime number ~ {
     when number < 2
-        exit wrong
+        return no
 
     loop 2..<number with i
         when remainder number, i = 0
-            exit wrong 
+            return no
 
-    exit right
+    return yes
 }
 
 write is-prime 117
@@ -35,8 +35,8 @@ write list
     "fibonacci": `
 fibonacci number ~ {
     when number < 2
-        exit number
-    exit (fibonacci number - 1) + fibonacci number - 2
+        return number
+    return (fibonacci number - 1) + fibonacci number - 2
 }
 
 write fibonacci 8
