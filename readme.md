@@ -3,7 +3,7 @@
 
 # Utkrisht
 
-[![Build Status](https://img.shields.io/badge/build-passing-22c55e)]()
+![Build Status](https://img.shields.io/badge/build-passing-22c55e)
 ![Repo Size](https://img.shields.io/github/repo-size/LadyBeGood/utkrisht?color=3b82f6)
 ![Last Commit](https://img.shields.io/github/last-commit/LadyBeGood/utkrisht?color=8b5cf6)
 
@@ -115,7 +115,7 @@ write "😼".1            # \ud83d
 
 write length "é"        # 1 (é)
 write length "é"        # 2 (e + "́")
-write "é" = "é"         # wrong (no normalization)
+write "é" = "é"         # no (no normalization)
 ```
 #### Number
 Number is represented in the double-precision 64-bit floating point format (IEEE 754), just like JavaScript's number type.
@@ -146,27 +146,27 @@ infinity - infinity   # nan
 ```
 
 ```
-(123 = 123.0)             # right
+(123 = 123.0)             # yes
 
-(0 = 0)                   # right
-(-0 = -0)                 # right
-(0 = -0)                  # right
+(0 = 0)                   # yes
+(-0 = -0)                 # yes
+(0 = -0)                  # yes
 
-(infinity = infinity)     # right
-(infinity = -infinity)    # wrong
-(-infinity = -infinity)   # right
+(infinity = infinity)     # yes
+(infinity = -infinity)    # no
+(-infinity = -infinity)   # yes
 
-(nan = nan)               # wrong (This is not a typo)
-(nan != nan)              # right (This is also not a typo)
+(nan = nan)               # no (This is not a typo)
+(nan != nan)              # yes (This is also not a typo)
 
-is-finite 123             # right
-is-finite infinity        # wrong
-is-finite -infinity       # wrong
-is-nan nan                # right
+is-finite 123             # yes
+is-finite infinity        # no
+is-finite -infinity       # no
+is-nan nan                # yes
 ```
 
 ```
-write 0.1 + 0.2 = 0.3         # wrong
+write 0.1 + 0.2 = 0.3         # no
 write 0.1 + 0.2               # 0.30000000000000004
 
 write 0.1 * 10                # 1
@@ -177,11 +177,62 @@ write 9999999999999999        # 10000000000000000
 ```
 
 #### Boolean
-Boolean literals are represented by the keywords `right` and `wrong`. There are no *truthy* or *falsy* values.
+Boolean literals are represented by the keywords `yes` and `no`. There are no *truthy* or *falsy* values.
 
 #### Procedure
+Procedures are callable units of code. A procedure body is delimited by `{` ... `}`.
+
+```
+# A procedure literal
+{write "Hello, World"}
+
+# Call it using `()` 
+{write "Hello, World"}()    # Hello, World
+```
+Procedures can accept arbitrary data called *arguments*.
+
+When a procedure is called with arguments, the call is implicit and does not require `()` operator.
+```
+{write "Hi |arguments.1|"} "Happy"          # Hi Happy 
+{write arguments.1 + arguments.2} 2, 3      # 5 
+```
 
 
+
+Storing them inside variables allows for code reuse. 
+```
+show-message ~ {
+    write "Hello, World"
+}
+
+show-message()     # Hello, World
+show-message()     # Hello, World
+show-message()     # Hello, World
+```
+
+It also allows giving names to arguments the procedure accepts. These names are called parameters.
+
+```
+# Here `divide` is the name of procedure
+# and `numerator` and `denominator` are its parameters
+divide numerator, denominator ~ {
+    exit numerator / denominator
+}
+
+divide 10, 5        # 2
+divide 9, 6         # 1.5
+```
+You can also add default values for parameters
+```nim
+# `message` parameter has the default value of "Good morning"
+# The procedure will use this value when no argument is passed to message parameter
+greet name, message: "Good morning" ~ {
+    write "|message|, |name|"
+}
+
+greet "Dmitri"                    # Good morning, Dmitri
+greet "Ilya", "Happy holidays"    # Happy holidays, Ilya
+```
 
 ### Keywords
 
@@ -191,12 +242,12 @@ Utkrisht has **14 keywords**. None of them are reserved and may also be used as 
 
 | Keywords                    | Description              |
 |-----------------------------|--------------------------|
-| `right` `wrong`             | Boolean literals         |
+| `yes` `no`                  | Boolean literals         |
 | `when` `else`               | Conditional branching    |
 | `loop` `with` `stop` `skip` | Looping and loop control |
 | `try` `fix`                 | Error handling           |
 | `exit` `give`               | Exiting from a procedure |
-| `import` `export`           | Module import and export |
+| `import` `export`           | Package import and export |
 
 
 
@@ -215,33 +266,35 @@ In Utkrisht, symbols are grouped by their role into **operators**, **separators*
 Operators are symbols used to perform operations on values.
 
 
-| Operator          | Position | Description    |
-|-------------------|----------|----------------|
-| `:`               | Infix    | Declaration    |
-| `=`               | Infix    | Assignment     |
-| `=`               | Infix    | Equal          |
-| `<`               | Infix    | Less Than      |
-| `>`               | Infix    | More Than      |
-| `+`               | Infix    | Addition       |
-| `-`               | Infix    | Substraction   |
-| `*`               | Infix    | Multiplication |
-| `/`               | Infix    | Division       |
-| `-`               | Prefix   | Unary Minus    |
-| `+`<sup>[1]</sup> | Prefix   | Unary Plus     |
-| `&`               | Infix    | And            |
-| `^`               | Infix    | Or             |
-| `!`               | Prefix   | Not            |
-| `!`               | Postfix  | Call           |
-| `.`               | Postfix  | Accessor       |
-| `/`               | Prefix   | Specifier      |
-| `\`               | Prefix   | Escape         |
-| `$`               | Prefix   | Reactivity     |
-| `@`               | Prefix   | Async          |
-| `#`               | Prefix   | Meta           |
-| `:`               | Infix    | Label          |
-| `..`              | Infix    | Range          |
-| `...`             | Prefix   | Spread         |
-| `___`             | Prefix   | Blank 
+| Operator          | Position | Description     |
+|-------------------|----------|-----------------|
+| `~`               | Infix    | Declaration     |
+| `=`               | Infix    | Assignment      |
+| `=`               | Infix    | Equal           |
+| `<`               | Infix    | Less Than       |
+| `>`               | Infix    | More Than       |
+| `!=`              | Infix    | Not Equal       |
+| `<=`              | Infix    | Less Than Equal |
+| `>=`              | Infix    | More Than Equal |
+| `+`               | Infix    | Addition        |
+| `-`               | Infix    | Substraction    |
+| `*`               | Infix    | Multiplication  |
+| `/`               | Infix    | Division        |
+| `-`               | Prefix   | Unary Minus     |
+| `+`<sup>[1]</sup> | Prefix   | Unary Plus      |
+| `&`               | Infix    | And             |
+| `\|`              | Infix    | Or              |
+| `!`               | Prefix   | Not             |
+| `.`               | Postfix  | Accessor        |
+| `()`              | Postfix  | Call            |
+| `/`               | Prefix   | Specifier       |
+| `\`               | Prefix   | Escape          |
+| `$`               | Prefix   | Reactivity      |
+| `@`               | Prefix   | Async           |
+| `#`               | Prefix   | Meta            |
+| `:`               | Infix    | Label           |
+| `..`              | Infix    | Range           |
+| `...`             | Prefix   | Spread          |
 
 > [1] Unary Plus does not perform any operation. It is simply there for symmetry with unary minus.  
 
@@ -252,7 +305,6 @@ Separators are symbols used to divide syntactic elements without performing an o
 | Separator | Separates                                                    |
 |-----------|--------------------------------------------------------------|
 | `,`       | Arguments, Parameters, Properties                            |
-| `!,`      | Arguments  (use default value for the parameter)             |
 | NewLine   | Arguments, Parameters, Properties (non-terminating contexts) |
 
 
@@ -268,7 +320,7 @@ Delimiters mark the beginning and end of syntactic constructs.
 | `[` ... `]`                  | Structures                                     |
 | `"` ... `"`                  | Strings                                        |
 | `/` ... `/`                  | Regular expressions                            |
-| `\(` ... `)`                 | String Interpolation                           |
+| `\|` ... `\|`                | String Interpolation                           |
 | `#` ... NewLine or EndOfFile | Comments                                       |
 | Indent ... Dedent            | Expressions, Procedures, Arguments, Parameters |
 
@@ -293,7 +345,7 @@ message ~ "hi"
 # structure keys
 [name = "Uki"]
 
-# modules
+# packages
 import components/footer
 ```
 
@@ -308,8 +360,8 @@ A valid identifier:
 Valid Identifiers
 ```
 name
-user-1
-user1
+user-123
+p16
 file-path
 data-set-3
 a1-b2
@@ -318,11 +370,11 @@ a1-b2
 Invalid Identifiers
 ```
 myName       # contains uppercase letter
-1value       # starts with a number
--value       # starts with a hyphen, will be interpreted as negation
+1080p        # starts with a number
+-webkit      # starts with a hyphen, will be interpreted as negation
 value-       # ends with a hyphen
 my--var      # contains consecutive hyphens
-user_name    # contains underscore, will be interpreted as a range
+user_name    # contains underscore
 ```
 
 ### Variables
@@ -378,12 +430,12 @@ loop
     write "hello"
 
 # loop keyword followed by a boolean
-# loops infinitely if right
-loop right
+# loops infinitely if yes
+loop yes
     write "hello"
 
-# doesn't loop if wrong
-loop wrong
+# doesn't loop if no
+loop no
     write "hello"
 
 
@@ -398,7 +450,7 @@ loop 5 # loops 5 times
 loop "uki" # loops 3 times because there are 3 characters in "uki": "u", "k" and "i"
     write "hello"
 
-loop [id = 567, right, "orange"] # loops 3 times
+loop [id = 567, yes, "orange"] # loops 3 times
     write "hello"
 
 
@@ -409,7 +461,7 @@ loop 5 with i
 
     # here 
     # `i` is the iterator
-    # `i` starts a 1 and ends at 5
+    # `i` starts at 1 and ends at 5
 
     # 1
     # 2
@@ -420,7 +472,7 @@ loop 5 with i
 fruits ~ ["apple", "mango", "banana"]
 
 loop fruits with fruit
-    write "I love \(fruit)"
+    write "I love |fruit|"
     
     # I love apple
     # I love mango
@@ -428,7 +480,7 @@ loop fruits with fruit
 
 # multiple iterators can be declared
 loop fruits with [i, fruit]
-    write "\(i). I love \(fruit)"
+    write "|i|. I love |fruit|"
     
     # 1. I love apple
     # 2. I love mango 
@@ -436,7 +488,7 @@ loop fruits with [i, fruit]
 
 
 loop "hi" with [index, character]
-    write "The character at position \(index) is \(character)"
+    write "The character at position |index| is |character|"
 
     # The character at position 1 is h
     # The character at position 2 is i
@@ -469,7 +521,7 @@ loop 3 with i
     loop 3 with j
         when i = 2
             skip i
-        write "\(i) \(j)"
+        write "|i| |j|"
     
     # 1 1
     # 1 2
@@ -481,23 +533,23 @@ loop 3 with i
 
 
 
-### Modules
+### Packages
 
-A module is a reusable unit of code that organizes logic into separate files and folders. 
+A package is a reusable unit of code that organizes logic into separate files and folders. 
 
-A module can *import* other modules and *export* its variables to share them with other module that import them.
+A package can *import* other packages and *export* its variables for other packages.
 
 > [!NOTE]
 > In an Utkrisht project, in order to be imported and compiled
 > - all file and folder names must be valid identifiers.
 > - a folder must not contain a file and folder of same name.
 
-There are two types of modules:
-1. **File Module**: Any Utkrisht file which is not inside a folder module.
-2. **Folder Module**: Any folder having a Utkrisht file of same name as a direct child.
+There are two types of packages:
+1. **File Package**: Any Utkrisht file which is not inside a folder package.
+2. **Folder Package**: Any folder having a Utkrisht file of same name as a direct child.
 
 #### Import
-A module can be imported using the `import` keyword followed by its path:
+A package can be imported using the `import` keyword followed by its path:
 ```
 import utilities 
 import components/footer
@@ -507,9 +559,30 @@ When you write an import like `import abc`, the compiler looks for:
 - a file named `abc.uki`, or
 - a folder named `abc` that contains a file named `abc.uki`.
 
-#### Export
-Use the `export` keyword to make the variable available to other modules that import it:
+Imported variables can be mutated, but not reassigned.
 ```
-export message ~ "hi"
+# colours.uki
+export colour-palette ~ [
+    red = "F00"
+    green = "0F0"
+    blue = "00F"
+]
 ```
 
+```
+import colours
+
+colour-palette.red = "EE4B2B"  # Works fine
+colour-palette = []            # Error
+```
+
+#### Export
+Use the `export` keyword to make the variable available to other packages that import it:
+```
+export message ~ "hi"
+export multiply a, b ~ {
+    exit a * b
+}
+```
+
+## License

@@ -28,6 +28,9 @@
         },
         {
             "include": "#meta"
+        },
+        {
+            "include": "#type"
         }
     ],
     "repository": {
@@ -113,7 +116,7 @@
             "patterns": [
                 {
                     "name": "entity.name.function",
-                    "match": "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= -\\d| +\\d|!| [a-z0-9\"\\[\\(])(?! with)"
+                    "match": "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= -\\d| +\\d|\\(| [a-z0-9A-Z\"\\[\\(])(?! with)"
                 },
                 {
                     "name": "entity.name.function",
@@ -122,10 +125,6 @@
                 {
                     "name": "entity.name.function",
                     "match": "(?:webapp|shape|text|media|tag)"
-                },
-                {
-                    "name": "entity.name.function",
-                    "match": "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?=\\()"
                 }
             ]
         },
@@ -146,6 +145,14 @@
                 {
                     "name": "meta.preprocessor.macro",
                     "match": "#[a-z](?:[a-z0-9-]*[a-z0-9])?"
+                }
+            ]
+        },
+        "type": {
+            "patterns": [
+                {
+                    "name": "entity.name.type",
+                    "match": "[A-Z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?"
                 }
             ]
         }
