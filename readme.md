@@ -13,15 +13,15 @@
 
 
 
-## Overview
+## What is Utkrisht?
 
-**Utkrisht** (uki) is a **source-to-source compiled programming language** under active development that targets **HTML, CSS, and JavaScript**, with the long-term objective of evolving into a **full-featured, unified web framework**.
+Utkrisht (uki) is a source-to-source compiled programming language under active development that targets HTML, CSS, and JavaScript, with the long-term objective of evolving into a full-featured, unified web framework.
 
 
 
 ## Installation
 
-### Using npm (recommended)
+### Using npm
 ```bash
 npm install -g utkrisht
 ```
@@ -32,6 +32,11 @@ bun add -g utkrisht
 ```
 > [!NOTE]
 > You may need to add the global bun's bin folder to `$PATH`.
+
+### Using winget
+```
+winget install utkrisht
+```
 
 ### Example usage
 Compile a input.uki file to output.js file:
@@ -61,7 +66,7 @@ You can document a variable by directly placing comments above it. These comment
 # - `a`: Numerator
 # - `b`: Denominator
 divide a, b ~ {
-    exit a / b
+    return a / b
 }
 ```
 
@@ -99,6 +104,35 @@ Strings can be created using double quotes:
 "
 ```
 
+To get the number of characters in a string, use the count procedure:
+```
+count "hi"          # 2
+count "goodbye"     # 7
+count ""            # 0
+```
+
+To get a character at a specific position, use `.` operator. Indexing starts from **1**:
+```
+"webapp".1        # w
+"webapp".4        # a
+```
+
+Strings are immutable and cannot be changed:
+```
+name ~ "uki"
+name.1 = "n"    # Error
+```
+
+Strings allow you to embed expressions inside them, by wrapping them in `|`...`|`:
+```
+name ~ "Jane"
+age ~ 20
+
+write "My name is |name|, I am |age| years old."  
+      # My name is Jane, I am 20 years old.
+      # Note how age, a number, was automatically converted to string for embedding.
+```
+
 Special characters
 | Character | Description     |
 |-----------|-----------------|
@@ -110,13 +144,16 @@ Special characters
 
 A string is represented internally a sequence of UTF-16 code units, identical to JavaScript strings, and thus share the same quirks.
 ```
-write length "😼"       # 2
-write "😼".1            # \ud83d
+write count "😼"       # 2
+write "😼".1           # \ud83d
 
-write length "é"        # 1 (é)
-write length "é"        # 2 (e + "́")
-write "é" = "é"         # no (no normalization)
+write count "é"        # 1 (é)
+write count "é"        # 2 (e and "́")
+write "é" = "é"        # no (no normalization)
+
+write count "👨‍👩‍👧‍👦"       # 11
 ```
+
 #### Number
 Number is represented in the double-precision 64-bit floating point format (IEEE 754), just like JavaScript's number type.
 ```
@@ -216,14 +253,14 @@ It also allows giving names to arguments the procedure accepts. These names are 
 # Here `divide` is the name of procedure
 # and `numerator` and `denominator` are its parameters
 divide numerator, denominator ~ {
-    exit numerator / denominator
+    return numerator / denominator
 }
 
 divide 10, 5        # 2
 divide 9, 6         # 1.5
 ```
 You can also add default values for parameters
-```nim
+```
 # `message` parameter has the default value of "Good morning"
 # The procedure will use this value when no argument is passed to message parameter
 greet name, message: "Good morning" ~ {
@@ -234,20 +271,65 @@ greet "Dmitri"                    # Good morning, Dmitri
 greet "Ilya", "Happy holidays"    # Happy holidays, Ilya
 ```
 
+#### Structure
+
+A Structure is an ordered collection of key-value pairs and standalone values. 
+
+It can act as both, a dynamic array and a hash map.
+
+```
+# Empty structure
+empty-struct ~ []
+
+# A structure acting as a dynamic array
+fruits ~ ["apple", "banana", "mango"]
+
+# A structure acting as a hashmap
+user ~ [
+    id = 101,
+    name = "Alex",
+    is-admin = yes
+]
+
+# A mixed structure containing both positional values and named properties
+mixed ~ ["first-item", status = active, 42]
+```
+
+You can access values using the . operator. Positional elements are accessed using 1-based index numbers.
+```
+# Accessing named properties
+write user.name       # Alex
+
+# Accessing positional elements
+write fruits.1        # apple
+
+# Modifying elements
+user.is-admin = no
+fruits.2 = "orange"
+```
+
+
+To find out how many elements (both values and properties) exist in a structure, use the count procedure:
+
+```
+user ~ [id = 1, name = "Sam"]
+write count user      # 2
+```
+
 ### Keywords
 
 Keywords are predefined words used by the language to perform internal operations or represent built-in behavior. 
 
 Utkrisht has **14 keywords**. None of them are reserved and may also be used as [identifiers](#identifiers).
 
-| Keywords                    | Description              |
-|-----------------------------|--------------------------|
-| `yes` `no`                  | Boolean literals         |
-| `when` `else`               | Conditional branching    |
-| `loop` `with` `stop` `skip` | Looping and loop control |
-| `try` `fix`                 | Error handling           |
-| `exit` `give`               | Exiting from a procedure |
-| `import` `export`           | Package import and export |
+| Keywords                    | Description                |
+|-----------------------------|----------------------------|
+| `yes` `no`                  | Boolean literals           |
+| `when` `else`               | Conditional branching      |
+| `loop` `with` `exit` `skip` | Looping and loop control   |
+| `try` `fix` `crash`         | Error handling             |
+| `return`                    | Returning from a procedure |
+| `import` `export`           | Package import and export  |
 
 
 
@@ -277,7 +359,7 @@ Operators are symbols used to perform operations on values.
 | `<=`              | Infix    | Less Than Equal |
 | `>=`              | Infix    | More Than Equal |
 | `+`               | Infix    | Addition        |
-| `-`               | Infix    | Substraction    |
+| `-`               | Infix    | Subtraction     |
 | `*`               | Infix    | Multiplication  |
 | `/`               | Infix    | Division        |
 | `-`               | Prefix   | Unary Minus     |
@@ -446,7 +528,7 @@ loop 5 # loops 5 times
 
 
 # loop keyword followed by a string or structure
-# loops `length iterable` times 
+# loops `count iterable` times 
 loop "uki" # loops 3 times because there are 3 characters in "uki": "u", "k" and "i"
     write "hello"
 
@@ -495,10 +577,10 @@ loop "hi" with [index, character]
 
 
 
-# stop statement, stops the loop
+# exit statement, exits the loop
 loop 50 with i
     when i = 4
-        stop
+        exit
     write i
     
     # 1 
@@ -516,7 +598,7 @@ loop 4 with i
     # 4
 
 
-# Iteration variables can be used as labels in nested loops for skip and stop statements
+# Iteration variables can be used as labels in nested loops for skip and exit statements
 loop 3 with i
     loop 3 with j
         when i = 2
@@ -531,7 +613,24 @@ loop 3 with i
     # 3 3
 ```
 
+### Error Handling
+Utkrisht uses explicit try, fix, and crash blocks to manage runtime errors. Errors do not silently fail; they must be intercepted or thrown explicitly.
+```
+# Intentional disruption using crash
+divide a, b ~ {
+    when b = 0
+        crash "Division by zero"
+    return a / b
+}
 
+# Catching anomalies using try and fix
+try 
+    result ~ divide 10, 0
+    write result
+fix error
+    write "An error occurred: |error|"
+```
+The fix block exposes an identifier containing the payload passed to the crash statement.
 
 ### Packages
 
@@ -581,8 +680,46 @@ Use the `export` keyword to make the variable available to other packages that i
 ```
 export message ~ "hi"
 export multiply a, b ~ {
-    exit a * b
+    return a * b
 }
 ```
 
+## Frequently Asked Questions
+### Why 1-based indexing?
+Most humans start counting at 1. Utkrisht is designed to be intuitive for general use and mathematical alignment rather than following C-style pointer arithmetic conventions.
+
+### Why use `|` ... `|` for string interpolation instead of `${` ... `}`, `{` ... `}` or `\(` ... `)`?
+It provides a clean, high-visibility delimiter that is rarely used in standard text, reducing the need for complex escape sequences inside strings.
+
+### Why no Truthy or Falsy values?
+Utkrisht, unlike Javascript, prioritizes explicit logic over "magic" coercion to prevent common bugs.
+
+### Why does Utkrisht use `kebab-case` and not `camelCase` or `snake_case`?
+`kebab-case` is highly readable and easy to write, and aligns with CSS/HTML naming conventions.
+
+### Why rename popular keywords like `if`, `break` and `catch`?
+The keywords in Utkrisht were chosen based on visual symmetry and linguistic clarity:
+
+- **Visual symmetry**: `when` and `else` have the same character count (4). 
+    This creates a perfectly aligned vertical "gutter" in your code, making blocks easier for the eyes to scan compared to the uneven `if`, `else` and `else if`. 
+    Similarly, `try` and `fix` share the same 3-letter width.
+
+- **Linguistic clarity**: Traditional keywords like `break` and `continue` are abstract. 
+    Utkrisht uses `exit` and `skip` because they describe exactly what is happening: you "exit" a loop or "skip" an iteration.
+
+## Acknowledgements
+
+### Credits
+- **Robert Nystrom's Crafting Interpreters**: The definitive blueprint for anyone building a language from scratch.
+- **Microsoft's Typescript Compiler**
+
+### Inspirations
+A lot of syntax and semantics of the language were inspired by features in different languages.
+
+
+
+### Resources
+
+
 ## License
+Licensed under AGPL-3.0. See [license.txt](./license.txt).
