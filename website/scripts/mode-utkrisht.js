@@ -63,8 +63,8 @@ ace.define("ace/mode/utkrisht_highlight_rules", ["require", "exports", "module",
         const identifier = "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?";
 
         // 1. Define the keywords explicitly for the primary check
-        const controlKeywords = "try|fix|when|else|loop|with|take|stop|skip|exit|import|export";
-        const constants = "right|wrong|nan|infinity|-infinity";
+        const controlKeywords = "try|fix|when|else|loop|with|return|skip|exit|import|export";
+        const constants = "yes|no|nan|infinity|-infinity";
         const builtins = "webapp|shape|text|media|tag";
 
         this.$rules = {
