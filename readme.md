@@ -21,21 +21,8 @@ Utkrisht (uki) is a source-to-source compiled programming language under active 
 
 ## Installation
 
-### Using npm
 ```bash
 npm install -g utkrisht
-```
-
-### Using bun
-```bash
-bun add -g utkrisht
-```
-> [!NOTE]
-> You may need to add the global bun's bin folder to `$PATH`.
-
-### Using winget
-```
-winget install utkrisht
 ```
 
 ### Example usage
@@ -58,14 +45,28 @@ when 10 > 5
     write "Condition is correct" # This is also a valid comment
 ```
 
-#### Documentation Comments
-You can document a variable by directly placing comments above it. These comments are **directly** copied into the generated JavaScript as JSDoc comments, without any special syntax.
+#### Documentation Comments (Under review)
+Placed directly above declarations to describe variables. They use standard text and Markdown without any special tag syntax.
 
 ```
+# The unique identifier for the active user session.
+session-id = "usr_9x82j1"
+
+
 # Divide 2 numbers
+# 
+# ### Parameters
 # - `a`: Numerator
 # - `b`: Denominator
-divide a, b ~ {
+#
+# ### Returns
+# Result of the division
+#
+# ### Crashes
+# When denominator is `0`
+divide a, b = {
+    when b = 0
+        crash "Division by zero"
     return a / b
 }
 ```
@@ -119,14 +120,14 @@ To get a character at a specific position, use `.` operator. Indexing starts fro
 
 Strings are immutable and cannot be changed:
 ```
-name ~ "uki"
+name = "uki"
 name.1 = "n"    # Error
 ```
 
 Strings allow you to embed expressions inside them, by wrapping them in `|`...`|`:
 ```
-name ~ "Jane"
-age ~ 20
+name = "Jane"
+age = 20
 
 write "My name is |name|, I am |age| years old."  
       # My name is Jane, I am 20 years old.
@@ -238,7 +239,7 @@ When a procedure is called with arguments, the call is implicit and does not req
 
 Storing them inside variables allows for code reuse. 
 ```
-show-message ~ {
+show-message = {
     write "Hello, World"
 }
 
@@ -252,7 +253,7 @@ It also allows giving names to arguments the procedure accepts. These names are 
 ```
 # Here `divide` is the name of procedure
 # and `numerator` and `denominator` are its parameters
-divide numerator, denominator ~ {
+divide numerator, denominator = {
     return numerator / denominator
 }
 
@@ -263,7 +264,7 @@ You can also add default values for parameters
 ```
 # `message` parameter has the default value of "Good morning"
 # The procedure will use this value when no argument is passed to message parameter
-greet name, message: "Good morning" ~ {
+greet name, message: "Good morning" = {
     write "|message|, |name|"
 }
 
@@ -279,20 +280,20 @@ It can act as both, a dynamic array and a hash map.
 
 ```
 # Empty structure
-empty-struct ~ []
+empty-struct = []
 
 # A structure acting as a dynamic array
-fruits ~ ["apple", "banana", "mango"]
+fruits = ["apple", "banana", "mango"]
 
 # A structure acting as a hashmap
-user ~ [
+user = [
     id = 101,
     name = "Alex",
     is-admin = yes
 ]
 
 # A mixed structure containing both positional values and named properties
-mixed ~ ["first-item", status = active, 42]
+mixed = ["first-item", status = active, 42]
 ```
 
 You can access values using the . operator. Positional elements are accessed using 1-based index numbers.
@@ -312,7 +313,7 @@ fruits.2 = "orange"
 To find out how many elements (both values and properties) exist in a structure, use the count procedure:
 
 ```
-user ~ [id = 1, name = "Sam"]
+user = [id = 1, name = "Sam"]
 write count user      # 2
 ```
 
@@ -350,8 +351,8 @@ Operators are symbols used to perform operations on values.
 
 | Operator          | Position | Description     |
 |-------------------|----------|-----------------|
-| `~`               | Infix    | Declaration     |
-| `=`               | Infix    | Assignment      |
+| `=`               | Infix    | Declaration     |
+| `~`               | Infix    | Assignment      |
 | `=`               | Infix    | Equal           |
 | `<`               | Infix    | Less Than       |
 | `>`               | Infix    | More Than       |
@@ -422,7 +423,7 @@ Identifiers are names given to different entities in Utkrisht to uniquely identi
 
 ```
 # variables
-message ~ "hi"
+message = "hi"
 
 # structure keys
 [name = "Uki"]
@@ -464,16 +465,16 @@ Variables are identifiers used to store data. All variables are mutable and can 
 
 
 
-Declare a variable using `~`
+Declare a variable using `=`
 ```
-message ~ "Hello World"
+message = "Hello World"
 ```
-Reassign a value using `=`
+Reassign a value using `~`
 ```
-quantity ~ 34
+quantity = 34
 
-quantity = 65
-quantity = "high" # Data type of the value does not matter
+quantity ~ 65
+quantity ~ "high" # Data type of the value does not matter
 ```
 
 ### Control Flow
@@ -492,7 +493,7 @@ else
 
 
 # Multiline conditional expression
-status ~ 
+status = 
     when age < 13 
         "child"
     else age > 19
@@ -501,10 +502,10 @@ status ~
         "teen"
     
 # Singleline conditional expression
-status ~ when (age < 13) "child" else (age > 19) "adult" else "teen"
+status = when (age < 13) "child" else (age > 19) "adult" else "teen"
 ```
 #### Loops
-Loop is a data type sensitive construct. Therefore the behaviour of the loop depends upon the data type of the data following it.
+Loop is a type sensitive construct. Therefore the behaviour of the loop depends upon the type of the data following it.
 ```
 # loop keyword not followed by any data type
 # loops infinitely
@@ -551,7 +552,7 @@ loop 5 with i
     # 4
     # 5
 
-fruits ~ ["apple", "mango", "banana"]
+fruits = ["apple", "mango", "banana"]
 
 loop fruits with fruit
     write "I love |fruit|"
@@ -617,7 +618,7 @@ loop 3 with i
 Utkrisht uses explicit try, fix, and crash blocks to manage runtime errors. Errors do not silently fail; they must be intercepted or thrown explicitly.
 ```
 # Intentional disruption using crash
-divide a, b ~ {
+divide a, b = {
     when b = 0
         crash "Division by zero"
     return a / b
@@ -625,7 +626,7 @@ divide a, b ~ {
 
 # Catching anomalies using try and fix
 try 
-    result ~ divide 10, 0
+    result = divide 10, 0
     write result
 fix error
     write "An error occurred: |error|"
@@ -660,8 +661,9 @@ When you write an import like `import abc`, the compiler looks for:
 
 Imported variables can be mutated, but not reassigned.
 ```
-# colours.uki
-export colour-palette ~ [
+# in colours.uki file
+
+export colour-palette = [
     red = "F00"
     green = "0F0"
     blue = "00F"
@@ -672,21 +674,21 @@ export colour-palette ~ [
 import colours
 
 colour-palette.red = "EE4B2B"  # Works fine
-colour-palette = []            # Error
+colour-palette ~ []            # Error
 ```
 
 #### Export
 Use the `export` keyword to make the variable available to other packages that import it:
 ```
-export message ~ "hi"
-export multiply a, b ~ {
+export message = "hi"
+export multiply a, b = {
     return a * b
 }
 ```
 
 ## Frequently Asked Questions
 ### Why 1-based indexing?
-Most humans start counting at 1. Utkrisht is designed to be intuitive for general use and mathematical alignment rather than following C-style pointer arithmetic conventions.
+Humans start counting at 1.
 
 ### Why use `|` ... `|` for string interpolation instead of `${` ... `}`, `{` ... `}` or `\(` ... `)`?
 It provides a clean, high-visibility delimiter that is rarely used in standard text, reducing the need for complex escape sequences inside strings.
@@ -695,7 +697,7 @@ It provides a clean, high-visibility delimiter that is rarely used in standard t
 Utkrisht, unlike Javascript, prioritizes explicit logic over "magic" coercion to prevent common bugs.
 
 ### Why does Utkrisht use `kebab-case` and not `camelCase` or `snake_case`?
-`kebab-case` is highly readable and easy to write, and aligns with CSS/HTML naming conventions.
+`kebab-case` is highly readable and easy to write, and aligns with HTML/CSS naming conventions.
 
 ### Why rename popular keywords like `if`, `break` and `catch`?
 The keywords in Utkrisht were chosen based on visual symmetry and linguistic clarity:
@@ -704,8 +706,25 @@ The keywords in Utkrisht were chosen based on visual symmetry and linguistic cla
     This creates a perfectly aligned vertical "gutter" in your code, making blocks easier for the eyes to scan compared to the uneven `if`, `else` and `else if`. 
     Similarly, `try` and `fix` share the same 3-letter width.
 
-- **Linguistic clarity**: Traditional keywords like `break` and `continue` are abstract. 
-    Utkrisht uses `exit` and `skip` because they describe exactly what is happening: you "exit" a loop or "skip" an iteration.
+- **Linguistic clarity**: Traditional keywords like `break`, `continue`, `throw` and `catch` are abstract. 
+    Utkrisht uses `exit`, `skip`, `crash` and `fix` because they describe exactly what is happening: You 
+    - "exit" a loop 
+    - "skip" an iteration
+    - "crash" the program, or
+    - "fix" the error
+
+### Why no `const` (unreassignable variables)?
+As a long-time JavaScript developer who faithfully follows "everything is `const` by default" philosophy, I've found it to be pretty useless in practice. 
+
+I have never, not even once in my life, "accidently" reassigned a variable I wasn't supposed to. 
+On the contrary, nearly every time I code in JS, I mistakenly declare a variable as `const`, realize it needs to change as my logic evolves, and have to back up and rewrite it to `let`.
+
+Utkrisht saves you from this guessing game.
+
+### Why did Utkrisht decide to not support functional or OOP paradigms?
+Both paradigms promise cleaner code but deliver complexity. OOP makes you learn classes, inheritance, interfaces, and design patterns before writing anything meaningful. FP trades that for currying, composition, immutability, and referential transparency, different complexity, not less. 
+
+OOP and FP introduce abstractions that work against Utkrisht's goal of being simple and immediately usable. The language constructs it provides, expressions, closures, structures, comprehensions, are expressive enough that the abstractions OOP and FP offer simply are not needed.
 
 ## Acknowledgements
 
@@ -719,7 +738,9 @@ A lot of syntax and semantics of the language were inspired by features in diffe
 
 
 ### Resources
-
+- [Syntax across all language](https://rigaux.org/language-study/syntax-across-languages.html#FnctnFnctCall)
+- [regex101](https://regex101.com/)
+- 
 
 ## License
 Licensed under AGPL-3.0. See [license.txt](./license.txt).

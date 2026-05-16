@@ -38,7 +38,7 @@
             "patterns": [
                 {
                     "name": "keyword.control",
-                    "match": "(?<!-|\\d|[a-z])(try|fix|when|else|loop|with|take|stop|skip|exit|import|export)(?!-|\\d|[a-z])"
+                    "match": "(?<!-|\\d|[a-z])(try|fix|crash|when|else|loop|with|exit|skip|return|import|export)(?!-|\\d|[a-z])"
                 },
                 {
                     "name": "constant.language",
@@ -77,13 +77,13 @@
                         },
                         {
                             "name": "string.interpolated.utkrisht",
-                            "begin": "\\\\\\(",
+                            "begin": "\\|",
                             "beginCaptures": {
                                 "0": {
                                     "name": "punctuation.definition.template-expression.begin"
                                 }
                             },
-                            "end": "\\)",
+                            "end": "\\|",
                             "endCaptures": {
                                 "0": {
                                     "name": "punctuation.definition.template-expression.end"
@@ -120,7 +120,7 @@
                 },
                 {
                     "name": "entity.name.function",
-                    "match": "(?<=^\\s*)[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]? ~ *(\\{)"
+                    "match": "(?<=^\\s*)[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]? = *(\\{)"
                 },
                 {
                     "name": "entity.name.function",
