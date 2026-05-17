@@ -11,7 +11,50 @@
 
 </div>
 
-
+## Table of contents
+- [What is Utkrisht?](#what-is-utkrisht)
+- [Installation](#installation)
+    - [Example usage](#example-usage)
+- [Reference](#reference)
+    - [Comments](#comments)
+        - [Regular Comments](#regular-comments)
+        - [Documentation Comments (Under review)](#documentation-comments-under-review)
+    - [Keywords](#keywords)
+    - [Symbols](#symbols)
+        - [Operators](#operators)
+        - [Separators](#separators)
+        - [Delimiters](#delimiters)
+        - [Terminators](#terminators)
+    - [Identifiers](#identifiers)
+    - [Data types](#data-types)
+        - [String](#string)
+        - [Number](#number)
+        - [Boolean](#boolean)
+        - [Procedure](#procedure)
+        - [Structure](#structure)
+    - [Variables](#variables)
+    - [Conditionals](#conditionals)
+        - [Conditional statement](#conditional-statement)
+        - [Conditional expression](#conditional-expression)
+        - [Conditional comprehension](#conditional-comprehension)
+    - [Loops](#loops)
+    - [Error Handling](#error-handling)
+    - [Packages](#packages)
+        - [Import](#import)
+        - [Export](#export)
+- [Frequently Asked Questions](#frequently-asked-questions)
+    - [Why 1-based indexing?](#why-1-based-indexing)
+    - [Why use | ... | for string interpolation instead of ${ ... }, { ... } or \( ... )?](#why-use----for-string-interpolation-instead-of-------or---)
+    - [Why no Truthy or Falsy values?](#why-no-truthy-or-falsy-values)
+    - [Why does Utkrisht use kebab-case and not camelCase or snake_case?](#why-does-utkrisht-use-kebab-case-and-not-camelcase-or-snake_case)
+    - [Why rename popular keywords like if, break and catch?](#why-rename-popular-keywords-like-if-break-and-catch)
+    - [Why no const (unreassignable variables)?](#why-no-const-unreassignable-variables)
+    - [Why did Utkrisht decide to not support functional or OOP paradigms?](#why-did-utkrisht-decide-to-not-support-functional-or-oop-paradigms)
+- [Acknowledgements](#acknowledgements)
+    - [Credits](#credits)
+    - [Inspirations](#inspirations)
+    - [Resources](#resources)
+- [License](#license)
 
 ## What is Utkrisht?
 
@@ -33,6 +76,8 @@ uki input.uki output.js
 ```
 
 ## Reference
+
+
 
 ### Comments
 
@@ -71,19 +116,162 @@ divide a, b = {
 }
 ```
 
+### Keywords
+
+Keywords are predefined words used by the language to perform internal operations or represent built-in behavior. 
+
+Utkrisht has **14 keywords**. None of them are reserved and may also be used as [identifiers](#identifiers).
+
+| Keywords                    | Description                |
+|-----------------------------|----------------------------|
+| `yes` `no`                  | Boolean literals           |
+| `when` `else`               | Conditional branching      |
+| `loop` `with` `exit` `skip` | Looping and loop control   |
+| `try` `fix` `crash`         | Error handling             |
+| `return`                    | Returning from a procedure |
+| `import` `export`           | Package import and export  |
+
+
+
+### Symbols
+
+Symbols are non-alphanumeric tokens that have special meaning in the language syntax.  
+
+Symbols are context sensitive.
+
+In Utkrisht, symbols are grouped by their role into **operators**, **separators**, **delimiters** and **terminators**.
+
+
+
+#### Operators
+
+Operators are symbols used to perform operations on values.
+
+
+| Operator          | Position | Description     |
+|-------------------|----------|-----------------|
+| `=`               | Infix    | Declaration     |
+| `~`               | Infix    | Assignment      |
+| `=`               | Infix    | Equal           |
+| `<`               | Infix    | Less Than       |
+| `>`               | Infix    | More Than       |
+| `!=`              | Infix    | Not Equal       |
+| `<=`              | Infix    | Less Than Equal |
+| `>=`              | Infix    | More Than Equal |
+| `+`               | Infix    | Addition        |
+| `-`               | Infix    | Subtraction     |
+| `*`               | Infix    | Multiplication  |
+| `/`               | Infix    | Division        |
+| `-`               | Prefix   | Unary Minus     |
+| `+`<sup>[1]</sup> | Prefix   | Unary Plus      |
+| `&`               | Infix    | And             |
+| `\|`              | Infix    | Or              |
+| `!`               | Prefix   | Not             |
+| `.`               | Postfix  | Accessor        |
+| `()`              | Postfix  | Call            |
+| `/`               | Prefix   | Specifier       |
+| `\`               | Prefix   | Escape          |
+| `$`               | Prefix   | Reactivity      |
+| `@`               | Prefix   | Async           |
+| `#`               | Prefix   | Meta            |
+| `:`               | Infix    | Label           |
+| `..`              | Infix    | Range           |
+| `...`             | Prefix   | Spread          |
+
+> [1] Unary Plus does not perform any operation. It is simply there for symmetry with unary minus.  
+
+#### Separators
+
+Separators are symbols used to divide syntactic elements without performing an operation.
+
+| Separator | Separates                                                    |
+|-----------|--------------------------------------------------------------|
+| `,`       | Arguments, Parameters, Properties                            |
+| NewLine   | Arguments, Parameters, Properties (non-terminating contexts) |
+
+
+
+#### Delimiters
+
+Delimiters mark the beginning and end of syntactic constructs.
+
+| Delimiter                    | Delimits                                       |
+|------------------------------|------------------------------------------------|
+| `(` ... `)`                  | Expression groups                              |
+| `{` ... `}`                  | Procedures                                     |
+| `[` ... `]`                  | Structures                                     |
+| `"` ... `"`                  | Strings                                        |
+| `/` ... `/`                  | Regular expressions                            |
+| `\|` ... `\|`                | String Interpolation                           |
+| `#` ... NewLine or EndOfFile | Comments                                       |
+| Indent ... Dedent            | Expressions, Procedures, Arguments, Parameters |
+
+
+#### Terminators
+Terminators mark the end of a statement or declaration.
+
+| Terminator | Terminates                                  |
+|------------|---------------------------------------------|
+| NewLine    | Statements, Comments (terminating contexts) |
+| EndOfFile  | Statements, Comments                        |
+
+
+### Identifiers
+Identifiers are names given to different entities in Utkrisht to uniquely identify them within the source code. Identifiers can be used in various places:
+
+```
+# variables
+message = "hi"
+
+# structure keys
+[name = "Uki"]
+
+# packages
+import components/footer
+```
+
+A valid identifier:
+
+- contains only lowercase letters (`a–z`), numbers (`0–9`), and `-`
+- starts with a lowercase letter
+- ends with a lowercase letter or number
+- does not contain consecutive hyphens (`--`, `---` etc.)
+
+
+Valid Identifiers
+```
+name
+user-123
+p16
+file-path
+data-set-3
+a1-b2
+```
+
+Invalid Identifiers
+```
+myName       # contains uppercase letter
+1080p        # starts with a number
+-webkit      # starts with a hyphen, will be interpreted as negation
+value-       # ends with a hyphen
+my--var      # contains consecutive hyphens
+user_name    # contains underscore
+```
+
+
 
 ### Data types
 Utkrisht has **5 data types**.
 
-| Data Type     | Passed by | Clonable | iterable | Mutable | Callable | Hashable          |
-|---------------|-----------|----------|----------|---------|----------|-------------------|
-| **String**    | Value     | Yes      | Yes      | No      | No       | Yes               |
-| **Number**    | Value     | Yes      | No       | No      | No       | Yes<sup>[1]</sup> |
-| **Boolean**   | Value     | Yes      | No       | No      | No       | Yes               |
-| **Procedure** | Reference | No       | No       | No      | Yes      | Yes               |
-| **Structure** | Reference | Yes      | Yes      | Yes     | No       | Yes               |
+| Data Type     | Passed by | Clonable | Accessible | Mutable | Callable | Hashable          |
+|---------------|-----------|----------|------------|---------|----------|-------------------|
+| **String**    | Value     | Yes      | Yes        | No      | No       | Yes               |
+| **Number**    | Value     | Yes      | No         | No      | No       | Yes<sup>[1]</sup> |
+| **Boolean**   | Value     | Yes      | No         | No      | No       | Yes               |
+| **Procedure** | Reference | No       | No         | No      | Yes      | Yes               |
+| **Structure** | Reference | Yes      | Yes        | Yes     | No       | Yes               |
 
-> [!NOTE]
+> [!NOTE]  
 > [1] All numbers including `nan` are hashable and can be used as keys. 
 > Structure uses the algorithm [SameValueZero](https://tc39.github.io/ecma262/#sec-samevaluezero) to test keys for equivalnce. 
 > So here `nan` is considered equal to `nan`.
@@ -317,148 +505,6 @@ user = [id = 1, name = "Sam"]
 write count user      # 2
 ```
 
-### Keywords
-
-Keywords are predefined words used by the language to perform internal operations or represent built-in behavior. 
-
-Utkrisht has **14 keywords**. None of them are reserved and may also be used as [identifiers](#identifiers).
-
-| Keywords                    | Description                |
-|-----------------------------|----------------------------|
-| `yes` `no`                  | Boolean literals           |
-| `when` `else`               | Conditional branching      |
-| `loop` `with` `exit` `skip` | Looping and loop control   |
-| `try` `fix` `crash`         | Error handling             |
-| `return`                    | Returning from a procedure |
-| `import` `export`           | Package import and export  |
-
-
-
-### Symbols
-
-Symbols are non-alphanumeric tokens that have special meaning in the language syntax.  
-
-Symbols are context sensitive.
-
-In Utkrisht, symbols are grouped by their role into **operators**, **separators**, **delimiters** and **terminators**.
-
-
-
-#### Operators
-
-Operators are symbols used to perform operations on values.
-
-
-| Operator          | Position | Description     |
-|-------------------|----------|-----------------|
-| `=`               | Infix    | Declaration     |
-| `~`               | Infix    | Assignment      |
-| `=`               | Infix    | Equal           |
-| `<`               | Infix    | Less Than       |
-| `>`               | Infix    | More Than       |
-| `!=`              | Infix    | Not Equal       |
-| `<=`              | Infix    | Less Than Equal |
-| `>=`              | Infix    | More Than Equal |
-| `+`               | Infix    | Addition        |
-| `-`               | Infix    | Subtraction     |
-| `*`               | Infix    | Multiplication  |
-| `/`               | Infix    | Division        |
-| `-`               | Prefix   | Unary Minus     |
-| `+`<sup>[1]</sup> | Prefix   | Unary Plus      |
-| `&`               | Infix    | And             |
-| `\|`              | Infix    | Or              |
-| `!`               | Prefix   | Not             |
-| `.`               | Postfix  | Accessor        |
-| `()`              | Postfix  | Call            |
-| `/`               | Prefix   | Specifier       |
-| `\`               | Prefix   | Escape          |
-| `$`               | Prefix   | Reactivity      |
-| `@`               | Prefix   | Async           |
-| `#`               | Prefix   | Meta            |
-| `:`               | Infix    | Label           |
-| `..`              | Infix    | Range           |
-| `...`             | Prefix   | Spread          |
-
-> [1] Unary Plus does not perform any operation. It is simply there for symmetry with unary minus.  
-
-#### Separators
-
-Separators are symbols used to divide syntactic elements without performing an operation.
-
-| Separator | Separates                                                    |
-|-----------|--------------------------------------------------------------|
-| `,`       | Arguments, Parameters, Properties                            |
-| NewLine   | Arguments, Parameters, Properties (non-terminating contexts) |
-
-
-
-#### Delimiters
-
-Delimiters mark the beginning and end of syntactic constructs.
-
-| Delimiter                    | Delimits                                       |
-|------------------------------|------------------------------------------------|
-| `(` ... `)`                  | Expression groups                              |
-| `{` ... `}`                  | Procedures                                     |
-| `[` ... `]`                  | Structures                                     |
-| `"` ... `"`                  | Strings                                        |
-| `/` ... `/`                  | Regular expressions                            |
-| `\|` ... `\|`                | String Interpolation                           |
-| `#` ... NewLine or EndOfFile | Comments                                       |
-| Indent ... Dedent            | Expressions, Procedures, Arguments, Parameters |
-
-
-#### Terminators
-Terminators mark the end of a statement or declaration.
-
-| Terminator | Terminates                                  |
-|------------|---------------------------------------------|
-| NewLine    | Statements, Comments (terminating contexts) |
-| EndOfFile  | Statements, Comments                        |
-
-
-
-### Identifiers
-Identifiers are names given to different entities in Utkrisht to uniquely identify them within the source code. Identifiers can be used in various places:
-
-```
-# variables
-message = "hi"
-
-# structure keys
-[name = "Uki"]
-
-# packages
-import components/footer
-```
-
-A valid identifier:
-
-- contains only lowercase letters (`a–z`), numbers (`0–9`), and `-`
-- starts with a lowercase letter
-- ends with a lowercase letter or number
-- does not contain consecutive hyphens (`--`, `---` etc.)
-
-
-Valid Identifiers
-```
-name
-user-123
-p16
-file-path
-data-set-3
-a1-b2
-```
-
-Invalid Identifiers
-```
-myName       # contains uppercase letter
-1080p        # starts with a number
--webkit      # starts with a hyphen, will be interpreted as negation
-value-       # ends with a hyphen
-my--var      # contains consecutive hyphens
-user_name    # contains underscore
-```
 
 ### Variables
 Variables are identifiers used to store data. All variables are mutable and can be reassigned.
@@ -476,23 +522,25 @@ quantity = 34
 quantity ~ 65
 quantity ~ "high" # Data type of the value does not matter
 ```
+ 
 
-### Control Flow
-Control flow determines how execution proceeds through a program.  
-
-#### Conditionals
+### Conditionals
 Conditionals control which block will be executed based on a **condition**. The condition must be a boolean value, Utkrisht does not have truthy or falsy values. 
+
+
+#### Conditional statement
 ```
-# Conditional statement
 when age < 13 
     write "You're a child"
 else age > 19
     write "You're an adult"
 else
     write "You're a teen"
+```
 
-
-# Multiline conditional expression
+#### Conditional expression
+Multiline
+```
 status = 
     when age < 13 
         "child"
@@ -500,45 +548,106 @@ status =
         "adult"
     else
         "teen"
-    
-# Singleline conditional expression
+```
+Single line
+```
 status = when (age < 13) "child" else (age > 19) "adult" else "teen"
 ```
-#### Loops
-Loop is a type sensitive construct. Therefore the behaviour of the loop depends upon the type of the data following it.
+
+#### Conditional comprehension
 ```
-# loop keyword not followed by any data type
-# loops infinitely
+user = [
+    id = 123
+    name = "Alex"
+    when age < 13 
+        role = "child"
+        restricted = yes
+    else age > 19
+        role = "adult"
+        restricted = no
+    else
+        role = "teen"
+        restricted = yes
+]
+```
+
+
+### Loops
+Loop is a type sensitive construct. Therefore the behaviour of the loop depends upon the type of the data following it.
+
+Loop keyword not followed by any data type loops infinitely:
+```
 loop
     write "hello"
 
-# loop keyword followed by a boolean
-# loops infinitely if yes
+    # hello
+    # hello
+    # hello
+    # ...
+```
+
+Loop keyword followed by a boolean loops infinitely if `yes`, doesn't loop if `no`:
+```
 loop yes
     write "hello"
+    
+    # hello
+    # hello
+    # hello
+    # ...
 
-# doesn't loop if no
+
 loop no
     write "hello"
+```
 
-
-# loop keyword followed by a number
-# loops that many times
-loop 5 # loops 5 times
+Loop keyword followed by a number loops that many times:
+```
+loop 5
     write "hello"
 
+    # loops 5 times
 
-# loop keyword followed by a string or structure
-# loops `count iterable` times 
-loop "uki" # loops 3 times because there are 3 characters in "uki": "u", "k" and "i"
+    # hello
+    # hello
+    # hello
+    # hello
+    # hello
+```
+
+Loop keyword followed by a string or structure loops `count iterable` times 
+```
+loop "uki"
     write "hello"
 
-loop [id = 567, yes, "orange"] # loops 3 times
+    # loops 3 times 
+    # because there are 3 characters in "uki": 
+    # "u", "k" and "i"
+
+    # hello
+    # hello
+    # hello
+
+
+loop [id = 567, "orange"] 
     write "hello"
 
+    # loops 2 times 
+    # because there are 2 entries inside the structure:
+    # `id = 567` and `"orange"`
 
-# with statement
-# declares a iterator/counter
+    # hello
+    # hello
+```
+
+Loop keyword followed by a procedure (Still under consideration)
+```
+
+```
+
+
+with statement declares a iterator/counter
+```
 loop 5 with i 
     write i
 
