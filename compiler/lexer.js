@@ -21,6 +21,8 @@ export function createLexer(source) {
 /**
  * A collection of reserved keywords used by the Utkrisht.
  * These tokens are restricted from being used as identifiers for now.
+ * 
+ * Words like `yes`, `no`, `infinity`, `nan`, `arguments` etc. are constants and not considered keywords
  */
 export const keywords = new Set([
     "when",
@@ -156,12 +158,7 @@ function lexString(compiler, lexer) {
         lexer.position++;
         const lexeme = lexer.source.slice(stringStartPosition, lexer.position);
 
-        return { 
-            type: "StringLiteral", 
-            lexeme, 
-            literal, 
-            line: stringStartLine 
-        };
+        return { type: "StringLiteral", lexeme, literal, line: stringStartLine };
     }
 
     else { // !isSingleLine
@@ -238,12 +235,7 @@ function lexString(compiler, lexer) {
         const literal = lines.join("\n");
         const lexeme = lexer.source.slice(stringStartPosition, lexer.position);
 
-        return { 
-            type: "StringLiteral", 
-            lexeme, 
-            literal, 
-            line: stringStartLine 
-        };
+        return { type: "StringLiteral", lexeme, literal, line: stringStartLine };
     }
 }
 
@@ -395,11 +387,7 @@ function lexNewLine(compiler, lexer) {
         const tokens = []
         while (indentLevel < lexer.nestingDepth) {
             lexer.nestingDepth--;
-            tokens.push({ 
-                type: "Dedent", 
-                lexeme: "----", 
-                line: lexer.line 
-            });
+            tokens.push({ type: "Dedent", lexeme: "----", line: lexer.line });
         }
         return tokens;
     }
@@ -544,7 +532,20 @@ function lexToken(compiler, lexer) {
             return { type: "RightCurlyBracket", lexeme: character, line: lexer.line };
         case ".":
             lexer.position++;
-            return { type: "Dot", lexeme: character, line: lexer.line };
+
+            if (isCurrentCharacter(lexer, ".")) {
+                lexer.position++;
+
+                if (isCurrentCharacter(lexer, ".")) {
+                    lexer.position++;
+                    return { type: "DotDotDot", lexeme: character, line: lexer.line };
+                }
+                else {
+                    return { type: "DotDot", lexeme: character, line: lexer.line };
+                }
+            } else {
+                return { type: "Dot", lexeme: character, line: lexer.line };
+            }
         case ",":
             return lexComma(compiler, lexer);
         case ":":
@@ -561,10 +562,22 @@ function lexToken(compiler, lexer) {
             return { type: "Equal", lexeme: character, line: lexer.line };
         case "<":
             lexer.position++;
-            return { type: "LessThan", lexeme: character, line: lexer.line };
+
+            if (isCurrentCharacter(lexer, "=")) {
+                lexer.position++;
+                return { type: "LessThanEqual", lexeme: "<=", line: lexer.line }
+            } else {
+                return { type: "LessThan", lexeme: character, line: lexer.line };
+            }
         case ">":
             lexer.position++;
-            return { type: "MoreThan", lexeme: character, line: lexer.line };
+
+            if (isCurrentCharacter(lexer, "=")) {
+                lexer.position++;
+                return { type: "MoreThanEqual", lexeme: ">=", line: lexer.line}
+            } else {
+                return { type: "MoreThan", lexeme: character, line: lexer.line };
+            }
         case "@":
             lexer.position++;
             return { type: "At", lexeme: character, line: lexer.line };
@@ -624,14 +637,6 @@ function lexToken(compiler, lexer) {
             if (isCurrentCharacter(lexer, "=")) {
                 lexer.position++;
                 return { type: "ExclamationMarkEqual", lexeme: "!=", line: lexer.line };
-            }
-            else if (isCurrentCharacter(lexer, "<")) {
-                lexer.position++;
-                return { type: "ExclamationMarkLessThan", lexeme: "!<", line: lexer.line };
-            }
-            else if (isCurrentCharacter(lexer, ">")) {
-                lexer.position++;
-                return { type: "ExclamationMarkMoreThan", lexeme: "!>", line: lexer.line };
             }
             else {
                 return { type: "ExclamationMark", lexeme: character, line: lexer.line };
@@ -712,19 +717,12 @@ function handleBeforeLexing(compiler, lexer) {
 function handleAfterLexing(lexer, tokens) {
     // Add remaining dedents
     while (lexer.nestingDepth > 0) {
-        tokens.push({ 
-            type: "Dedent", 
-            lexeme: "----", 
-            line: lexer.line 
-        });
+        tokens.push({ type: "Dedent", lexeme: "----", line: lexer.line });
         lexer.nestingDepth--;
     }
 
     // Add the last token, i.e. EndOfFile
-    tokens.push({ 
-        type: "EndOfFile", 
-        line: lexer.line 
-    });
+    tokens.push({ type: "EndOfFile", line: lexer.line });
 }
 
 /**
