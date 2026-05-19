@@ -23,19 +23,18 @@ export function createLexer(source) {
  * These tokens are restricted from being used as identifiers for now.
  */
 export const keywords = new Set([
-    "try",
-    "fix",
     "when",
     "else",
     "loop",
     "with",
-    "right",
-    "wrong",
-    // "import", // Not implemented
-    // "export", // Not implemented
     "exit",
-    "stop",
     "skip",
+    "try",
+    "fix",
+    "crash",
+    "import",
+    "export",
+    "return",
 ]);
 
 /**
@@ -157,7 +156,12 @@ function lexString(compiler, lexer) {
         lexer.position++;
         const lexeme = lexer.source.slice(stringStartPosition, lexer.position);
 
-        return { type: "StringLiteral", lexeme, literal, line: stringStartLine };
+        return { 
+            type: "StringLiteral", 
+            lexeme, 
+            literal, 
+            line: stringStartLine 
+        };
     }
 
     else { // !isSingleLine
@@ -234,7 +238,12 @@ function lexString(compiler, lexer) {
         const literal = lines.join("\n");
         const lexeme = lexer.source.slice(stringStartPosition, lexer.position);
 
-        return { type: "StringLiteral", lexeme, literal, line: stringStartLine };
+        return { 
+            type: "StringLiteral", 
+            lexeme, 
+            literal, 
+            line: stringStartLine 
+        };
     }
 }
 
@@ -386,7 +395,11 @@ function lexNewLine(compiler, lexer) {
         const tokens = []
         while (indentLevel < lexer.nestingDepth) {
             lexer.nestingDepth--;
-            tokens.push({ type: "Dedent", lexeme: "----", line: lexer.line });
+            tokens.push({ 
+                type: "Dedent", 
+                lexeme: "----", 
+                line: lexer.line 
+            });
         }
         return tokens;
     }
@@ -693,19 +706,25 @@ function handleBeforeLexing(compiler, lexer) {
  * 
  * The `EndOfFile` token is helpful in determining the end when parsing these tokens.
  * 
- * @param {Compiler} compiler Compiler state
  * @param {Lexer} lexer Lexer state
  * @param {Token[]} tokens 
  */
-function handleAfterLexing(compiler, lexer, tokens) {
+function handleAfterLexing(lexer, tokens) {
     // Add remaining dedents
     while (lexer.nestingDepth > 0) {
-        tokens.push({ type: "Dedent", lexeme: "----", line: lexer.line });
+        tokens.push({ 
+            type: "Dedent", 
+            lexeme: "----", 
+            line: lexer.line 
+        });
         lexer.nestingDepth--;
     }
 
     // Add the last token, i.e. EndOfFile
-    tokens.push({ type: "EndOfFile", line: lexer.line });
+    tokens.push({ 
+        type: "EndOfFile", 
+        line: lexer.line 
+    });
 }
 
 /**
@@ -731,7 +750,7 @@ export function lex(compiler, lexer) {
         }
     }
 
-    handleAfterLexing(compiler, lexer, tokens);
+    handleAfterLexing(lexer, tokens);
 
     return tokens;
 }

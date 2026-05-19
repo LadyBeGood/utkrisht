@@ -1,3 +1,6 @@
 2 + 3 * 4
 
 
+log value, base: 10 = {
+    return (log value) / log base
+}
