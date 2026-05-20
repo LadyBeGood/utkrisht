@@ -11,62 +11,9 @@
 
 </div>
 
-
-- [What is Utkrisht?](#what-is-utkrisht)
-    - [Features](#features)
-    - [Examples](#examples)
-- [Getting Started](#getting-started)
-    - [Installation](#installation)
-    - [IDE Support](#ide-support)
-- [Reference](#reference)
-    - [Comments](#comments)
-        - [Regular Comments](#regular-comments)
-        - [Documentation Comments](#documentation-comments)
-    - [Keywords](#keywords)
-    - [Symbols](#symbols)
-        - [Operators](#operators)
-        - [Separators](#separators)
-        - [Delimiters](#delimiters)
-        - [Terminators](#terminators)
-    - [Identifiers](#identifiers)
-    - [Data types](#data-types)
-        - [String](#string)
-        - [Number](#number)
-        - [Boolean](#boolean)
-        - [Procedure](#procedure)
-        - [Structure](#structure)
-    - [Variables](#variables)
-    - [Conditionals](#conditionals)
-        - [Conditional statement](#conditional-statement)
-        - [Conditional expression](#conditional-expression)
-        - [Conditional comprehension](#conditional-comprehension)
-    - [Loops](#loops)
-    - [Error Handling](#error-handling)
-    - [Packages](#packages)
-        - [Import](#import)
-        - [Export](#export)
-- [Frequently Asked Questions](#frequently-asked-questions)
-    - [Why 1-based indexing?](#why-1-based-indexing)
-    - [Why use | ... | for string interpolation instead of ${ ... }, { ... } or \( ... )?](#why-use----for-string-interpolation-instead-of-------or---)
-    - [Why no Truthy or Falsy values?](#why-no-truthy-or-falsy-values)
-    - [Why does Utkrisht use kebab-case and not camelCase or snake_case?](#why-does-utkrisht-use-kebab-case-and-not-camelcase-or-snake_case)
-    - [Why rename popular keywords like if, break and catch?](#why-rename-popular-keywords-like-if-break-and-catch)
-    - [Why no const (unreassignable variables)?](#why-no-const-unreassignable-variables)
-    - [Why did Utkrisht decide to not support functional or OOP paradigms?](#why-did-utkrisht-decide-to-not-support-functional-or-oop-paradigms)
-- [Acknowledgements](#acknowledgements)
-    - [Credits](#credits)
-    - [Inspirations](#inspirations)
-    - [Resources](#resources)
-- [License](#license)
-
-## What is Utkrisht?
+## Introduction
 
 Utkrisht (uki) is a source-to-source compiled programming language under active development that targets HTML, CSS, and JavaScript, with the long-term objective of evolving into a full-featured, unified web framework.
-
-### Features
-
-
-### Examples
 
 ## Getting Started
 
@@ -804,19 +751,27 @@ export multiply a, b = {
 ```
 
 ## Frequently Asked Questions
-### Why 1-based indexing?
+### Why use 1-based indexing for strings and structures?
 Humans start counting at 1.
 
-### Why use `|` ... `|` for string interpolation instead of `${` ... `}`, `{` ... `}` or `\(` ... `)`?
+### Why are keywords valid identifiers?
+
+### Why use `~` for assignment instead of `=`?
+
+### Why don't procedure calls with arguments require parentheses?
+
+### Why merge arrays and maps into a single Structure type?
+
+### Why use `|` ... `|` for string interpolation?
 It provides a clean, high-visibility delimiter that is rarely used in standard text, reducing the need for complex escape sequences inside strings.
 
-### Why no Truthy or Falsy values?
+### Why are there no truthy or falsy values?
 Utkrisht, unlike Javascript, prioritizes explicit logic over "magic" coercion to prevent common bugs.
 
-### Why does Utkrisht use `kebab-case` and not `camelCase` or `snake_case`?
+### Why use `kebab-case` instead of `camelCase` or `snake_case`?
 `kebab-case` is highly readable and easy to write, and aligns with HTML/CSS naming conventions.
 
-### Why rename popular keywords like `if`, `break` and `catch`?
+### Why use custom keywords like `when`, `exit` and `fix`?
 The keywords in Utkrisht were chosen based on visual symmetry and linguistic clarity:
 
 - **Visual symmetry**: `when` and `else` have the same character count (4). 
@@ -843,21 +798,44 @@ Both paradigms promise cleaner code but deliver complexity. OOP makes you learn 
 
 OOP and FP introduce abstractions that work against Utkrisht's goal of being simple and immediately usable. The language constructs it provides, expressions, closures, structures, comprehensions, are expressive enough that the abstractions OOP and FP offer simply are not needed.
 
+### Why does Utkrisht not have Uniform Function Call Syntax (UFCS)?
+Utkirsht tries to only offer one way to do things, to improve clarity.
+
+`x.f(y)` meaning `f(x, y)` is ambiguous as `x` may have a field called `f`. It is not at all clear what this means.
+
+### Can I use external JavaScript libraries or npm packages inside an Utkrisht file?
+
+
+
+### Which version of ECMAScript does the compiler target?
+
 ## Acknowledgements
 
 ### Credits
-- **Robert Nystrom's Crafting Interpreters**: The definitive blueprint for anyone building a language from scratch.
-- **Microsoft's Typescript Compiler**
+- [Robert Nystrom's Crafting Interpreters](https://craftinginterpreters.com) - The definitive blueprint for anyone building a language from scratch. 
+    - [Rockcavera's Nlox](https://github.com/rockcavera/nim-nlox/) - Nim implementation of the Lox programming language interpreter.
+    - [David Timms' Loxdown](https://github.com/DavidTimms/loxdown) - A Typescript implementation of a statically-typed variant of the Lox programming language.
+- [Microsoft's Typescript Compiler](https://github.com/microsoft/TypeScript/) - A very well written (obviously) Javascript transpiler. 
+- [Tyler Laceby's Youtube tutorial](https://youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh&si=ROqcOk6DfMtiqsNP) - On building a custom scripting language in Typescript
+-  
+
 
 ### Inspirations
-A lot of syntax and semantics of the language were inspired by features in different languages.
+The syntax and semantics of the Utkrisht programming language has went through many changes over the years. The syntax was, and to a certain extent still is, very fraile and changing one bit of syntax led to changing syntax of many seemingly unrelated parts.
+
+Each such change was motivated by the hope of staying consistent with the philosophies of the language. And the philosophies frequently changed, and so did the syntax.
+
+Utkrisht took inspiration from many different programming languages, from popular to niche, to come up with a language that I will enjoy to program in. 
+
+Here are some of those:
+
 
 
 
 ### Resources
-- [Syntax across all language](https://rigaux.org/language-study/syntax-across-languages.html#FnctnFnctCall)
-- [regex101](https://regex101.com/)
-- 
+- [Syntax across all language](https://rigaux.org/language-study/syntax-across-languages.html#FnctnFnctCall) - Comparison of syntax across many (not all unfortunately) different programming languages. 
+- [regex101](https://regex101.com/) - Regex editor to test and learn regexes. Was very helpful while creating syntax highlighting regexes for the VSCode extension and the website's playground. 
+
 
 ## License
 Licensed under AGPL-3.0. See [license.txt](./license.txt).
