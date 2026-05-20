@@ -11,14 +11,17 @@
 
 </div>
 
-## Table of contents
+
 - [What is Utkrisht?](#what-is-utkrisht)
-- [Installation](#installation)
-    - [Example usage](#example-usage)
+    - [Features](#features)
+    - [Examples](#examples)
+- [Getting Started](#getting-started)
+    - [Installation](#installation)
+    - [IDE Support](#ide-support)
 - [Reference](#reference)
     - [Comments](#comments)
         - [Regular Comments](#regular-comments)
-        - [Documentation Comments (Under review)](#documentation-comments-under-review)
+        - [Documentation Comments](#documentation-comments)
     - [Keywords](#keywords)
     - [Symbols](#symbols)
         - [Operators](#operators)
@@ -60,20 +63,27 @@
 
 Utkrisht (uki) is a source-to-source compiled programming language under active development that targets HTML, CSS, and JavaScript, with the long-term objective of evolving into a full-featured, unified web framework.
 
+### Features
 
 
-## Installation
+### Examples
+
+## Getting Started
+
+### Installation
 
 ```bash
 npm install -g utkrisht
 ```
 
-### Example usage
 Compile a input.uki file to output.js file:
 
 ```bash
 uki input.uki output.js
 ```
+
+### IDE Support
+
 
 ## Reference
 
@@ -88,7 +98,7 @@ when 10 > 5
     write "Condition is correct" # This is also a valid comment
 ```
 
-#### Documentation Comments (Under review)
+#### Documentation Comments
 Placed directly above declarations to describe variables. They use standard text and Markdown without any special tag syntax.
 
 ```

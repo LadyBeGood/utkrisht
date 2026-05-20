@@ -410,103 +410,6 @@ function lexComent(lexer) {
 }
 
 /**
- * @param {Compiler} compiler 
- * @param {Lexer} lexer 
- * @returns {Token[]}
- */
-function lexComma(compiler, lexer) {
-    /** @type {Token[]} */
-    const tokens = [{ type: "Comma", lexeme: ",", line: lexer.line }];
-    lexer.position++;
-
-    // Ignore spaces and comments
-    while (true) {
-        while (true) {
-            if (isCurrentCharacter(lexer, " ")) {
-                lexer.position++;
-            } else if (isCurrentCharacter(lexer, "#")) {
-                lexComent(lexer);
-            } else {
-                break;
-            }
-        }
-
-        if (isCurrentCharacter(lexer, "\r")) {
-            lexer.position++;
-            if (!isCurrentCharacter(lexer, "\n")) {
-                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
-            }
-        }
-
-        if (isCurrentCharacter(lexer, "\n")) {
-            const whiteSpaceTokens = lexNewLine(compiler, lexer);
-            if (Array.isArray(whiteSpaceTokens)) {
-                tokens.push(...whiteSpaceTokens);
-                break;
-            }
-            if (whiteSpaceTokens !== undefined && whiteSpaceTokens.type !== "NewLine") {
-                tokens.push(whiteSpaceTokens);
-                break;
-            }
-        } else {
-            break;
-        }
-    }
-
-
-    return tokens;
-}
-
-/**
- * @param {Compiler} compiler 
- * @param {Lexer} lexer 
- * @param {TokenType} type 
- * @param {string} character 
- * @returns {Token[]}
- */
-function lexOpenBracket(compiler, lexer, type, character) {
-    /** @type {Token[]} */
-    const tokens = [{ type, lexeme: character, line: lexer.line }];
-    lexer.position++;
-
-    // Ignore spaces and comments
-    while (true) {
-        while (true) {
-            if (isCurrentCharacter(lexer, " ")) {
-                lexer.position++;
-            } else if (isCurrentCharacter(lexer, "#")) {
-                lexComent(lexer);
-            } else {
-                break;
-            }
-        }
-
-        if (isCurrentCharacter(lexer, "\r")) {
-            lexer.position++;
-            if (!isCurrentCharacter(lexer, "\n")) {
-                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
-            }
-        }
-
-        if (isCurrentCharacter(lexer, "\n")) {
-            const whiteSpaceTokens = lexNewLine(compiler, lexer);
-            if (Array.isArray(whiteSpaceTokens)) {
-                tokens.push(...whiteSpaceTokens);
-                break;
-            }
-            if (whiteSpaceTokens !== undefined && whiteSpaceTokens.type !== "NewLine") {
-                tokens.push(whiteSpaceTokens);
-                break;
-            }
-        } else {
-            break;
-        }
-    }
-
-    return tokens;
-}
-
-/**
  * @param {Compiler} compiler Compiler state
  * @param {Lexer} lexer Lexer state
  * @returns {Token | Token[] | undefined}
@@ -516,17 +419,20 @@ function lexToken(compiler, lexer) {
 
     switch (character) {
         case "(":
-            return lexOpenBracket(compiler, lexer, "LeftRoundBracket", "(")
+            lexer.position++;
+            return { type: "LeftRoundBracket", lexeme: character, line: lexer.line };
         case ")":
             lexer.position++;
             return { type: "RightRoundBracket", lexeme: character, line: lexer.line };
         case "[":
-            return lexOpenBracket(compiler, lexer, "LeftSquareBracket", "[")
+            lexer.position++;
+            return { type: "LeftSquareBracket", lexeme: character, line: lexer.line };
         case "]":
             lexer.position++;
             return { type: "RightSquareBracket", lexeme: character, line: lexer.line };
         case "{":
-            return lexOpenBracket(compiler, lexer, "LeftCurlyBracket", "{");
+            lexer.position++;
+            return { type: "LeftCurlyBracket", lexeme: character, line: lexer.line };
         case "}":
             lexer.position++;
             return { type: "RightCurlyBracket", lexeme: character, line: lexer.line };
@@ -538,16 +444,17 @@ function lexToken(compiler, lexer) {
 
                 if (isCurrentCharacter(lexer, ".")) {
                     lexer.position++;
-                    return { type: "DotDotDot", lexeme: character, line: lexer.line };
+                    return { type: "DotDotDot", lexeme: "...", line: lexer.line };
                 }
                 else {
-                    return { type: "DotDot", lexeme: character, line: lexer.line };
+                    return { type: "DotDot", lexeme: "..", line: lexer.line };
                 }
             } else {
                 return { type: "Dot", lexeme: character, line: lexer.line };
             }
         case ",":
-            return lexComma(compiler, lexer);
+            lexer.position++;
+            return { type: "Comma", lexeme: character, line: lexer.line };
         case ":":
             lexer.position++;
             return { type: "Colon", lexeme: character, line: lexer.line };

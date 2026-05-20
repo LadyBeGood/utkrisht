@@ -2,8 +2,7 @@
 import "./utilities/types.js"
 import { createLexer, lex } from "./lexer.js";
 import { createParser, parse } from "./parser.js";
-// import { createResolver, resolve } from "./resolver.js";
-import { createAnalyser, analyse } from "./analyser.js"
+// import { createChecker, checker } from "./checker.js";
 // import { createTransformer, transform } from "./transformer.js"
 // import { createGenerator, generate } from "./generator.js";
 import { EndProgram } from "./utilities/logger.js"
@@ -39,23 +38,23 @@ export function compile(compiler) {
         const parser = createParser(tokens);
         const statements = parse(compiler, parser);
 
-        /* Resolving */
-        const resolver = createResolver(statements);
-        resolve(compiler, resolver);
+        // /* Resolving */
+        // const resolver = createResolver(statements);
+        // resolve(compiler, resolver);
 
-        /* Analysing */
-        const analyser = createAnalyser(statements);
-        analyse(compiler, analyser);
+        // /* Analysing */
+        // const analyser = createAnalyser(statements);
+        // analyse(compiler, analyser);
 
-        /* Transforming */
-        const transformer = createTransformer(statements);
-        const javascriptStatements = transform(compiler, transformer);
+        // /* Transforming */
+        // const transformer = createTransformer(statements);
+        // const javascriptStatements = transform(compiler, transformer);
 
-        /* Generating */
-        const generator = createGenerator(javascriptStatements);
-        const output = generate(compiler, generator);
+        // /* Generating */
+        // const generator = createGenerator(javascriptStatements);
+        // const output = generate(compiler, generator);
 
-        return output;
+        return { tokens, statements };
     } catch (error) {
         if (error instanceof EndProgram) {
             // No operations
@@ -68,4 +67,56 @@ export function compile(compiler) {
 }
 
 
+const compiler = createCompiler(`
+# statement level
+aaa
+aaa bbb
+aaa 10
+aaa "hi"
+aaa bbb, ccc
+aaa bbb, "hi", 10
+
+aaa bbb: ccc
+aaa bbb: ccc, ddd: eee
+aaa bbb: 10, ccc: "hi"
+aaa 10, bbb: "hi"
+
+aaa()
+aaa bbb()
+aaa bbb, ccc
+aaa bbb ccc
+aaa bbb ccc, ddd
+aaa (bbb ccc), ddd
+
+aaa (10 + 20)
+
+# expressions
+(aaa)
+(aaa bbb)
+(aaa 10)
+(aaa "hi")
+(aaa bbb, ccc)
+(aaa bbb, "hi", 10)
+
+(aaa bbb: ccc)
+(aaa bbb: ccc, ddd: eee)
+(aaa bbb: 10, ccc: "hi")
+(aaa 10, bbb: "hi")
+
+(aaa())
+(aaa bbb())
+(aaa bbb, ccc)
+(aaa bbb ccc)
+(aaa bbb ccc, ddd)
+(aaa (bbb ccc), ddd)
+
+(aaa (10 + 20))
+
+`)
+
+const { tokens, statements } = compile(compiler);
+
+
+console.log(JSON.stringify(tokens, null, 4))
+console.log(JSON.stringify(statements, null, 4))
 
