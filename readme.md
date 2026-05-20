@@ -17,20 +17,28 @@ Utkrisht (uki) is a source-to-source compiled programming language under active 
 
 ## Getting Started
 
+### Playground
+You can try Utkrisht instantly in your browser without any installation or setup.
+
 ### Installation
 
 ```bash
 npm install -g utkrisht
 ```
 
-Compile a input.uki file to output.js file:
+To compile an `input.uki` file to `output.js` file, run:
 
 ```bash
 uki input.uki output.js
 ```
 
-### IDE Support
+### Editor setup
+For the best development experience, install the official **Utkrisht VS Code Extension** to get full syntax highlighting, error checking, and code snippets:
 
+1. Open VS Code.
+2. Open the Extensions view (`Ctrl+Shift+X` or `Cmd+Shift+X`).
+3. Search for **Utkrisht** by **LadyBeGood**
+4. Click Install.
 
 ## Reference
 
