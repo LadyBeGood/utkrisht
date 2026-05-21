@@ -175,25 +175,47 @@ function isCurrentTokenTypeExpressionStart(parser) {
  * 
  * @param {Compiler} compiler 
  * @param {Parser} parser 
- * @returns 
+ * @returns {Expression}
  */
 function parsePrimaryExpression(compiler, parser) {
-    let expression;
-
     if (isCurrentTokenType(parser, "StringLiteral")) {
-        expression = { type: "LiteralExpression", value: { type: "StringLiteral", value: getCurrentToken(parser).literal } };
+        const stringLiteral = consume(compiler, parser, "StringLiteral").literal;
+        return { 
+            type: "LiteralExpression", 
+            value: { 
+                type: "StringLiteral", 
+                // This check is only done to satisfy Typescript typechecker
+                // We know for sure that `stringLiteral` is a string
+                value: typeof stringLiteral === "string" ? stringLiteral : "" 
+            } 
+        };
+    } 
+    else if (isCurrentTokenType(parser, "NumericLiteral")) {
+        const numericLiteral = consume(compiler, parser, "NumericLiteral").literal;
+        return { 
+            type: "LiteralExpression", 
+            value: { 
+                type: "NumericLiteral", 
+                // This check is only done to satisfy Typescript typechecker
+                // We know for sure that `numericLiteral` is a number
+                value: typeof numericLiteral === "number" ? numericLiteral: -1 
+            } 
+        };
+    } 
+    else if (isCurrentTokenType(parser, "LeftRoundBracket")) {
         parser.position++;
-    } else if (isCurrentTokenType(parser, "NumericLiteral")) {
-        expression = { type: "LiteralExpression", value: { type: "NumericLiteral", value: Number(getCurrentToken(parser).lexeme) } };
-        parser.position++;
-    } else if (isCurrentTokenType(parser, "LeftRoundBracket")) {
-        parser.position++;
-        expression = { type: "GroupingExpression", expression: parseExpression(compiler, parser) };
-        expect(compiler, parser, "RightRoundBracket");
-        parser.position++;
+        
+        /** @type {Expression} */
+        const expression = { 
+            type: "GroupingExpression", 
+            expression: parseExpression(compiler, parser) 
+        };
+        
+        consume(compiler, parser, "RightRoundBracket");
+        
+        return expression;
     } else if (isCurrentTokenType(parser, "Identifier")) {
-        expression = { type: "Identifier", value: { type: "NumericLiteral", value: getCurrentToken(parser) } };
-        parser.position++;
+        return { type: "VariableExpression", name: consume(compiler, parser, "Identifier") };
     } else {
         error(
             compiler,
@@ -203,11 +225,14 @@ function parsePrimaryExpression(compiler, parser) {
             getCurrentToken(parser).line
         );
     }
-
-    return expression;
 }
 
-
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseArgumentsList(compiler, parser) {
     const args = [parseExpression(compiler, parser)];
 
@@ -219,7 +244,12 @@ function parseArgumentsList(compiler, parser) {
     return args;
 }
 
-
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseArguments(compiler, parser) {
     let args = [];
     
@@ -232,6 +262,12 @@ function parseArguments(compiler, parser) {
     return args
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseCallExpression(compiler, parser, caller) {
     let args = parseArguments(compiler, parser);
     let expression = {
@@ -247,6 +283,12 @@ function parseCallExpression(compiler, parser, caller) {
     return expression;
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseMemberExpression(compiler, parser) {
     let expression = parsePrimaryExpression(compiler, parser);
 
@@ -277,6 +319,12 @@ function parseMemberExpression(compiler, parser) {
     return expression;
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseMemberCallExpression(compiler, parser) {
     const expression = parseMemberExpression(compiler, parser);
 
@@ -287,6 +335,12 @@ function parseMemberCallExpression(compiler, parser) {
     return expression;
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseUnaryExpression(compiler, parser) {
     if (isCurrentTokenType(parser, "ExclamationMark", "Minus")) {
         const operator = getCurrentToken(parser);
@@ -298,6 +352,12 @@ function parseUnaryExpression(compiler, parser) {
     return parseMemberCallExpression(compiler, parser);
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseMultiplicationAndDivisionExpression(compiler, parser) {
     let expression = parseUnaryExpression(compiler, parser);
 
@@ -311,6 +371,12 @@ function parseMultiplicationAndDivisionExpression(compiler, parser) {
     return expression;
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseAdditionAndSubstractionExpression(compiler, parser) {
     let expression = parseMultiplicationAndDivisionExpression(compiler, parser);
 
@@ -324,6 +390,12 @@ function parseAdditionAndSubstractionExpression(compiler, parser) {
     return expression;
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseComparisonExpression(compiler, parser) {
     let expression = parseAdditionAndSubstractionExpression(compiler, parser);
 
@@ -337,6 +409,12 @@ function parseComparisonExpression(compiler, parser) {
     return expression;
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseEqualityAndInequalityExpression(compiler, parser) {
     let expression = parseComparisonExpression(compiler, parser);
 
@@ -350,6 +428,13 @@ function parseEqualityAndInequalityExpression(compiler, parser) {
     return expression;
 }
 
+
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseLogicalAndExpression(compiler, parser) {
     let expression = parseEqualityAndInequalityExpression(compiler, parser);
     
@@ -363,6 +448,13 @@ function parseLogicalAndExpression(compiler, parser) {
     return expression;
 }
 
+
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseLogicalOrExpression(compiler, parser) {
     let expression = parseLogicalAndExpression(compiler, parser);
     
@@ -376,10 +468,22 @@ function parseLogicalOrExpression(compiler, parser) {
     return expression;
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseExpression(compiler, parser) {
     return parseLogicalOrExpression(compiler, parser);
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Statement}
+ */
 function parseExpressionStatement(compiler, parser) {
     const expression = parseExpression(compiler, parser);
     expect(compiler, parser, "NewLine", "Dedent", "EndOfFile");
@@ -387,220 +491,224 @@ function parseExpressionStatement(compiler, parser) {
     return { type: "ExpressionStatement", expression };
 }
 
-
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Statement}
+ */
 function parseBlockStatement(compiler, parser) {
-    expect(compiler, parser, "Indent");
-    parser.position++;
+    consume(compiler, parser, "Indent");
 
+    /** @type {Statement[]} */
     const statements = [];
 
     while (!isCurrentTokenType(parser, "EndOfFile") && !isCurrentTokenType(parser, "Dedent")) {
         statements.push(parseStatement(compiler, parser));
     }
 
-    expect(compiler, parser, "Dedent");
-    parser.position++;
+    consume(compiler, parser, "Dedent");
 
-    return { type: "BlockStatement", statements }
+    return { type: "BlockStatement", body: statements }
 }
 
-function parseWhenStatement(compiler, parser) {
-    const whenClauses = [];
+// function parseWhenStatement(compiler, parser) {
+//     const whenClauses = [];
 
-    const whenKeyword = getCurrentToken(parser);
-    parser.position++;
+//     const whenKeyword = getCurrentToken(parser);
+//     parser.position++;
 
-    const condition = parseExpression(compiler, parser);
-    const block = parseBlockStatement(compiler, parser);
+//     const condition = parseExpression(compiler, parser);
+//     const block = parseBlockStatement(compiler, parser);
 
-    whenClauses.push({ type: "WhenClause", keyword: whenKeyword, condition, block });
+//     whenClauses.push({ type: "WhenClause", keyword: whenKeyword, condition, block });
 
-    while (isCurrentTokenType(parser, "Else")) {
-        const keyword = getCurrentToken(parser);
-        parser.position++;
+//     while (isCurrentTokenType(parser, "Else")) {
+//         const keyword = getCurrentToken(parser);
+//         parser.position++;
 
-        let condition = undefined;
-        if (!isCurrentTokenType(parser, "Indent")) {
-            condition = parseExpression(compiler, parser);
-        }
+//         let condition = undefined;
+//         if (!isCurrentTokenType(parser, "Indent")) {
+//             condition = parseExpression(compiler, parser);
+//         }
 
-        const block = parseBlockStatement(compiler, parser);
+//         const block = parseBlockStatement(compiler, parser);
 
-        whenClauses.push({ type: "WhenClause", keyword, condition, block });
-    }
+//         whenClauses.push({ type: "WhenClause", keyword, condition, block });
+//     }
 
-    return { type: "WhenStatement", whenClauses }
-}
+//     return { type: "WhenStatement", whenClauses }
+// }
 
-/**
- * 
- * @param {Compiler} compiler 
- * @param {Parser} parser 
- * @returns {Expression}
- */
-function parseBinding(compiler, parser) {
-    expect(compiler, parser, "LeftSquareBracket", "Identifier")
+// /**
+//  *
+//  * @param {Compiler} compiler
+//  * @param {Parser} parser
+//  * @returns {Expression}
+//  */
+// function parseBinding(compiler, parser) {
+//     expect(compiler, parser, "LeftSquareBracket", "Identifier")
 
-    // Destructure
-    if (isCurrentTokenType("LeftSquareBracket")) {
-        parser.position++; // consume [
-        const declarations = [];
+//     // Destructure
+//     if (isCurrentTokenType("LeftSquareBracket")) {
+//         parser.position++; // consume [
+//         const declarations = [];
 
-        while (!isCurrentTokenType(parser, "RightSquareBracket")) {
-            // Nesting allowed for arrays, but groups still forbidden
-            declarations.push(parseBinding(compiler, parser));
+//         while (!isCurrentTokenType(parser, "RightSquareBracket")) {
+//             // Nesting allowed for arrays, but groups still forbidden
+//             declarations.push(parseBinding(compiler, parser));
 
-            if (isCurrentTokenType(parser, "Comma")) {
-                parser.position++;
-            } else {
-                break;
-            }
-        }
+//             if (isCurrentTokenType(parser, "Comma")) {
+//                 parser.position++;
+//             } else {
+//                 break;
+//             }
+//         }
 
-        expect(compiler, parser, "RightSquareBracket");
-        parser.position++; // consume ]
+//         expect(compiler, parser, "RightSquareBracket");
+//         parser.position++; // consume ]
 
-        return { type: "Destructure", declarations };
-    }
+//         return { type: "Destructure", declarations };
+//     }
 
-    // Simple Identifier
-    if (isCurrentTokenType("Identifier")) {
-        const value = getCurrentToken(parser);
-        parser.position++;
-        return { type: "Identifier", value };
-    }
+//     // Simple Identifier
+//     if (isCurrentTokenType("Identifier")) {
+//         const value = getCurrentToken(parser);
+//         parser.position++;
+//         return { type: "Identifier", value };
+//     }
 
-}
+// }
 
-/**
- * 
- * @param {Compiler} compiler 
- * @param {Parser} parser 
- * @returns {Statement}
- */
-function parseLoopStatement(compiler, parser) {
-    const loopKeyword = getCurrentToken(parser);
-    let isGrouping = false
+// /**
+//  *
+//  * @param {Compiler} compiler
+//  * @param {Parser} parser
+//  * @returns {Statement}
+//  */
+// function parseLoopStatement(compiler, parser) {
+//     const loopKeyword = getCurrentToken(parser);
+//     let isGrouping = false
 
-    if (isCurrentTokenType(parser, "LeftRoundBracket")) {
-        isGrouping = true;
-        parser.position++;
-    }
+//     if (isCurrentTokenType(parser, "LeftRoundBracket")) {
+//         isGrouping = true;
+//         parser.position++;
+//     }
 
-    const loopClauses = [];
-    while (isCurrentTokenTypeExpressionStart(parser)) {
-        const left = parseExpression(compiler, parser);
+//     const loopClauses = [];
+//     while (isCurrentTokenTypeExpressionStart(parser)) {
+//         const left = parseExpression(compiler, parser);
 
-        let withKeyword;
-        let right;
-        if (isCurrentTokenType(parser, "With")) {
-            withKeyword = getCurrentToken(parser);
-            parser.position++
+//         let withKeyword;
+//         let right;
+//         if (isCurrentTokenType(parser, "With")) {
+//             withKeyword = getCurrentToken(parser);
+//             parser.position++
 
-            right = parseBinding(compiler, parser, true);
-        }
+//             right = parseBinding(compiler, parser, true);
+//         }
 
-        loopClauses.push({ type: "LoopClause", withKeyword, left, right })
+//         loopClauses.push({ type: "LoopClause", withKeyword, left, right })
 
-        if (isCurrentTokenType(parser, "Comma")) {
-            parser.position++
-        } else {
-            break;
-        }
-    }
+//         if (isCurrentTokenType(parser, "Comma")) {
+//             parser.position++
+//         } else {
+//             break;
+//         }
+//     }
 
-    if (isGrouping) {
-        expect(compiler, parser, "RightRoundBracket");
-        parser.position++;
-    }
+//     if (isGrouping) {
+//         expect(compiler, parser, "RightRoundBracket");
+//         parser.position++;
+//     }
 
-    const block = parseBlockStatement(compiler, parser);
+//     const block = parseBlockStatement(compiler, parser);
 
-    return { type: "LoopStatement", loopKeyword, loopClauses, block }
-}
+//     return { type: "LoopStatement", loopKeyword, loopClauses, block }
+// }
 
-/**
- * 
- * @param {Compiler} compiler 
- * @param {Parser} parser 
- * @returns {Statement}
- */
-function parseTryStatement(compiler, parser) {
-    const tryKeyword = getCurrentToken(parser);
-    parser.position++;
+// /**
+//  *
+//  * @param {Compiler} compiler
+//  * @param {Parser} parser
+//  * @returns {Statement}
+//  */
+// function parseTryStatement(compiler, parser) {
+//     const tryKeyword = getCurrentToken(parser);
+//     parser.position++;
 
-    const tryBlock = parseBlockStatement(compiler, parser);
+//     const tryBlock = parseBlockStatement(compiler, parser);
 
-    expect(compiler, parser, "Fix");
-    const fixKeyword = getCurrentToken(parser);
-    parser.position++;
+//     expect(compiler, parser, "Fix");
+//     const fixKeyword = getCurrentToken(parser);
+//     parser.position++;
 
-    const fixBlock = parseBlockStatement(compiler, parser);
+//     const fixBlock = parseBlockStatement(compiler, parser);
 
-    return { type: "TryStatement", tryKeyword, tryBlock, fixKeyword, fixBlock };
-}
+//     return { type: "TryStatement", tryKeyword, tryBlock, fixKeyword, fixBlock };
+// }
 
-/**
- * @param {Compiler} compiler 
- * @param {Parser} parser 
- * @returns {Statement}
- */
-function parseReturnStatement(compiler, parser) {
-    const keyword = getCurrentToken(parser);
-    parser.position++;
+// /**
+//  * @param {Compiler} compiler
+//  * @param {Parser} parser
+//  * @returns {Statement}
+//  */
+// function parseReturnStatement(compiler, parser) {
+//     const keyword = getCurrentToken(parser);
+//     parser.position++;
 
-    let value = undefined;
+//     let value = undefined;
 
-    if (!isCurrentTokenType(parser, "NewLine", "Dedent")) {
-        value = parseExpression(compiler, parser);
-    }
+//     if (!isCurrentTokenType(parser, "NewLine", "Dedent")) {
+//         value = parseExpression(compiler, parser);
+//     }
 
-    expect(compiler, parser, "NewLine", "Dedent");
-    ignore(parser, "NewLine");
+//     expect(compiler, parser, "NewLine", "Dedent");
+//     ignore(parser, "NewLine");
 
-    return { type: "ReturnStatement", keyword, value }
-}
+//     return { type: "ReturnStatement", keyword, value }
+// }
 
-/**
- * 
- * @param {Compiler} compiler 
- * @param {Parser} parser 
- * @returns {Statement}
- */
-function parseExitOrSkipStatement(compiler, parser) {
-    const keyword = getCurrentToken(parser);
-    parser.position++;
+// /**
+//  *
+//  * @param {Compiler} compiler
+//  * @param {Parser} parser
+//  * @returns {Statement}
+//  */
+// function parseExitOrSkipStatement(compiler, parser) {
+//     const keyword = getCurrentToken(parser);
+//     parser.position++;
 
-    let label = undefined;
-    if (isCurrentTokenType(parser, "Identifier")) {
-        label = getCurrentToken(parser);
-    }
+//     let label = undefined;
+//     if (isCurrentTokenType(parser, "Identifier")) {
+//         label = getCurrentToken(parser);
+//     }
 
-    expect(compiler, parser, "NewLine", "Dedent");
-    ignore(parser, "NewLine");
+//     expect(compiler, parser, "NewLine", "Dedent");
+//     ignore(parser, "NewLine");
 
-    if (keyword.type === "Exit") {
-        return { type: "ExitStatement", keyword, label }
-    } else {
-        return { type: "SkipStatement", keyword, label }
-    }
-}
+//     if (keyword.type === "Exit") {
+//         return { type: "ExitStatement", keyword, label }
+//     } else {
+//         return { type: "SkipStatement", keyword, label }
+//     }
+// }
+
+
+// /**
+//  * @param {Compiler} compiler Compiler state
+//  * @param {Parser} parser Parser state
+//  * @returns {Statement | undefined}  statement
+//  */
+// function parseAssignmentStatement(compiler, parser) {
+//     // const left =
+// }
 
 
 /**
  * @param {Compiler} compiler Compiler state 
  * @param {Parser} parser Parser state
- * @returns {Statement | undefined}  statement
- */
-function parseAssignmentStatement(compiler, parser) {
-    // const left = 
-}
-
-
-/**
- * @param {Compiler} compiler Compiler state 
- * @param {Parser} parser Parser state
- * @returns {Statement | undefined}  statement
+ * @returns {Statement} Variable declaration statement
  */
 function parseVariableDeclarationOrExpressionStatement(compiler, parser) {
     // const left = 
@@ -612,7 +720,7 @@ function parseVariableDeclarationOrExpressionStatement(compiler, parser) {
 /**
  * @param {Compiler} compiler Compiler state 
  * @param {Parser} parser Parser state
- * @returns {Statement | undefined}  statement
+ * @returns {Statement}  statement
  */
 function parseStatement(compiler, parser) {
     // if (isCurrentTokenType(parser, "When")) {

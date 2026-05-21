@@ -13,11 +13,10 @@ import { EndProgram } from "./utilities/logger.js"
  * @param {boolean} [isErrorTolerant=false]
  * @returns {Compiler} Compiler state
  */
-export function createCompiler(source, isErrorTolerant = false) {
+export function createCompiler(source, logger = console) {
     return {
         source,
-        diagnostics: [],
-        isErrorTolerant,
+        logger,
     };
 }
 

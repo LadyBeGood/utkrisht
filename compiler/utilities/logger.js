@@ -12,30 +12,29 @@ export class EndProgram {
 
 
 /**
- * 
+ * @param {Compiler} compiler 
  * @param {DiagnosticType} type 
  * @param {string} message 
  * @param {number} line 
+ * @returns {void}
  */
-export function styledLog(type, message, line) {
+export function styledLog(compiler, type, message, line) {
     const red = "\x1b[31m";
     const reset = "\x1b[0m";
 
     switch (type) {
         case "Error":
-            console.error("Error: " + message)
+            compiler.logger.error("Error: " + message)
             break;
         case "Warning":
-            console.warn("Warning: " + message)
+            compiler.logger.warn("Warning: " + message)
             break;
         case "Information":
-            console.info("Information: " + message)
+            compiler.logger.info("Information: " + message)
             break;
         default:
             throw new Error("Unknown error type");
     }
-
-    throw new EndProgram()
 }
 
 /**
@@ -43,14 +42,11 @@ export function styledLog(type, message, line) {
  * @param {Compiler} compiler Compiler state
  * @param {string} message The error message.
  * @param {number} line Error location.
- * @returns {void}
+ * @returns {never}
  */
 export function error(compiler, message, line) {
-    compiler.diagnostics.push({ type: "Error", line, message })
-
-    if (!compiler.isErrorTolerant) {
-        styledLog("Error", message, line)
-    }
+    styledLog(compiler, "Error", message, line);
+    throw new EndProgram();
 }
 
 /**
@@ -61,11 +57,7 @@ export function error(compiler, message, line) {
  * @returns {void}
  */
 export function warn(compiler, message, line) {
-    compiler.diagnostics.push({ type: "Warning", line, message })
-
-    if (!compiler.isErrorTolerant) {
-        styledLog("Warning", message, line)
-    }
+    styledLog(compiler, "Warning", message, line)
 }
 
 /**
@@ -76,10 +68,6 @@ export function warn(compiler, message, line) {
  * @returns {void}
  */
 export function info(compiler, message, line) {
-    compiler.diagnostics.push({ type: "Information", line, message })
-
-    if (!compiler.isErrorTolerant) {
-        styledLog("Information", message, line)
-    }
+    styledLog(compiler, "Information", message, line)
 }
 

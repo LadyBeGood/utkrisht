@@ -64,17 +64,9 @@
  */
 
 /**
- * @typedef {Object} Diagnostic
- * @property {DiagnosticType} type
- * @property {number} line
- * @property {string} message   
- */
-
-/**
  * @typedef  {Object} Compiler Compiler state
  * @property {string} source
- * @property {Diagnostic[]} diagnostics
- * @property {boolean} isErrorTolerant
+ * @property {*} logger
  */
 
 /**
@@ -95,7 +87,9 @@
 /**
  * @typedef {object} LiteralExpression
  * @property {"LiteralExpression"} type
- * @property {StringLiteral | NumericLiteral} value
+ * @property { StringLiteral 
+ *           | NumericLiteral 
+ *           | ProcedureLiteral } value
  */
 
 /**
@@ -108,6 +102,19 @@
  * @typedef {object} NumericLiteral
  * @property {"NumericLiteral"} type
  * @property {number} value
+ */
+
+/**
+ * @typedef {object} Parameter
+ * @property {Token} name
+ * @property {Expression | undefined} defaultValue
+ */
+
+/**
+ * @typedef {object} ProcedureLiteral
+ * @property {"ProcedureLiteral"} type
+ * @property {Parameter[]} parameters
+ * @property {Statement[]} body
  */
 
 /**
@@ -132,6 +139,14 @@
  */
 
 /**
+ * @typedef {Object} LogicalExpression
+ * @property {"LogicalExpression"} type
+ * @property {Expression} left
+ * @property {Token} operator
+ * @property {Expression} right
+ */
+
+/**
  * @typedef {Object} CallExpression
  * @property {"CallExpression"} type
  * @property {Expression} callee
@@ -148,6 +163,7 @@
  * @typedef { LiteralExpression 
  *          | UnaryExpression 
  *          | GroupingExpression 
+ *          | LogicalExpression
  *          | CallExpression
  *          | VariableExpression
  *          | BinaryExpression } Expression
@@ -156,7 +172,7 @@
 /**
  * @typedef {Object} BlockStatement
  * @property {"BlockStatement"} type
- * @property {Statement[]} statements
+ * @property {Statement[]} body
  */
 
 /**
