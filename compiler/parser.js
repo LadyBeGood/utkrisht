@@ -171,7 +171,12 @@ function isCurrentTokenTypeExpressionStart(parser) {
     )
 }
 
-
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns 
+ */
 function parsePrimaryExpression(compiler, parser) {
     let expression;
 
@@ -187,7 +192,8 @@ function parsePrimaryExpression(compiler, parser) {
         expect(compiler, parser, "RightRoundBracket");
         parser.position++;
     } else if (isCurrentTokenType(parser, "Identifier")) {
-        expression = parseVariableExpression(compiler, parser);
+        expression = { type: "Identifier", value: { type: "NumericLiteral", value: getCurrentToken(parser) } };
+        parser.position++;
     } else {
         error(
             compiler,
@@ -201,19 +207,81 @@ function parsePrimaryExpression(compiler, parser) {
     return expression;
 }
 
-function parseCallExpression(compiler, parser) {
-    let arguments = parseArguments(compiler, parser);
+
+function parseArgumentsList(compiler, parser) {
+    const args = [parseExpression(compiler, parser)];
+
+    while (isCurrentTokenType(parser, "Comma")) {
+        parser.position++;
+        args.push(parseExpression(compiler, parser))
+    }
+
+    return args;
+}
+
+
+function parseArguments(compiler, parser) {
+    let args = [];
+    
+    if (isCurrentTokenType(parser, "LeftRoundBracket") && isNextTokenType(parser, "RightRoundBracket")) {
+        parser.position += 2;
+        return args;
+    }
+        
+    args = parseArgumentsList(compiler, parser);
+    return args
+}
+
+function parseCallExpression(compiler, parser, caller) {
+    let args = parseArguments(compiler, parser);
+    let expression = {
+        type: "CallExpression",
+        caller,
+        arguments: args,
+    };
+
+    if (isCurrentTokenTypeExpressionStart(parser)) {
+        expression = parseCallExpression(compiler, parser, expression);
+    }
+
+    return expression;
 }
 
 function parseMemberExpression(compiler, parser) {
+    let expression = parsePrimaryExpression(compiler, parser);
 
+    while (isCurrentTokenType(parser, "Dot")) {
+        const operator = consume(compiler, parser, "Dot");
+        let property;
+        let isComputed;
+
+        if (isCurrentTokenType(parser, "LeftRoundBracket")) {
+            parser.position++;
+            isComputed = true;
+            property = parseExpression(compiler, parser);
+            consume(compiler, parser, "RightRoundBracket");
+        } else {
+            isComputed = false;
+            property = parseExpression(compiler, parser);
+        }
+
+        expression = {
+            type: "MemberExpression",
+            expression,
+            property,
+            isComputed,
+        }
+
+    }
+
+    return expression;
 }
 
 function parseMemberCallExpression(compiler, parser) {
     const expression = parseMemberExpression(compiler, parser);
 
     if (isCurrentTokenTypeExpressionStart(parser)) {
-        return parseCallExpression(compiler, parser);
+        return parseCallExpression(compiler, parser, expression);
     }
 
     return expression;
@@ -511,7 +579,7 @@ function parseAssignmentStatement(compiler, parser) {
  * @param {Parser} parser Parser state
  * @returns {Statement | undefined}  statement
  */
-function parseIDontEvenKnowAtThisPointStatement(compiler, parser) {
+function parseVariableDeclarationOrExpressionStatement(compiler, parser) {
     // const left = 
 }
 
@@ -536,18 +604,18 @@ function parseStatement(compiler, parser) {
     else if (isCurrentTokenType(parser, "Return")) {
         return parseReturnStatement(compiler, parser);
     }    
-    else if (isCurrentTokenType(parser, "Crash")) {
-        return parseCrashStatement(compiler, parser);
-    }    
+    // else if (isCurrentTokenType(parser, "Crash")) {
+    //     return parseCrashStatement(compiler, parser);
+    // }    
     else if (isCurrentTokenType(parser, "Exit", "Skip")) {
         return parseExitOrSkipStatement(compiler, parser);
     }
-    else if (isCurrentTokenType(parser, "Import")) {
-        return parseImportStatement(compiler, parser);
-    }
-    else if (isCurrentTokenType(parser, "Export")) {
-        return parseExportStatement(compiler, parser);
-    }
+    // else if (isCurrentTokenType(parser, "Import")) {
+    //     return parseImportStatement(compiler, parser);
+    // }
+    // else if (isCurrentTokenType(parser, "Export")) {
+    //     return parseExportStatement(compiler, parser);
+    // }
     else if (isCurrentTokenType(parser, "Identifier") && isNextTokenType(parser, "Tilde")) {
         return parseAssignmentStatement(compiler, parser);
     }
@@ -559,9 +627,9 @@ function parseStatement(compiler, parser) {
         } else if (isCurrentTokenType(parser, "With")) {
             error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser).line)
         } else {
-            return parseExpressionStatement(compiler, parser);
-        }    
-    }    
+            return parseVariableDeclarationOrExpressionStatement(compiler, parser);
+        }
+    }
 }
 
 
@@ -585,3 +653,5 @@ export function parse(compiler, parser) {
 
     return statements
 }    
+
+

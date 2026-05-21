@@ -35,8 +35,8 @@ export function compile(compiler) {
         const tokens = lex(compiler, lexer);
 
         /* Parsing */
-        const parser = createParser(tokens);
-        const statements = parse(compiler, parser);
+        // const parser = createParser(tokens);
+        // const statements = parse(compiler, parser);
 
         // /* Resolving */
         // const resolver = createResolver(statements);
@@ -54,7 +54,7 @@ export function compile(compiler) {
         // const generator = createGenerator(javascriptStatements);
         // const output = generate(compiler, generator);
 
-        return { tokens, statements };
+        return { tokens, statements: undefined };
     } catch (error) {
         if (error instanceof EndProgram) {
             // No operations
@@ -70,47 +70,47 @@ export function compile(compiler) {
 const compiler = createCompiler(`
 # statement level
 aaa
-aaa bbb
-aaa 10
-aaa "hi"
-aaa bbb, ccc
-aaa bbb, "hi", 10
-
-aaa bbb: ccc
-aaa bbb: ccc, ddd: eee
-aaa bbb: 10, ccc: "hi"
-aaa 10, bbb: "hi"
-
-aaa()
-aaa bbb()
-aaa bbb, ccc
-aaa bbb ccc
-aaa bbb ccc, ddd
-aaa (bbb ccc), ddd
-
-aaa (10 + 20)
-
-# expressions
-(aaa)
-(aaa bbb)
-(aaa 10)
-(aaa "hi")
-(aaa bbb, ccc)
-(aaa bbb, "hi", 10)
-
-(aaa bbb: ccc)
-(aaa bbb: ccc, ddd: eee)
-(aaa bbb: 10, ccc: "hi")
-(aaa 10, bbb: "hi")
-
-(aaa())
-(aaa bbb())
-(aaa bbb, ccc)
-(aaa bbb ccc)
-(aaa bbb ccc, ddd)
-(aaa (bbb ccc), ddd)
-
-(aaa (10 + 20))
+# aaa bbb
+# aaa 10
+# aaa "hi"
+# aaa bbb, ccc
+# aaa bbb, "hi", 10
+# 
+# aaa bbb: ccc
+# aaa bbb: ccc, ddd: eee
+# aaa bbb: 10, ccc: "hi"
+# aaa 10, bbb: "hi"
+# 
+# aaa()
+# aaa bbb()
+# aaa bbb, ccc
+# aaa bbb ccc
+# aaa bbb ccc, ddd
+# aaa (bbb ccc), ddd
+# 
+# aaa (10 + 20)
+# 
+# # expressions
+# (aaa)
+# (aaa bbb)
+# (aaa 10)
+# (aaa "hi")
+# (aaa bbb, ccc)
+# (aaa bbb, "hi", 10)
+# 
+# (aaa bbb: ccc)
+# (aaa bbb: ccc, ddd: eee)
+# (aaa bbb: 10, ccc: "hi")
+# (aaa 10, bbb: "hi")
+# 
+# (aaa())
+# (aaa bbb())
+# (aaa bbb, ccc)
+# (aaa bbb ccc)
+# (aaa bbb ccc, ddd)
+# (aaa (bbb ccc), ddd)
+# 
+# (aaa (10 + 20))
 
 `)
 

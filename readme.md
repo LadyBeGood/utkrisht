@@ -821,21 +821,18 @@ Utkirsht tries to only offer one way to do things, to improve clarity.
 
 ### Credits
 - [Robert Nystrom's Crafting Interpreters](https://craftinginterpreters.com) - The definitive blueprint for anyone building a language from scratch. 
-    - [Rockcavera's Nlox](https://github.com/rockcavera/nim-nlox/) - Nim implementation of the Lox programming language interpreter.
+    - [Rockcavera's Nlox](https://github.com/rockcavera/nim-nlox/) - Nim implementation of the Lox programming language.
     - [David Timms' Loxdown](https://github.com/DavidTimms/loxdown) - A Typescript implementation of a statically-typed variant of the Lox programming language.
-- [Microsoft's Typescript Compiler](https://github.com/microsoft/TypeScript/) - A very well written (obviously) Javascript transpiler. 
-- [Tyler Laceby's Youtube tutorial](https://youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh&si=ROqcOk6DfMtiqsNP) - On building a custom scripting language in Typescript
--  
+- [Microsoft's Typescript Compiler](https://github.com/microsoft/TypeScript/) - A very well-written codebase to study for transpiler design. 
+    - [Orta Therox's Typescript compiler guide](https://youtu.be/X8k_4tZ16qU?si=hYu4txp-OmW-iW5f) - A YouTube presentation exploring the inner workings of the Typescript compiler.
+    - [Nathan Shively-Sanders' Mini- & Centi-Typescript](https://github.com/sandersn/mini-typescript) - Miniature models of the Typescript compiler.
+    - [Simone Poggiali's The Concise TypeScript Book](https://github.com/gibbok/typescript-book) - An incredibly informative Typescript guide.
+- [Tyler Laceby's Programming Language Guide](https://youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh&si=ROqcOk6DfMtiqsNP) - An excellent YouTube playlist on building a custom scripting language in TypeScript.
+-  [Meriyah](https://github.com/meriyah/meriyah/) - A 100% compliant, self-hosted Javascript parser.
 
 
 ### Inspirations
-The syntax and semantics of the Utkrisht programming language has went through many changes over the years. The syntax was, and to a certain extent still is, very fraile and changing one bit of syntax led to changing syntax of many seemingly unrelated parts.
 
-Each such change was motivated by the hope of staying consistent with the philosophies of the language. And the philosophies frequently changed, and so did the syntax.
-
-Utkrisht took inspiration from many different programming languages, from popular to niche, to come up with a language that I will enjoy to program in. 
-
-Here are some of those:
 
 
 
