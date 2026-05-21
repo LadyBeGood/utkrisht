@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { interpret } from "../compiler/compiler.js"
+import { interpret } from "./compiler.js"
 
 
 
