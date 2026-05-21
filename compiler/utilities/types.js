@@ -1,6 +1,4 @@
 
-
-
 /**
  * @typedef { "LeftRoundBracket"
  *          | "RightRoundBracket"
@@ -59,8 +57,10 @@
  * @property {number} line The line number where this token appears
  */
 
-/**
- * @typedef {"Error" | "Warning" | "Information"} DiagnosticType
+ /**
+ * @typedef { "Error"
+ *          | "Warning"
+ *          | "Information" } DiagnosticType
  */
 
 /**
@@ -77,7 +77,6 @@
  * @property {boolean} isErrorTolerant
  */
 
-
 /**
  * @typedef  {Object} Lexer Lexer state
  * @property {string} source The source code of the utkrisht file
@@ -87,7 +86,6 @@
  * @property {number} nestingDepth Used to emit the correct number of Dedent tokens when returning to outer scopes.
  */
 
-
 /**
  * @typedef {Object} Parser Parser state
  * @property {Token[]} tokens Tokens produced by the lexer
@@ -95,20 +93,88 @@
  */
 
 /**
- * @typedef { "VariableAssignmentStatement"
- *          | "VariableDeclarationStatement"
- *          | "WhenStatement"
- *          | "LoopStatement"
- *          | "TryStatement"
- *          | "ExitStatement"
- *          | "StopStatement"
- *          | "SkipStatement"
- *          | "BlockStatement"
- *          | "ExpressionStatement" } StatementType
+ * @typedef {object} LiteralExpression
+ * @property {"LiteralExpression"} type
+ * @property {StringLiteral | NumericLiteral} value
  */
 
 /**
- * @typedef {Object} Statement
- * @property {StatementType} type
+ * @typedef {object} StringLiteral
+ * @property {"StringLiteral"} type
+ * @property {string} value
+ */
+
+/**
+ * @typedef {object} NumericLiteral
+ * @property {"NumericLiteral"} type
+ * @property {number} value
+ */
+
+/**
+ * @typedef {Object} UnaryExpression
+ * @property {"UnaryExpression"} type
+ * @property {Token} operator
+ * @property {Expression} right
+ */
+
+/**
+ * @typedef {Object} GroupingExpression
+ * @property {"GroupingExpression"} type
+ * @property {Expression} expression
+ */
+
+/**
+ * @typedef {Object} BinaryExpression
+ * @property {"BinaryExpression"} type
+ * @property {Expression} left
+ * @property {Token} operator
+ * @property {Expression} right
+ */
+
+/**
+ * @typedef {Object} CallExpression
+ * @property {"CallExpression"} type
+ * @property {Expression} callee
+ * @property {Expression[]} arguments
+ */
+
+/**
+ * @typedef {Object} VariableExpression
+ * @property {"VariableExpression"} type
+ * @property {Token} name
+ */
+
+/**
+ * @typedef { LiteralExpression 
+ *          | UnaryExpression 
+ *          | GroupingExpression 
+ *          | CallExpression
+ *          | VariableExpression
+ *          | BinaryExpression } Expression
+ */
+
+/**
+ * @typedef {Object} BlockStatement
+ * @property {"BlockStatement"} type
+ * @property {Statement[]} statements
+ */
+
+/**
+ * @typedef {Object} VariableDeclarationStatement
+ * @property {"VariableDeclarationStatement"} type
+ * @property {Token} name
+ * @property {Expression} value
+ */
+
+/**
+ * @typedef {Object} ExpressionStatement
+ * @property {"ExpressionStatement"} type
+ * @property {Expression} expression
+ */
+
+/**
+ * @typedef { BlockStatement
+ *          | VariableDeclarationStatement
+ *          | ExpressionStatement } Statement
  */
 

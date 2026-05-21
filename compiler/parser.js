@@ -432,6 +432,12 @@ function parseWhenStatement(compiler, parser) {
     return { type: "WhenStatement", whenClauses }
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Expression}
+ */
 function parseBinding(compiler, parser) {
     expect(compiler, parser, "LeftSquareBracket", "Identifier")
 
@@ -466,6 +472,12 @@ function parseBinding(compiler, parser) {
 
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Statement}
+ */
 function parseLoopStatement(compiler, parser) {
     const loopKeyword = getCurrentToken(parser);
     let isGrouping = false
@@ -507,6 +519,12 @@ function parseLoopStatement(compiler, parser) {
     return { type: "LoopStatement", loopKeyword, loopClauses, block }
 }
 
+/**
+ * 
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Statement}
+ */
 function parseTryStatement(compiler, parser) {
     const tryKeyword = getCurrentToken(parser);
     parser.position++;
@@ -522,6 +540,11 @@ function parseTryStatement(compiler, parser) {
     return { type: "TryStatement", tryKeyword, tryBlock, fixKeyword, fixBlock };
 }
 
+/**
+ * @param {Compiler} compiler 
+ * @param {Parser} parser 
+ * @returns {Statement}
+ */
 function parseReturnStatement(compiler, parser) {
     const keyword = getCurrentToken(parser);
     parser.position++;
@@ -592,44 +615,44 @@ function parseVariableDeclarationOrExpressionStatement(compiler, parser) {
  * @returns {Statement | undefined}  statement
  */
 function parseStatement(compiler, parser) {
-    if (isCurrentTokenType(parser, "When")) {
-        return parseWhenStatement(compiler, parser);
-    }    
-    else if (isCurrentTokenType(parser, "Loop")) {
-        return parseLoopStatement(compiler, parser);
-    }    
-    else if (isCurrentTokenType(parser, "Try")) {
-        return parseTryStatement(compiler, parser);
-    }    
-    else if (isCurrentTokenType(parser, "Return")) {
-        return parseReturnStatement(compiler, parser);
-    }    
+    // if (isCurrentTokenType(parser, "When")) {
+    //     return parseWhenStatement(compiler, parser);
+    // }    
+    // else if (isCurrentTokenType(parser, "Loop")) {
+    //     return parseLoopStatement(compiler, parser);
+    // }    
+    // else if (isCurrentTokenType(parser, "Try")) {
+    //     return parseTryStatement(compiler, parser);
+    // }    
+    // else if (isCurrentTokenType(parser, "Return")) {
+    //     return parseReturnStatement(compiler, parser);
+    // }    
     // else if (isCurrentTokenType(parser, "Crash")) {
     //     return parseCrashStatement(compiler, parser);
     // }    
-    else if (isCurrentTokenType(parser, "Exit", "Skip")) {
-        return parseExitOrSkipStatement(compiler, parser);
-    }
+    // else if (isCurrentTokenType(parser, "Exit", "Skip")) {
+    //     return parseExitOrSkipStatement(compiler, parser);
+    // }
     // else if (isCurrentTokenType(parser, "Import")) {
     //     return parseImportStatement(compiler, parser);
     // }
     // else if (isCurrentTokenType(parser, "Export")) {
     //     return parseExportStatement(compiler, parser);
     // }
-    else if (isCurrentTokenType(parser, "Identifier") && isNextTokenType(parser, "Tilde")) {
-        return parseAssignmentStatement(compiler, parser);
-    }
-    else {
-        if (isCurrentTokenType(parser, "Else")) {
-            error(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser).line);
-        } else if (isCurrentTokenType(parser, "Fix")) {
-            error(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser).line);
-        } else if (isCurrentTokenType(parser, "With")) {
-            error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser).line)
-        } else {
+    // else if (isCurrentTokenType(parser, "Identifier") && isNextTokenType(parser, "Tilde")) {
+    //     return parseAssignmentStatement(compiler, parser);
+    // }
+    // else {
+    //     if (isCurrentTokenType(parser, "Else")) {
+    //         error(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser).line);
+    //     } else if (isCurrentTokenType(parser, "Fix")) {
+    //         error(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser).line);
+    //     } else if (isCurrentTokenType(parser, "With")) {
+    //         error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser).line)
+    //     } else {
             return parseVariableDeclarationOrExpressionStatement(compiler, parser);
-        }
-    }
+    //     }
+    // }
 }
 
 
