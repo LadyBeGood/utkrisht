@@ -718,7 +718,6 @@ function parseBlockStatement(compiler, parser) {
 // }
 
 
-
 /**
  * Parses a variable declaration statement or delegates to an expression statement.
  * 
@@ -732,9 +731,34 @@ function parseBlockStatement(compiler, parser) {
  * @returns {Statement} Variable declaration statement
  */
 function parseVariableDeclarationStatementOrExpressionStatement(compiler, parser) {
-    const left = parseMemberCallExpression(compiler, parser);
+    const expression = parseMemberCallExpression(compiler, parser);
 
     if (isCurrentTokenType(parser, "Equal")) {
+        /** @type {Parameter[]} */
+        const parameters = [];
+        let name;
+
+        if (expression.type === "VariableExpression") {
+            name = expression
+        } else if (expression.type === "CallExpression") {
+
+            name = expression.callee
+
+            if (expression.arguments.length === 0) {
+                error(compiler, "Thats not how you declare a variable, that syntax is used for calling only, remove the `()`.", expression.callee.name.line)
+            }
+
+            for (const argument of expression.arguments) {
+                if (argument.type !== "VariableExpression") {
+                    error(compiler, "Invalid Parameter", expression.callee.name.line)
+                }
+
+                parameters.push({ name: argument, defaultValue: undefined })
+            }
+        } else {
+            throw new Error("BROOO UNIMPLEMENTEDDDDD STUFFFF BRRRO HELP")
+        }
+        
         const operator = consume(compiler, parser, "Equal");
         const right = parseExpression(compiler, parser);
 
@@ -743,12 +767,13 @@ function parseVariableDeclarationStatementOrExpressionStatement(compiler, parser
         
         return {
             type: "VariableDeclarationStatement",
-            name: left,
+            name,
             value: right,
+            parameters,
             operator
         }
     } else {
-        parser.preParsedExpression = left
+        parser.preParsedExpression = expression
         return parseExpressionStatement(compiler, parser);
     }
 }
@@ -795,15 +820,15 @@ function parseStatement(compiler, parser) {
     //     return parseAssignmentStatement(compiler, parser);
     // }
     // else {
-    //     if (isCurrentTokenType(parser, "Else")) {
-    //         error(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser).line);
-    //     } else if (isCurrentTokenType(parser, "Fix")) {
-    //         error(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser).line);
-    //     } else if (isCurrentTokenType(parser, "With")) {
-    //         error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser).line)
-    //     } else {
+        if (isCurrentTokenType(parser, "Else")) {
+            error(compiler, "Can not use `else` statement without `when` statement", getCurrentToken(parser).line);
+        } else if (isCurrentTokenType(parser, "Fix")) {
+            error(compiler, "Can not use `fix` statement without `try` statement", getCurrentToken(parser).line);
+        } else if (isCurrentTokenType(parser, "With")) {
+            error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser).line)
+        } else {
             return parseVariableDeclarationStatementOrExpressionStatement(compiler, parser);
-    //     }
+        }
     // }
 }
 

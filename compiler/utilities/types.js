@@ -112,15 +112,8 @@
  */
 
 /**
- * @typedef {object} Parameter
- * @property {Token} name
- * @property {Expression | undefined} defaultValue
- */
-
-/**
  * @typedef {object} ProcedureLiteral
  * @property {"ProcedureLiteral"} type
- * @property {Parameter[]} parameters
  * @property {Statement[]} body
  */
 
@@ -156,7 +149,7 @@
 /**
  * @typedef {Object} CallExpression
  * @property {"CallExpression"} type
- * @property {Expression} callee
+ * @property {VariableExpression} callee
  * @property {Expression[]} arguments
  */
 
@@ -189,9 +182,16 @@
  */
 
 /**
+ * @typedef {object} Parameter
+ * @property {Expression} name
+ * @property {Expression | undefined} defaultValue
+ */
+
+/**
  * @typedef {Object} VariableDeclarationStatement
  * @property {"VariableDeclarationStatement"} type
  * @property {Expression} name
+ * @property {Parameter[]} parameters
  * @property {Expression} value
  * @property {Token} operator
  */

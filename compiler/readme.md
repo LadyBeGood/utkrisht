@@ -36,13 +36,13 @@ The compiler is located at the `compiler` folder in the root directory of the Gi
 
 ```text
 
-         +-------+                +--------+                                                    +-------------+                                         +-----------+
-.uki >---| lexer |---> tokens >---| parser |---> abstract syntax tree >---+------>------+--->---| transformer |---> javascript abstract syntax tree >---| generator |---> .js
-         +-------+                +--------+                              |             |       +-------------+                                         +-----------+
-                                                                          |             |
-                                                                          v             v
-                                                                    +----------+   +----------+
-                                                                    | resolver |   | analyser |
-                                                                    +----------+   +----------+
+         +-------+                +--------+                                        +-------------+                                         +-----------+
+.uki >---| lexer |---> tokens >---| parser |---> abstract syntax tree >-----+-----> | transformer |---> javascript abstract syntax tree >---| generator |---> .js
+         +-------+                +--------+                                |       +-------------+                                         +-----------+
+                                                                            |
+                                                                            v
+                                                                       +---------+
+                                                                       | checker |
+                                                                       +---------+
 
 ```

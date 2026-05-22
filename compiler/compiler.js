@@ -112,8 +112,9 @@ const compiler = createCompiler(`
 
 # aaa = 10
 # (aaa = 10)
-# aaa bbb, ccc = 0
-aaa bbb < 10
+aaa bbb, ccc = 0
+# aaa bbb < 10
+# aaa bbb = 10
 `)
 
 const { tokens, statements } = compile(compiler);
