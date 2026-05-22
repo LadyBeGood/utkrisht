@@ -10,7 +10,7 @@ import { EndProgram } from "./utilities/logger.js"
 /**
  * Creates an `Compiler` object
  * @param {string} source 
- * @param {boolean} [isErrorTolerant=false]
+ * @param {*} [logger=console]
  * @returns {Compiler} Compiler state
  */
 export function createCompiler(source, logger = console) {
@@ -34,8 +34,8 @@ export function compile(compiler) {
         const tokens = lex(compiler, lexer);
 
         /* Parsing */
-        // const parser = createParser(tokens);
-        // const statements = parse(compiler, parser);
+        const parser = createParser(tokens);
+        const statements = parse(compiler, parser);
 
         // /* Resolving */
         // const resolver = createResolver(statements);
@@ -53,11 +53,11 @@ export function compile(compiler) {
         // const generator = createGenerator(javascriptStatements);
         // const output = generate(compiler, generator);
 
-        return { tokens, statements: undefined };
+        return { tokens, statements };
     } catch (error) {
         if (error instanceof EndProgram) {
             // No operations
-            console.log(error)
+            throw 0;
         } else {
             // rethrow it if it is a different error
             throw error
@@ -68,7 +68,7 @@ export function compile(compiler) {
 
 const compiler = createCompiler(`
 # statement level
-aaa
+# aaa
 # aaa bbb
 # aaa 10
 # aaa "hi"
@@ -82,12 +82,11 @@ aaa
 # 
 # aaa()
 # aaa bbb()
-# aaa bbb, ccc
 # aaa bbb ccc
 # aaa bbb ccc, ddd
 # aaa (bbb ccc), ddd
 # 
-# aaa (10 + 20)
+# aaa 10 + 20
 # 
 # # expressions
 # (aaa)
@@ -111,6 +110,10 @@ aaa
 # 
 # (aaa (10 + 20))
 
+# aaa = 10
+# (aaa = 10)
+# aaa bbb, ccc = 0
+aaa bbb < 10
 `)
 
 const { tokens, statements } = compile(compiler);

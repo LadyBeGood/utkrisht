@@ -178,7 +178,7 @@
 /**
  * @typedef {Object} VariableDeclarationStatement
  * @property {"VariableDeclarationStatement"} type
- * @property {Token} name
+ * @property {Expression} name
  * @property {Expression} value
  */
 

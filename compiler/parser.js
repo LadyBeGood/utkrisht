@@ -13,6 +13,7 @@ export function createParser(tokens) {
     return {
         tokens,
         position: 0,
+        lhs: undefined
     };
 }
 
@@ -234,11 +235,15 @@ function parsePrimaryExpression(compiler, parser) {
  * @returns {Expression}
  */
 function parseArgumentsList(compiler, parser) {
-    const args = [parseExpression(compiler, parser)];
+    const args = [parseAdditionAndSubstractionExpression(compiler, parser)];
 
     while (isCurrentTokenType(parser, "Comma")) {
         parser.position++;
-        args.push(parseExpression(compiler, parser))
+        // if (parser.isStatementLevel) {
+        //     args.push(parseExpression(compiler, parser))
+        // } else {
+        args.push(parseAdditionAndSubstractionExpression(compiler, parser))
+        // }
     }
 
     return args;
@@ -397,7 +402,7 @@ function parseAdditionAndSubstractionExpression(compiler, parser) {
  * @returns {Expression}
  */
 function parseComparisonExpression(compiler, parser) {
-    let expression = parseAdditionAndSubstractionExpression(compiler, parser);
+    let expression = parser.lhs ?? parseAdditionAndSubstractionExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "MoreThan", "LessThan", "MoreThanEqual", "LessThanEqual")) {
         const operator = getCurrentToken(parser);
@@ -705,13 +710,31 @@ function parseBlockStatement(compiler, parser) {
 // }
 
 
+
 /**
  * @param {Compiler} compiler Compiler state 
  * @param {Parser} parser Parser state
  * @returns {Statement} Variable declaration statement
  */
 function parseVariableDeclarationOrExpressionStatement(compiler, parser) {
-    // const left = 
+    const left = parseMemberCallExpression(compiler, parser);
+
+    if (isCurrentTokenType(parser, "Equal")) {
+        const operator = consume(compiler, parser, "Equal");
+        const right = parseExpression(compiler, parser);
+
+        expect(compiler, parser, "NewLine", "EndOfFile");
+        ignore(parser, "NewLine");
+        
+        return {
+            type: "VariableDeclarationStatement",
+            name: left,
+            value: right
+        }
+    } else {
+        parser.lhs = left
+        return parseExpressionStatement(compiler, parser);
+    }
 }
 
 
