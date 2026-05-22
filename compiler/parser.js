@@ -13,7 +13,7 @@ export function createParser(tokens) {
     return {
         tokens,
         position: 0,
-        lhs: undefined
+        preParsedExpression: undefined
     };
 }
 
@@ -232,7 +232,7 @@ function parsePrimaryExpression(compiler, parser) {
  * 
  * @param {Compiler} compiler 
  * @param {Parser} parser 
- * @returns {Expression}
+ * @returns {Expression[]}
  */
 function parseArgumentsList(compiler, parser) {
     const args = [parseAdditionAndSubstractionExpression(compiler, parser)];
@@ -253,9 +253,10 @@ function parseArgumentsList(compiler, parser) {
  * 
  * @param {Compiler} compiler 
  * @param {Parser} parser 
- * @returns {Expression}
+ * @returns {Expression[]}
  */
 function parseArguments(compiler, parser) {
+    /** @type {Expression[]} */
     let args = [];
     
     if (isCurrentTokenType(parser, "LeftRoundBracket") && isNextTokenType(parser, "RightRoundBracket")) {
@@ -295,6 +296,7 @@ function parseCallExpression(compiler, parser, caller) {
  * @returns {Expression}
  */
 function parseMemberExpression(compiler, parser) {
+    /** @type {Expression} */
     let expression = parsePrimaryExpression(compiler, parser);
 
     while (isCurrentTokenType(parser, "Dot")) {
@@ -402,7 +404,8 @@ function parseAdditionAndSubstractionExpression(compiler, parser) {
  * @returns {Expression}
  */
 function parseComparisonExpression(compiler, parser) {
-    let expression = parser.lhs ?? parseAdditionAndSubstractionExpression(compiler, parser);
+    let expression = parser.preParsedExpression ?? parseAdditionAndSubstractionExpression(compiler, parser);
+    parser.preParsedExpression = undefined;
 
     while (isCurrentTokenType(parser, "MoreThan", "LessThan", "MoreThanEqual", "LessThanEqual")) {
         const operator = getCurrentToken(parser);
@@ -484,6 +487,10 @@ function parseExpression(compiler, parser) {
 }
 
 /**
+ * Parses an expression statement.
+ * 
+ * Evaluates the expression and ensures it is followed by a valid statement 
+ * terminator.
  * 
  * @param {Compiler} compiler 
  * @param {Parser} parser 
@@ -497,6 +504,7 @@ function parseExpressionStatement(compiler, parser) {
 }
 
 /**
+ * Parses a block statement, which is delimited by `Indent` and `Dedent` tokens
  * 
  * @param {Compiler} compiler 
  * @param {Parser} parser 
@@ -712,11 +720,18 @@ function parseBlockStatement(compiler, parser) {
 
 
 /**
+ * Parses a variable declaration statement or delegates to an expression statement.
+ * 
+ * This function handles lookahead resolution via cover grammar. It first speculatively 
+ * parses a member call expression. If a declaration operator (`=`) follows, it commits 
+ * to parsing a variable declaration statement. Otherwise, it caches the expression on the 
+ * parser state and processes it as a standard expression statement.
+ * 
  * @param {Compiler} compiler Compiler state 
  * @param {Parser} parser Parser state
  * @returns {Statement} Variable declaration statement
  */
-function parseVariableDeclarationOrExpressionStatement(compiler, parser) {
+function parseVariableDeclarationStatementOrExpressionStatement(compiler, parser) {
     const left = parseMemberCallExpression(compiler, parser);
 
     if (isCurrentTokenType(parser, "Equal")) {
@@ -729,10 +744,11 @@ function parseVariableDeclarationOrExpressionStatement(compiler, parser) {
         return {
             type: "VariableDeclarationStatement",
             name: left,
-            value: right
+            value: right,
+            operator
         }
     } else {
-        parser.lhs = left
+        parser.preParsedExpression = left
         return parseExpressionStatement(compiler, parser);
     }
 }
@@ -741,6 +757,11 @@ function parseVariableDeclarationOrExpressionStatement(compiler, parser) {
 
 
 /**
+ * Parses any statement.
+ * 
+ * It also catches misplaced blocks, like an orphan `else`, `fix`, or `with`, early 
+ * to provide clearer error messages.
+ * 
  * @param {Compiler} compiler Compiler state 
  * @param {Parser} parser Parser state
  * @returns {Statement}  statement
@@ -781,7 +802,7 @@ function parseStatement(compiler, parser) {
     //     } else if (isCurrentTokenType(parser, "With")) {
     //         error(compiler, "Can not use `with` statement without `loop` statement", getCurrentToken(parser).line)
     //     } else {
-            return parseVariableDeclarationOrExpressionStatement(compiler, parser);
+            return parseVariableDeclarationStatementOrExpressionStatement(compiler, parser);
     //     }
     // }
 }
@@ -799,10 +820,7 @@ export function parse(compiler, parser) {
 
     while (!isCurrentTokenType(parser, "EndOfFile")) {
         const statement = parseStatement(compiler, parser);
-        
-        if (statement !== undefined) {
-            statements.push(statement);
-        }    
+        statements.push(statement); 
     }    
 
     return statements

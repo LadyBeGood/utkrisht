@@ -82,7 +82,14 @@
  * @typedef {Object} Parser Parser state
  * @property {Token[]} tokens Tokens produced by the lexer
  * @property {number} position The index of the current token in the tokens
- */
+ * @property {Expression | undefined} preParsedExpression Temporary cache for an eagerly parsed expression node inside `parseVariableDeclarationStatementOrExpressionStatement`
+*/
+
+
+
+/*=============================*/
+/* EXPRESSIONS                 */
+/*=============================*/
 
 /**
  * @typedef {object} LiteralExpression
@@ -169,6 +176,12 @@
  *          | BinaryExpression } Expression
  */
 
+
+
+/*=============================*/
+/* STATEMENTS                  */
+/*=============================*/
+
 /**
  * @typedef {Object} BlockStatement
  * @property {"BlockStatement"} type
@@ -180,6 +193,7 @@
  * @property {"VariableDeclarationStatement"} type
  * @property {Expression} name
  * @property {Expression} value
+ * @property {Token} operator
  */
 
 /**
