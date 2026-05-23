@@ -7,7 +7,7 @@
 ![Repo Size](https://img.shields.io/github/repo-size/LadyBeGood/utkrisht?color=3b82f6)
 ![Last Commit](https://img.shields.io/github/last-commit/LadyBeGood/utkrisht?color=8b5cf6)
 
-*A unified language for the web*
+*profound tagline goes here*
 
 </div>
 
@@ -832,11 +832,11 @@ Utkirsht tries to only offer one way to do things, to improve clarity.
 ### Inspirations
 - [Arturo](https://arturo-lang.io/) - The `|expression|` syntax for string interpolation.
 - [Python](https://www.python.org/) - Use of the `#` symbol for comments.
-- [SASS](https://sass-lang.com/) - Indentation-based syntax and syntax for components.
+- [SASS](https://sass-lang.com/) - Indentation-based syntax, using `:` for named arguments and syntax for components.
 - [Ripple](https://www.ripple-ts.com/) - Components constructing UI directly instead of returning UI objects.
-- [Lua](https://www.lua.org/) - The concept of the unified `Structure` data type that handles both lists and maps.
+- [Lua](https://www.lua.org/) - The concept of a unified `Structure` data type that handles both lists and maps.
 - [Svelte 4](https://v4.svelte.dev/) - Using `$` for the compiler based reactivity system.
-- [Coffeescript](https://coffeescript.org/) - Omission of round bracket syntax in procedure calls when arguments are present.
+- [CoffeeScript](https://coffeescript.org/) - Omission of round bracket as delimiters in procedure calls when arguments are present.
 - [Nim](https://nim-lang.org/) - Import behavior where all exported variables from an imported file are automatically pulled.
 - [QML](https://doc.qt.io/qt-6/qmlreference.html) - The `property.subproperty: value` syntax used for grouped properties.
 

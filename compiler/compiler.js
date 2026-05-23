@@ -9,6 +9,7 @@ import { EndProgram } from "./utilities/logger.js"
 
 /**
  * Creates an `Compiler` object
+ * 
  * @param {string} source 
  * @param {*} [logger=console]
  * @returns {Compiler} Compiler state
@@ -36,10 +37,6 @@ export function compile(compiler) {
         /* Parsing */
         const parser = createParser(tokens);
         const statements = parse(compiler, parser);
-
-        // /* Resolving */
-        // const resolver = createResolver(statements);
-        // resolve(compiler, resolver);
 
         // /* Analysing */
         // const analyser = createAnalyser(statements);
@@ -115,7 +112,9 @@ const compiler = createCompiler(`
 # aaa bbb, ccc = 0
 # aaa bbb < 10
 # aaa bbb = 10
-aaa = 10
+# aaa = 10
+# aaa bbb, ccc = 10
+(((aaa 1) 2) 3)
 `)
 
 const { tokens, statements } = compile(compiler);
