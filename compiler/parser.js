@@ -742,15 +742,15 @@ function parseVariableDeclarationStatementOrExpressionStatement(compiler, parser
             name = expression
         } else if (expression.type === "CallExpression") {
 
-            name = expression.callee
+            name = expression.caller
 
             if (expression.arguments.length === 0) {
-                error(compiler, "Thats not how you declare a variable, that syntax is used for calling only, remove the `()`.", expression.callee.name.line)
+                error(compiler, "Thats not how you declare a variable, that syntax is used for calling only, remove the `()`.", expression.caller.name.line)
             }
 
             for (const argument of expression.arguments) {
                 if (argument.type !== "VariableExpression") {
-                    error(compiler, "Invalid Parameter", expression.callee.name.line)
+                    error(compiler, "Invalid Parameter", expression.caller.name.line)
                 }
 
                 parameters.push({ name: argument, defaultValue: undefined })

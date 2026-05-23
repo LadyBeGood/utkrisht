@@ -57,7 +57,7 @@ export function compile(compiler) {
     } catch (error) {
         if (error instanceof EndProgram) {
             // No operations
-            throw 0;
+            return {tokens: [], statements: []}
         } else {
             // rethrow it if it is a different error
             throw error
@@ -112,9 +112,10 @@ const compiler = createCompiler(`
 
 # aaa = 10
 # (aaa = 10)
-aaa bbb, ccc = 0
+# aaa bbb, ccc = 0
 # aaa bbb < 10
 # aaa bbb = 10
+aaa = 10
 `)
 
 const { tokens, statements } = compile(compiler);

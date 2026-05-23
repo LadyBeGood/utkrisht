@@ -149,7 +149,7 @@
 /**
  * @typedef {Object} CallExpression
  * @property {"CallExpression"} type
- * @property {VariableExpression} callee
+ * @property {VariableExpression} caller
  * @property {Expression[]} arguments
  */
 
