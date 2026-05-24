@@ -1,7 +1,9 @@
 
 <div align="center">
 
-# Utkrisht
+# Utkrisht | उत्कृष्ट
+
+/ut̪ˈkɾɪʂʈ/ • "oot-krisht"
 
 ![Build Status](https://img.shields.io/badge/build-passing-22c55e)
 ![Repo Size](https://img.shields.io/github/repo-size/LadyBeGood/utkrisht?color=3b82f6)
@@ -541,6 +543,8 @@ Loop keyword not followed by any data type loops infinitely:
 loop
     write "hello"
 
+    # loops infinitely
+
     # hello
     # hello
     # hello
@@ -552,6 +556,8 @@ Loop keyword followed by a boolean loops infinitely if `yes`, doesn't loop if `n
 loop yes
     write "hello"
     
+    # loops infinitely
+
     # hello
     # hello
     # hello
@@ -560,6 +566,8 @@ loop yes
 
 loop no
     write "hello"
+
+    # does not loop
 ```
 
 Loop keyword followed by a number loops that many times:
@@ -606,6 +614,8 @@ Loop keyword followed by a procedure loops till the procedure returns a value. T
 loop {return 0}
     write "hello"
 
+    # loops infinitely
+
     # hello
     # hello
     # hello
@@ -614,7 +624,8 @@ loop {return 0}
 loop {write "Hello, World"}
     write "hello"
 
-    # Hello, World
+    # Does not loop but logs "Hello, World" 
+    # because the prodecure was called once internally by the loop
 ```
 
 This can be used with closures to create iterator based loops:
@@ -628,7 +639,7 @@ range start, end, gap: 1 = {
             return
         
         value = current
-        current ~ count + step
+        current ~ current + step
         return value
     }
 }
@@ -680,13 +691,13 @@ loop 4..>1
     # "hello"
 ```
 
-with statement declares a variable 
+with statement declares a loop variable 
 ```
 loop 5 with i 
     write i
 
     # here 
-    # `i` is the iterator
+    # `i` is the loop variable
     # `i` starts at 1 and ends at 5
 
     # 1
@@ -694,6 +705,15 @@ loop 5 with i
     # 3
     # 4
     # 5
+
+loop 10..<20..2 with i
+    write i
+
+    # 10
+    # 12
+    # 14
+    # 16
+    # 18
 
 fruits = ["apple", "mango", "banana"]
 
@@ -704,7 +724,7 @@ loop fruits with fruit
     # I love mango
     # I love banana
 
-# multiple iterators can be declared
+
 loop fruits with [i, fruit]
     write "|i|. I love |fruit|"
     
@@ -718,10 +738,11 @@ loop "hi" with [index, character]
 
     # The character at position 1 is h
     # The character at position 2 is i
+```
 
 
-
-# exit statement, exits the loop
+`exit` statement, exits the loop
+```
 loop 50 with i
     when i = 4
         exit
@@ -730,8 +751,10 @@ loop 50 with i
     # 1 
     # 2 
     # 3
+```
 
-# skip statement, skips the iteration 
+`skip` statement, skips the iteration
+``` 
 loop 4 with i
     when i = 2
         skip
@@ -741,8 +764,10 @@ loop 4 with i
     # 3
     # 4
 
+```
 
-# Iteration variables can be used as labels in nested loops for skip and exit statements
+Iteration variables can be used as labels in nested loops for skip and exit statements
+```
 loop 3 with i
     loop 3 with j
         when i = 2
@@ -848,7 +873,6 @@ export multiply a, b = {
 ### Why use 1-based indexing for strings and structures?
 Humans start counting at 1.
 
-### Why are keywords valid identifiers?
 
 ### Why use `~` for assignment instead of `=`?
 
