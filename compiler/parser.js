@@ -272,10 +272,13 @@ function parseArguments(compiler, parser) {
  * 
  * @param {Compiler} compiler 
  * @param {Parser} parser 
+ * @param {Expression} caller 
  * @returns {Expression}
  */
 function parseCallExpression(compiler, parser, caller) {
     let args = parseArguments(compiler, parser);
+    
+    /** @type {Expression} */
     let expression = {
         type: "CallExpression",
         caller,

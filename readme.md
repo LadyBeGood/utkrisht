@@ -519,8 +519,6 @@ status = when (age < 13) "child" else (age > 19) "adult" else "teen"
 #### Conditional comprehension
 ```
 user = [
-    id = 123
-    name = "Alex"
     when age < 13 
         role = "child"
         restricted = yes
@@ -537,6 +535,7 @@ user = [
 ### Loops
 Loop is a type sensitive construct. Therefore the behaviour of the loop depends upon the type of the data following it.
 
+#### Loop statement
 Loop keyword not followed by any data type loops infinitely:
 ```
 loop
@@ -577,7 +576,7 @@ loop 5
     # hello
 ```
 
-Loop keyword followed by a string or structure loops `count iterable` times 
+Loop keyword followed by a string or structure loops `count iterable` times:
 ```
 loop "uki"
     write "hello"
@@ -602,13 +601,86 @@ loop [id = 567, "orange"]
     # hello
 ```
 
-Loop keyword followed by a procedure (Still under consideration)
+Loop keyword followed by a procedure loops till the procedure returns a value. The loop statement internally calls the procedure:
+```
+loop {return 0}
+    write "hello"
+
+    # hello
+    # hello
+    # hello
+    # ...
+
+loop {write "Hello, World"}
+    write "hello"
+
+    # Hello, World
 ```
 
+This can be used with closures to create iterator based loops:
+```
+range start, end, gap: 1 = {
+    current = start
+    step = when (start <= end) gap else -gap
+
+    return {
+        when (step > 0 & current > end) | (step < 0 & current < end)
+            return
+        
+        value = current
+        current ~ count + step
+        return value
+    }
+}
+
+loop range 1, 9, 3
+    write "hello"
+
+    # loops 3 times
+    # the values returned by the closure returned by the range procedure are:
+    # 1, 4 and 7
+
+    # "hello"
+    # "hello"
+    # "hello"
 ```
 
+Utkrisht provides a neat literal syntax for creating sunch ranges:
+```
+loop 1..9..3
+    write "hello"
 
-with statement declares a iterator/counter
+    # behaves similarly to the custom `range` procedure
+
+    # "hello"
+    # "hello"
+    # "hello"
+
+# By default, gap is equal to 1 and end is inclusive. If you want to exclude the end, use `..<` or `..>` instead of `..`
+loop 1..<4
+    write "hello"
+
+    # loops 3 times
+    # the values returned by the closure returned by the range literal are:
+    # 1, 2 and 3 
+
+    # "hello"
+    # "hello"
+    # "hello"
+
+loop 4..>1
+    write "hello"
+
+    # loops 3 times
+    # the values returned by the closure returned by the range literal are:
+    # 4, 3, and 2
+
+    # "hello"
+    # "hello"
+    # "hello"
+```
+
+with statement declares a variable 
 ```
 loop 5 with i 
     write i
@@ -684,6 +756,21 @@ loop 3 with i
     # 3 2
     # 3 3
 ```
+
+#### Loop comprehension
+Multiline
+```
+doubled = [
+    loop numbers with number
+        number * 2
+]
+```
+
+Single line
+```
+doubled = [loop (numbers with number) number * 2]
+```
+
 
 ### Error Handling
 Utkrisht uses explicit try, fix, and crash blocks to manage runtime errors. Errors do not silently fail; they must be intercepted or thrown explicitly.
@@ -818,16 +905,17 @@ Utkirsht tries to only offer one way to do things, to improve clarity.
 
 ## Acknowledgements
 
-### Credits
+### Foundations
 - [Robert Nystrom's Crafting Interpreters](https://craftinginterpreters.com) - The definitive blueprint for anyone building a language from scratch. 
     - [Rockcavera's Nlox](https://github.com/rockcavera/nim-nlox/) - Nim implementation of the Lox programming language.
     - [David Timms' Loxdown](https://github.com/DavidTimms/loxdown) - A TypeScript implementation of a statically-typed variant of the Lox programming language.
 - [Microsoft's TypeScript Compiler](https://github.com/microsoft/TypeScript/) - A very well-written codebase to study for transpiler design. 
     - [Nathan Shively-Sanders' Mini- & Centi-TypeScript](https://github.com/sandersn/mini-typescript) - Miniature models of the TypeScript compiler.
     - [Orta Therox's TypeScript compiler guide](https://youtu.be/X8k_4tZ16qU?si=hYu4txp-OmW-iW5f) - A YouTube presentation exploring the inner workings of the TypeScript compiler.
+    - [Simone Poggiali's The Concise TypeScript Book](https://github.com/gibbok/typescript-book) - An incredibly informative TypeScript guide.
 - [Tyler Laceby's Programming Language Guide](https://youtube.com/playlist?list=PL_2VhOvlMk4UHGqYCLWc6GO8FaPl8fQTh&si=ROqcOk6DfMtiqsNP) - An excellent YouTube playlist on building a custom scripting language in TypeScript.
 - [Meriyah](https://github.com/meriyah/meriyah/) - A 100% compliant, self-hosted JavaScript parser.
-
+- [Michael L. Scott's Programming Language Pragmatics](http://www.r-5.org/files/books/computers/compilers/theory/Michael_L_Scott-Programming_Language_Pragmatics-EN.pdf) - The study of how real-world context and human design choices affect how programming languages are actually used.
 
 ### Inspirations
 - [Arturo](https://arturo-lang.io/) - The `|expression|` syntax for string interpolation.
@@ -845,8 +933,7 @@ Utkirsht tries to only offer one way to do things, to improve clarity.
 - [AST Explorer](https://astexplorer.net/) - A web tool to explore the ASTs generated by various parsers.
 - [Syntax across languages](https://rigaux.org/language-study/syntax-across-languages.html) - A comparison of syntax across many programming languages. 
 - [regex101](https://regex101.com/) - Regex editor for testing and learning regular expressions. Very helpful while creating syntax-highlighting patterns for the VSCode extension and website playground.
-- [Simone Poggiali's The Concise TypeScript Book](https://github.com/gibbok/typescript-book) - An incredibly informative TypeScript guide.
-
+- [Matt Neuburg's guide on writing TextMate grammar](https://www.apeth.com/nonblog/stories/textmatebundle.html) - A comprehensive reference for understanding TextMate grammar internals and syntax highlighting behavior. You will have a very hard time dealing with TextMate if you don't digest this guide first.
 
 
 ## License

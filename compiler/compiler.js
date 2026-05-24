@@ -2,7 +2,7 @@
 import "./utilities/types.js"
 import { createLexer, lex } from "./lexer.js";
 import { createParser, parse } from "./parser.js";
-// import { createChecker, checker } from "./checker.js";
+// import { createChecker, check } from "./checker.js";
 // import { createTransformer, transform } from "./transformer.js"
 // import { createGenerator, generate } from "./generator.js";
 import { EndProgram } from "./utilities/logger.js"
@@ -39,8 +39,8 @@ export function compile(compiler) {
         const statements = parse(compiler, parser);
 
         // /* Analysing */
-        // const analyser = createAnalyser(statements);
-        // analyse(compiler, analyser);
+        // const analyser = createChecker(statements);
+        // check(compiler, analyser);
 
         // /* Transforming */
         // const transformer = createTransformer(statements);
