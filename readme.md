@@ -1,21 +1,22 @@
 
 <div align="center">
 
-# Utkrisht | उत्कृष्ट
+# Utkrisht
 
-/ut̪ˈkɾɪʂʈ/ • "oot-krisht"
+उत्कृष्ट · /ʊt̪.kɾɪʂʈ/
 
 ![Build Status](https://img.shields.io/badge/build-passing-22c55e)
 ![Repo Size](https://img.shields.io/github/repo-size/LadyBeGood/utkrisht?color=3b82f6)
 ![Last Commit](https://img.shields.io/github/last-commit/LadyBeGood/utkrisht?color=8b5cf6)
 
-*profound tagline goes here*
+*Statically checked. Dynamically written.*
 
 </div>
 
 ## Introduction
+Utkrisht (uki) is a procedural language with static type checking that requires zero type annotations.
 
-Utkrisht (uki) is a source-to-source compiled programming language under active development that targets HTML, CSS, and JavaScript, with the long-term objective of evolving into a full-featured, unified web framework.
+Its type system, Enigma, infers types entirely from how values are used, aiming to provide the safety of static analysis without the verbosity of traditional type systems.
 
 ## Getting Started
 
@@ -134,13 +135,13 @@ Operators are symbols used to perform operations on values.
 | `.`               | Postfix  | Accessor        |
 | `()`              | Postfix  | Call            |
 | `/`               | Prefix   | Specifier       |
-| `\`               | Prefix   | Escape          |
-| `$`               | Prefix   | Reactivity      |
-| `@`               | Prefix   | Async           |
-| `#`               | Prefix   | Meta            |
 | `:`               | Infix    | Label           |
 | `..`              | Infix    | Range           |
 | `...`             | Prefix   | Spread          |
+<!-- | `\`               | Prefix   | Escape          | -->
+<!-- | `$`               | Prefix   | Reactivity      | -->
+<!-- | `@`               | Prefix   | Async           | -->
+<!-- | `#`               | Prefix   | Meta            | -->
 
 > [1] Unary Plus does not perform any operation. It is simply there for symmetry with unary minus.  
 
@@ -875,10 +876,9 @@ Humans start counting at 1.
 
 
 ### Why use `~` for assignment instead of `=`?
+Utkrisht uses `=` for declarations because declarations are far more common than reassignment, and `=` is the most visually natural symbol for introducing a value.
 
-### Why don't procedure calls with arguments require parentheses?
-
-### Why merge arrays and maps into a single Structure type?
+Utkrisht wants declaration and reassignment to be distinct operations. Using `~` keeps reassignment explicit and unambiguous.
 
 ### Why use `|` ... `|` for string interpolation?
 It provides a clean, high-visibility delimiter that is rarely used in standard text, reducing the need for complex escape sequences inside strings.
@@ -921,11 +921,9 @@ Utkirsht tries to only offer one way to do things, to improve clarity.
 
 `x.f(y)` meaning `f(x, y)` is ambiguous as `x` may have a field called `f`. It is not at all clear what this means.
 
-### Can I use external JavaScript libraries or npm packages inside an Utkrisht file?
 
 
 
-### Which version of ECMAScript does the compiler target?
 
 ## Acknowledgements
 
@@ -944,13 +942,14 @@ Utkirsht tries to only offer one way to do things, to improve clarity.
 ### Inspirations
 - [Arturo](https://arturo-lang.io/) - The `|expression|` syntax for string interpolation.
 - [Python](https://www.python.org/) - Use of the `#` symbol for comments.
-- [SASS](https://sass-lang.com/) - Indentation-based syntax, using `:` for named arguments and syntax for components.
-- [Ripple](https://www.ripple-ts.com/) - Components constructing UI directly instead of returning UI objects.
+<!-- - [SASS](https://sass-lang.com/) - Indentation-based syntax, using `:` for named arguments and syntax for components. -->
+- [SASS](https://sass-lang.com/) - Indentation-based syntax and using `:` for named arguments
+<!-- - [Ripple](https://www.ripple-ts.com/) - Components constructing UI directly instead of returning UI objects. -->
 - [Lua](https://www.lua.org/) - The concept of a unified `Structure` data type that handles both lists and maps.
-- [Svelte 4](https://v4.svelte.dev/) - Using `$` for the compiler based reactivity system.
+<!-- - [Svelte 4](https://v4.svelte.dev/) - Using `$` for the compiler based reactivity system. -->
 - [CoffeeScript](https://coffeescript.org/) - Omission of round bracket as delimiters in procedure calls when arguments are present.
 - [Nim](https://nim-lang.org/) - Import behavior where all exported variables from an imported file are automatically pulled.
-- [QML](https://doc.qt.io/qt-6/qmlreference.html) - The `property.subproperty: value` syntax used for grouped properties.
+<!-- - [QML](https://doc.qt.io/qt-6/qmlreference.html) - The `property.subproperty: value` syntax used for grouped properties. -->
 
 
 ### Resources
