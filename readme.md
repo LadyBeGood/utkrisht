@@ -4,7 +4,7 @@
 # Utkrisht
 
 [![Website Status](https://img.shields.io/website?url=https%3A%2F%2Fladybegood.github.io%2Futkrisht&up_message=online&up_color=22c55e&label=playground)](https://ladybegood.github.io/utkrisht)
-![Repo Size](https://img.shields.io/github/repo-size/ladybegood/utkrisht?color=3b82f6)  
+![Repo Size](https://img.shields.io/github/repo-size/ladybegood/utkrisht?color=3b82f6)
 ![Last Commit](https://img.shields.io/github/last-commit/ladybegood/utkrisht?color=8b5cf6)
 
 *Statically typed. Dynamically written.*
