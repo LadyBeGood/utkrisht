@@ -3,11 +3,9 @@
 
 # Utkrisht
 
-उत्कृष्ट · /ʊt̪.kɾɪʂʈ/
-
-![Build Status](https://img.shields.io/badge/build-passing-22c55e)
-![Repo Size](https://img.shields.io/github/repo-size/LadyBeGood/utkrisht?color=3b82f6)  
-![Last Commit](https://img.shields.io/github/last-commit/LadyBeGood/utkrisht?color=8b5cf6)
+[![Website Status](https://img.shields.io/website?url=https%3A%2F%2Fladybegood.github.io%2Futkrisht&up_message=online&up_color=22c55e&label=playground)](https://ladybegood.github.io/utkrisht)
+![Repo Size](https://img.shields.io/github/repo-size/ladybegood/utkrisht?color=3b82f6)  
+![Last Commit](https://img.shields.io/github/last-commit/ladybegood/utkrisht?color=8b5cf6)
 
 *Statically typed. Dynamically written.*
 

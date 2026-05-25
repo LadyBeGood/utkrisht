@@ -99,7 +99,6 @@ function createToken(lexer, type, lexeme) {
     return {
         type,
         lexeme,
-        line: lexer.line,
 
         gluedLeft:
             previousCharacter !== undefined &&
