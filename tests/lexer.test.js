@@ -7,7 +7,7 @@ import { createLexer, lex } from "../compiler/lexer.js";
 
 
 function tokenise(source, returnCompiler = false) {
-    const compiler = createCompiler(source, /* logErrors */ false);
+    const compiler = createCompiler(source);
     const lexer = createLexer(compiler.sources[0]);
     const tokens = lex(compiler, lexer);
     

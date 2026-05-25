@@ -15,15 +15,12 @@
  *          | "Equal"
  *          | "LessThan"
  *          | "MoreThan"
- *          | "At"
- *          | "Dollar"
  *          | "And"
  *          | "Plus"
  *          | "Minus"
  *          | "Asterisk"
  *          | "Slash"
  *          | "Bar"
- *          | "BackSlash"
  *          | "ExclamationMark"
  *          | "ExclamationMarkEqual"
  *          | "LessThanEqual"
@@ -54,7 +51,10 @@
  * @property {TokenType} type The type of the token
  * @property {string} [lexeme] The literal text from the source
  * @property {string | number} [literal] The processed value (for strings/numbers)
- * @property {number} line The line number where this token appears
+ * @property {number} start 
+ * @property {number} end
+ * @property {boolean} hasLeadingWhitespace
+ * @property {boolean} hasTrailingWhitespace
  */
 
  /**

@@ -20,7 +20,7 @@ export function createLexer(source) {
 
 /**
  * A collection of reserved keywords used by the Utkrisht.
- * These tokens are restricted from being used as identifiers for now.
+ * These tokens are restricted from being used as identifiers.
  * 
  * Words like `yes`, `no`, `infinity`, `nan`, `arguments` etc. are constants and not considered keywords
  */
@@ -66,6 +66,73 @@ function isCurrentCharacter(lexer, expected) {
     } else {
         return false;
     }
+}
+
+/**
+ * Checks if the character at the previous lexer position matches the expected criteria.
+ * 
+ * @param {Lexer} lexer Lexer state
+ * @param {string | ((character: string) => boolean)} expected The exact character to match or a predicate function.
+ * @returns {boolean}
+ */
+function isPreviousCharacter(lexer, expected) {
+    if (typeof expected === "function") {
+        return expected(lexer.source[lexer.position - 1]);
+    } else if (lexer.source[lexer.position - 1] === expected) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+/**
+ * @param {Lexer} lexer
+ * @param {string} lexeme
+ * @param {TokenType} type
+ * @returns {Token}
+ */
+function createToken(lexer, type, lexeme) {
+    const previousCharacter = lexer.source[lexer.position - 1];
+    const nextCharacter = lexer.source[lexer.position + lexeme.length];
+
+    return {
+        type,
+        lexeme,
+        line: lexer.line,
+
+        gluedLeft:
+            previousCharacter !== undefined &&
+            previousCharacter !== " " &&
+            previousCharacter !== "\n" &&
+            previousCharacter !== "\r",
+
+        gluedRight:
+            nextCharacter !== undefined &&
+            nextCharacter !== " " &&
+            nextCharacter !== "\n" &&
+            nextCharacter !== "\r",
+    }
+}
+
+/**
+ *  
+ * @param {Lexer} lexer 
+ * @param {TokenType} type 
+ * @returns {Token}
+ */
+function lexSingleCharacterToken(lexer, type) {
+    const lexeme = lexer.source[lexer.position];
+
+    const token = createToken(
+        lexer,
+        type,
+        lexeme
+    );
+
+    lexer.position++;
+
+    return token;
 }
 
 /**
@@ -417,155 +484,194 @@ function lexComent(lexer) {
 function lexToken(compiler, lexer) {
     let character = lexer.source[lexer.position];
 
-    switch (character) {
-        case "(":
-            lexer.position++;
-            return { type: "LeftRoundBracket", lexeme: character, line: lexer.line };
-        case ")":
-            lexer.position++;
-            return { type: "RightRoundBracket", lexeme: character, line: lexer.line };
-        case "[":
-            lexer.position++;
-            return { type: "LeftSquareBracket", lexeme: character, line: lexer.line };
-        case "]":
-            lexer.position++;
-            return { type: "RightSquareBracket", lexeme: character, line: lexer.line };
-        case "{":
-            lexer.position++;
-            return { type: "LeftCurlyBracket", lexeme: character, line: lexer.line };
-        case "}":
-            lexer.position++;
-            return { type: "RightCurlyBracket", lexeme: character, line: lexer.line };
-        case ".":
+
+    if (character === "(") {
+        return lexSingleCharacterToken(lexer, "LeftRoundBracket");
+    }
+
+    else if (character === ")") {
+        lexer.position++;
+        return { type: "RightRoundBracket", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "[") {
+        lexer.position++;
+        return { type: "LeftSquareBracket", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "]") {
+        lexer.position++;
+        return { type: "RightSquareBracket", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "{") {
+        lexer.position++;
+        return { type: "LeftCurlyBracket", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "}") {
+        lexer.position++;
+        return { type: "RightCurlyBracket", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === ".") {
+        lexer.position++;
+
+        if (isCurrentCharacter(lexer, ".")) {
             lexer.position++;
 
             if (isCurrentCharacter(lexer, ".")) {
                 lexer.position++;
-
-                if (isCurrentCharacter(lexer, ".")) {
-                    lexer.position++;
-                    return { type: "DotDotDot", lexeme: "...", line: lexer.line };
-                }
-                else {
-                    return { type: "DotDot", lexeme: "..", line: lexer.line };
-                }
-            } else {
-                return { type: "Dot", lexeme: character, line: lexer.line };
-            }
-        case ",":
-            lexer.position++;
-            return { type: "Comma", lexeme: character, line: lexer.line };
-        case ":":
-            lexer.position++;
-            return { type: "Colon", lexeme: character, line: lexer.line };
-        case "#":
-            lexComent(lexer);
-            return undefined;
-        case "~":
-            lexer.position++;
-            return { type: "Tilde", lexeme: character, line: lexer.line };
-        case "=":
-            lexer.position++;
-            return { type: "Equal", lexeme: character, line: lexer.line };
-        case "<":
-            lexer.position++;
-
-            if (isCurrentCharacter(lexer, "=")) {
-                lexer.position++;
-                return { type: "LessThanEqual", lexeme: "<=", line: lexer.line }
-            } else {
-                return { type: "LessThan", lexeme: character, line: lexer.line };
-            }
-        case ">":
-            lexer.position++;
-
-            if (isCurrentCharacter(lexer, "=")) {
-                lexer.position++;
-                return { type: "MoreThanEqual", lexeme: ">=", line: lexer.line}
-            } else {
-                return { type: "MoreThan", lexeme: character, line: lexer.line };
-            }
-        case "@":
-            lexer.position++;
-            return { type: "At", lexeme: character, line: lexer.line };
-        case "$":
-            lexer.position++;
-            return { type: "Dollar", lexeme: character, line: lexer.line };
-        case "&":
-            lexer.position++;
-            return { type: "And", lexeme: character, line: lexer.line };
-        case "+":
-            lexer.position++;
-            if (isCurrentCharacter(lexer, isDigit)) {
-                return lexNumber(lexer)
-            } else {
-                return { type: "Plus", lexeme: character, line: lexer.line };
-            }
-        case "-":
-            lexer.position++;
-            if (isCurrentCharacter(lexer, isDigit)) {
-                return lexNumber(lexer, /* isNegative */ true)
-            } else {
-                return { type: "Minus", lexeme: character, line: lexer.line };
-            }
-        case "*":
-            lexer.position++;
-            return { type: "Asterisk", lexeme: character, line: lexer.line };
-        case "/":
-            lexer.position++;
-            return { type: "Slash", lexeme: character, line: lexer.line };
-        case "|":
-            lexer.position++;
-            return { type: "Bar", lexeme: character, line: lexer.line };
-        case "\\":
-            lexer.position++;
-            return { type: "BackSlash", lexeme: character, line: lexer.line };
-        case " ":
-            lexer.position++;
-            return undefined;
-        case "\r":
-            lexer.position++;
-            if (isCurrentCharacter(lexer, "\n")) {
-                return lexNewLine(compiler, lexer);
-            } else {
-                error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
-                lexer.position++
-                return undefined;
-            }
-        case "\n":
-            return lexNewLine(compiler, lexer)
-        case "\t":
-            error(compiler, "Utkrisht does not support tabs for indentation. Please use spaces.", lexer.line);
-            lexer.position++
-            return undefined;
-        case "!":
-            lexer.position++;
-
-            if (isCurrentCharacter(lexer, "=")) {
-                lexer.position++;
-                return { type: "ExclamationMarkEqual", lexeme: "!=", line: lexer.line };
+                return { type: "DotDotDot", lexeme: "...", line: lexer.line };
             }
             else {
-                return { type: "ExclamationMark", lexeme: character, line: lexer.line };
+                return { type: "DotDot", lexeme: "..", line: lexer.line };
             }
-        case '"':
-            return lexString(compiler, lexer);
-        default:
-            if (isDigit(character)) {
-                return lexNumber(lexer);
-            }
-            else if (isSmallAlphabet(character)) {
-                return lexIdentifier(lexer);
-            }
-            else if (isBigAlphabet(character)) {
-                error(compiler, "Big Letters are not allowed in identifiers", lexer.line);
-                lexer.position++;
-                return undefined;
-            }
-            error(compiler, "Invalid character \"" + character + "\"", lexer.line);
-            lexer.position++
-
+        } else {
+            return { type: "Dot", lexeme: character, line: lexer.line };
+        }
     }
+
+    else if (character === ",") {
+        lexer.position++;
+        return { type: "Comma", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === ":") {
+        lexer.position++;
+        return { type: "Colon", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "#") {
+        lexComent(lexer);
+        return undefined;
+    }
+
+    else if (character === "~") {
+        lexer.position++;
+        return { type: "Tilde", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "=") {
+        lexer.position++;
+        return { type: "Equal", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "<") {
+        lexer.position++;
+
+        if (isCurrentCharacter(lexer, "=")) {
+            lexer.position++;
+            return { type: "LessThanEqual", lexeme: "<=", line: lexer.line }
+        } else {
+            return { type: "LessThan", lexeme: character, line: lexer.line };
+        }
+    }
+
+    else if (character === ">") {
+        lexer.position++;
+
+        if (isCurrentCharacter(lexer, "=")) {
+            lexer.position++;
+            return { type: "MoreThanEqual", lexeme: ">=", line: lexer.line}
+        } else {
+            return { type: "MoreThan", lexeme: character, line: lexer.line };
+        }
+    }
+
+    else if (character === "&") {
+        lexer.position++;
+        return { type: "And", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "+") {
+        lexer.position++;
+        if (isCurrentCharacter(lexer, isDigit)) {
+            return lexNumber(lexer)
+        } else {
+            return { type: "Plus", lexeme: character, line: lexer.line };
+        }
+    }
+
+    else if (character === "-") {
+        lexer.position++;
+        if (isCurrentCharacter(lexer, isDigit)) {
+            return lexNumber(lexer, /* isNegative */ true)
+        } else {
+            return { type: "Minus", lexeme: character, line: lexer.line };
+        }
+    }
+
+    else if (character === "*") {
+        lexer.position++;
+        return { type: "Asterisk", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "/") {
+        lexer.position++;
+        return { type: "Slash", lexeme: character, line: lexer.line };
+    }
+
+    else if (character === "|") {
+        lexer.position++;
+        return { type: "Bar", lexeme: character, line: lexer.line };
+    }
+
+
+    else if (character === " ") {
+        lexer.position++;
+        return undefined;
+    }
+
+    else if (character === "\r") {
+        lexer.position++;
+        if (isCurrentCharacter(lexer, "\n")) {
+            return lexNewLine(compiler, lexer);
+        } else {
+            error(compiler, "Carriage return must be followed by a NewLine character.", lexer.line);
+        }
+    }
+
+    else if (character === "\n") {
+        return lexNewLine(compiler, lexer)
+    }
+
+    else if (character === "\t") {
+        error(compiler, "Utkrisht does not support tabs for indentation. Please use spaces.", lexer.line);
+    }
+
+    else if (character === "!") {
+        lexer.position++;
+
+        if (isCurrentCharacter(lexer, "=")) {
+            lexer.position++;
+            return { type: "ExclamationMarkEqual", lexeme: "!=", line: lexer.line };
+        }
+        else {
+            return { type: "ExclamationMark", lexeme: character, line: lexer.line };
+        }
+    }
+
+    else if (character === '"') {
+        return lexString(compiler, lexer);
+    }
+
+    else if (isDigit(character)) {
+        return lexNumber(lexer);
+    }
+        
+    else if (isSmallAlphabet(character)) {
+        return lexIdentifier(lexer);
+    }
+        
+    else if (isBigAlphabet(character)) {
+        error(compiler, "Big Letters are not allowed in identifiers", lexer.line);
+    }
+    
+    else {
+        error(compiler, "Invalid character \"" + character + "\"", lexer.line);
+    }
+
 }
 
 
