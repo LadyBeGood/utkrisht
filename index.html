@@ -110,9 +110,2317 @@
         <div>
             aaa
         </div>
-        <div>
-            bbb
+        
+
+
+        
+
+
+        <div class="playground-ref">
+        
+            <!-- LEFT PANEL: NAVIGATION MATRIX / HUD LIVE SNIPPET CONTAINER -->
+            <div class="playground-ref__sidebar" id="refSidebar" data-collapsed="false">
+                
+                <!-- SIDEBAR HEAD HEADER: COLLAPSE & EXPAND UTILITY CONTROLS -->
+                <div class="playground-ref__search-box">
+                    <div class="playground-ref__search-row">
+                        <input type="text" id="refSearch" class="playground-ref__search-input" placeholder="Search..."
+                            autocomplete="off">
+                        <button id="toggleSidebarBtn" class="playground-ref__sidebar-toggle" title="Collapse Sidebar">◀</button>
+                    </div>
+                
+                    <!-- NEW: ICON UTILITY STRIP (Only visible when sidebar has data-collapsed="true") -->
+                    <div class="playground-ref__collapsed-icons" id="collapsedIconsStrip" style="display: none;">
+                        <button id="uncollapseSidebarBtn" class="playground-ref__icon-btn" title="Expand Sidebar">▶</button>
+                        <button id="quickSearchBtn" class="playground-ref__icon-btn" title="Open Search">🔍</button>
+                    </div>
+                
+                    <!-- SEARCH NAVIGATIONAL HUD OVERLAY -->
+                    <div id="refSearchControls" class="playground-ref__search-controls" style="display: none;">
+                        <span id="refMatchCount" class="playground-ref__match-count">0/0 results</span>
+                        <div class="playground-ref__nav-arrows">
+                            <button id="refPrevBtn" class="playground-ref__nav-btn" title="Previous Result">▲</button>
+                            <button id="refNextBtn" class="playground-ref__nav-btn" title="Next Result">▼</button>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- MODE A: STANDARD TREE DIRECTORY (Hidden automatically during search execution) -->
+                <nav class="playground-ref__nav" id="refDefaultNav">
+                    <ul class="playground-ref__tree">
+                        <li class="playground-ref__category open">
+                            <div class="playground-ref__category-header" data-heading>Language</div>
+                            <ul class="playground-ref__branch">
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-comments" class="playground-ref__link active">Comments</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-keywords" class="playground-ref__link">Keywords</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-symbols" class="playground-ref__link">Symbols</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-identifiers" class="playground-ref__link">Identifiers</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-datatypes" class="playground-ref__link">Data Types</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-variables" class="playground-ref__link">Variables</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-conditionals" class="playground-ref__link">Conditionals</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-loops" class="playground-ref__link">Loops</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-errors" class="playground-ref__link">Error Handling</a>
+                                </li>
+                                
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-packages" class="playground-ref__link">Packages</a>
+                                </li>
+                            </ul>
+                        </li>
+        
+                        <li class="playground-ref__category open">
+                            <div class="playground-ref__category-header" data-heading>Keybindings</div>
+                            <ul class="playground-ref__branch">
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-ace" class="playground-ref__link">Ace</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-vs-code" class="playground-ref__link">VS Code</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-sublime" class="playground-ref__link">Sublime</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-vim" class="playground-ref__link">Vim</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-emacs" class="playground-ref__link">Emacs</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+        
+                <!-- MODE B: LIVE SNIPPET HUD VIEW -->
+                <div class="playground-ref__search-results" id="refSearchResultsHUD" style="display: none;"></div>
+            </div>
+        
+            <!-- RIGHT PANEL: MAIN VIEWPORT HUB -->
+            <div class="playground-ref__content" id="refContentArea">
+                <div class="markdown-body">
+        
+                    <!-- SCREEN 1: COMMENTS -->
+                    <section id="scr-comments" class="playground-ref__screen active" data-title="Comments">
+                        <h1>Comments</h1>
+                        <h3>Regular Comments</h3>
+                        <p>Used for notes. They can be placed anywhere.</p>
+                        <pre><code># This is a regular comment
+when 10 &gt; 5  
+# This is also a comment
+    write "Condition is correct" # This is also a valid comment</code></pre>
+
+                        <h3>Documentation Comments</h3>
+                        <p>Placed directly above declarations to describe variables. They use standard text and Markdown without
+                            any special tag syntax.</p>
+                        <pre><code># The unique identifier for the active user session.
+session-id = "usr_9x82j1"
+
+# Divide 2 numbers
+# 
+# ### Parameters
+# - `a`: Numerator
+# - `b`: Denominator
+#
+# ### Returns
+# Result of the division
+#
+# ### Crashes
+# When denominator is `0`
+divide a, b = {
+    when b = 0
+        crash "Division by zero"
+    return a / b
+}</code></pre>
+                    </section>
+        
+                    <!-- SCREEN 2: KEYWORDS -->
+                    <section id="scr-keywords" class="playground-ref__screen" data-title="Keywords">
+                        <h1>Keywords</h1>
+                        <p>Keywords are predefined words used by the language to perform internal operations or represent built-in behavior.</p>
+                        <p>Utkrisht has <strong>12 keywords</strong>. All of them are reserved and cannot be used as identifiers.</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Keywords</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>when</code> <code>else</code></td>
+                                    <td>Conditional branching</td>
+                                </tr>
+                                <tr>
+                                    <td><code>loop</code> <code>with</code> <code>exit</code> <code>skip</code></td>
+                                    <td>Looping and loop control</td>
+                                </tr>
+                                <tr>
+                                    <td><code>try</code> <code>fix</code> <code>crash</code></td>
+                                    <td>Error handling</td>
+                                </tr>
+                                <tr>
+                                    <td><code>return</code></td>
+                                    <td>Returning from a procedure</td>
+                                </tr>
+                                <tr>
+                                    <td><code>import</code> <code>export</code></td>
+                                    <td>Package import and export</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+        
+                    <!-- SCREEN 3: SYMBOLS -->
+                    <section id="scr-symbols" class="playground-ref__screen" data-title="Symbols">
+                        <h1>Symbols</h1>
+                        <p>Symbols are non-alphanumeric tokens that have special meaning in the language syntax. Symbols are context sensitive.</p>
+                        <p>In Utkrisht, symbols are grouped into operators, separators, delimiters, and terminators.</p>
+        
+                        <h3>Operators</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Operator</th>
+                                    <th>Position</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>=</code></td>
+                                    <td>Infix</td>
+                                    <td>Declaration</td>
+                                </tr>
+                                <tr>
+                                    <td><code>~</code></td>
+                                    <td>Infix</td>
+                                    <td>Assignment</td>
+                                </tr>
+                                <tr>
+                                    <td><code>=</code></td>
+                                    <td>Infix</td>
+                                    <td>Equal</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;</code></td>
+                                    <td>Infix</td>
+                                    <td>Less Than</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&gt;</code></td>
+                                    <td>Infix</td>
+                                    <td>More Than</td>
+                                </tr>
+                                <tr>
+                                    <td><code>!=</code></td>
+                                    <td>Infix</td>
+                                    <td>Not Equal</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;=</code></td>
+                                    <td>Infix</td>
+                                    <td>Less Than Equal</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&gt;=</code></td>
+                                    <td>Infix</td>
+                                    <td>More Than Equal</td>
+                                </tr>
+                                <tr>
+                                    <td><code>+</code></td>
+                                    <td>Infix</td>
+                                    <td>Addition</td>
+                                </tr>
+                                <tr>
+                                    <td><code>-</code></td>
+                                    <td>Infix</td>
+                                    <td>Subtraction</td>
+                                </tr>
+                                <tr>
+                                    <td><code>*</code></td>
+                                    <td>Infix</td>
+                                    <td>Multiplication</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/</code></td>
+                                    <td>Infix</td>
+                                    <td>Division</td>
+                                </tr>
+                                <tr>
+                                    <td><code>-</code></td>
+                                    <td>Prefix</td>
+                                    <td>Unary Minus</td>
+                                </tr>
+                                <tr>
+                                    <td><code>+</code></td>
+                                    <td>Prefix</td>
+                                    <td>Unary Plus<sup>[1]</sup></td>
+                                </tr>
+                                <tr>
+                                    <td><code>&amp;</code></td>
+                                    <td>Infix</td>
+                                    <td>And</td>
+                                </tr>
+                                <tr>
+                                    <td><code>|</code></td>
+                                    <td>Infix</td>
+                                    <td>Or</td>
+                                </tr>
+                                <tr>
+                                    <td><code>!</code></td>
+                                    <td>Prefix</td>
+                                    <td>Not</td>
+                                </tr>
+                                <tr>
+                                    <td><code>.</code></td>
+                                    <td>Postfix</td>
+                                    <td>Accessor</td>
+                                </tr>
+                                <tr>
+                                    <td><code>()</code></td>
+                                    <td>Postfix</td>
+                                    <td>Call</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/</code></td>
+                                    <td>Prefix</td>
+                                    <td>Specifier</td>
+                                </tr>
+                                <tr>
+                                    <td><code>:</code></td>
+                                    <td>Infix</td>
+                                    <td>Label</td>
+                                </tr>
+                                <tr>
+                                    <td><code>..</code></td>
+                                    <td>Infix</td>
+                                    <td>Range</td>
+                                </tr>
+                                <tr>
+                                    <td><code>...</code></td>
+                                    <td>Prefix</td>
+                                    <td>Spread</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <blockquote>[1] Unary Plus does not perform any operation. It is simply there for symmetry with unary minus.</blockquote>
+        
+                        <h3>Separators</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Separator</th>
+                                    <th>Separates</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>,</code></td>
+                                    <td>Arguments, Parameters, Properties</td>
+                                </tr>
+                                <tr>
+                                    <td><code>NewLine</code></td>
+                                    <td>Arguments, Parameters, Properties (non-terminating contexts)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+        
+                        <h3>Delimiters</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Delimiter</th>
+                                    <th>Delimits</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>(</code> ... <code>)</code></td>
+                                    <td>Expression groups</td>
+                                </tr>
+                                <tr>
+                                    <td><code>{</code> ... <code>}</code></td>
+                                    <td>Procedures</td>
+                                </tr>
+                                <tr>
+                                    <td><code>[</code> ... <code>]</code></td>
+                                    <td>Structures</td>
+                                </tr>
+                                <tr>
+                                    <td><code>"</code> ... <code>"</code></td>
+                                    <td>Strings</td>
+                                </tr>
+                                <tr>
+                                    <td><code>/</code> ... <code>/</code></td>
+                                    <td>Regular expressions</td>
+                                </tr>
+                                <tr>
+                                    <td><code>|</code> ... <code>|</code></td>
+                                    <td>String Interpolation</td>
+                                </tr>
+                                <tr>
+                                    <td><code>#</code> ... NewLine</td>
+                                    <td>Comments</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Indent</code> ... <code>Dedent</code></td>
+                                    <td>Expressions, Procedures, Arguments</td>
+                                </tr>
+                            </tbody>
+                        </table>
+        
+                        <h3>Terminators</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Terminator</th>
+                                    <th>Terminates</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>NewLine</code></td>
+                                    <td>Statements, Comments (terminating contexts)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>EndOfFile</code></td>
+                                    <td>Statements, Comments</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+        
+                    <!-- SCREEN 4: IDENTIFIERS -->
+                    <section id="scr-identifiers" class="playground-ref__screen" data-title="Identifiers">
+                        <h1>Identifiers</h1>
+                        <p>Identifiers are names given to entities to uniquely isolate them within source files.</p>
+                        <pre><code># variables
+message = "hi"
+# structure keys
+[name = "Uki"]
+# packages
+import components/footer</code></pre>
+                        <p>A valid identifier contains only lowercase letters (a–z), numbers (0–9), and hyphens (-). It must
+                            start with a letter, end with a letter or number, and cannot contain consecutive hyphens.</p>
+        
+                        <h3>Valid Identifiers</h3>
+                        <pre><code>name
+user-123
+file-path</code></pre>
+        
+                        <h3>Invalid Identifiers</h3>
+                        <pre><code>myName    # contains uppercase letter
+1080p     # starts with a number
+user_name # contains underscore</code></pre>
+                    </section>
+        
+                    <!-- SCREEN 5: DATA TYPES -->
+                    <section id="scr-datatypes" class="playground-ref__screen" data-title="Data Types">
+                        <h1>Data Types</h1>
+                        <p>Utkrisht features 5 fundamental data types.</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data Type</th>
+                                    <th>Passed by</th>
+                                    <th>Clonable</th>
+                                    <th>Mutable</th>
+                                    <th>Hashable</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>String</strong></td>
+                                    <td>Value</td>
+                                    <td>Yes</td>
+                                    <td>No</td>
+                                    <td>Yes</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Number</strong></td>
+                                    <td>Value</td>
+                                    <td>Yes</td>
+                                    <td>No</td>
+                                    <td>Yes<sup>[1]</sup></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Boolean</strong></td>
+                                    <td>Value</td>
+                                    <td>Yes</td>
+                                    <td>No</td>
+                                    <td>Yes</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Procedure</strong></td>
+                                    <td>Reference</td>
+                                    <td>No</td>
+                                    <td>No</td>
+                                    <td>Yes</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Structure</strong></td>
+                                    <td>Reference</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                    <td>Yes</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <blockquote>[1] All numbers including nan are hashable. Structure maps use the SameValueZero protocol,
+                            meaning nan matches nan.</blockquote>
+        
+                        <h3>String</h3>
+                        <pre><code>"This is a single line string."</code></pre>
+                        <p>String elements are accessible via 1-based indexing using the accessor dot: <code>"webapp".1</code>
+                            evaluates to w.</p>
+        
+                        <h3>Number</h3>
+                        <pre><code>write 0.1 + 0.2  # 0.30000000000000004
+is-nan nan       # yes</code></pre>
+        
+                        <h3>Boolean</h3>
+                        <p>Literals are explicitly mapped via keywords <code>yes</code> and <code>no</code>.</p>
+        
+                        <h3>Procedure</h3>
+                        <pre><code>greet name = { write "Hi |name|" }
+greet "Dmitri"</code></pre>
+        
+                        <h3>Structure</h3>
+                        <pre><code>mixed = ["first-item", status = active, 42]</code></pre>
+                    </section>
+        
+                    <!-- SCREEN 6: VARIABLES -->
+                    <section id="scr-variables" class="playground-ref__screen" data-title="Variables">
+                        <h1>Variables</h1>
+                        <p>Variables are identifiers used to store data. All variables are mutable and can be reassigned.</p>
+                        <p>Declare a variable using <code>=</code></p>
+                        <pre><code>message = "Hello World"</code></pre>
+                        <p>Reassign a value using <code>~</code></p>
+                        <pre><code>quantity = 34
+quantity ~ 65
+quantity ~ "high" # Data type of the value does not matter</code></pre>
+                    </section>
+        
+                    <!-- SCREEN 7: CONDITIONALS -->
+                    <section id="scr-conditionals" class="playground-ref__screen" data-title="Conditionals">
+                        <h1>Conditionals</h1>
+                        <p>Conditionals control which block will be executed based on a condition. The condition must be a
+                            boolean value; Utkrisht does not have truthy or falsy values.</p>
+                        <h3>Conditional statement</h3>
+                        <pre><code>when age &lt; 13 
+    write "You're a child"
+else
+    write "You're a teen"</code></pre>
+                        <h3>Conditional expression</h3>
+                        <pre><code>status = when (age &lt; 13) "child" else "teen"</code></pre>
+                    </section>
+        
+                    <!-- SCREEN 8: LOOPS -->
+                    <section id="scr-loops" class="playground-ref__screen" data-title="Loops">
+                        <h1>Loops</h1>
+                        <p>Loop is a type sensitive construct. Therefore the behaviour of the loop depends upon the type of the
+                            data following it.</p>
+                        <pre><code>loop 5 with i
+    write i # Executes exactly 5 times
+        
+loop 1..9..3 with i
+    write i # 1, 4, 7</code></pre>
+                        <p>Use <code>exit</code> statement to stop loops entirely, and <code>skip</code> statement to advance the current iteration.</p>
+                    </section>
+        
+                    <!-- SCREEN 9: ERROR HANDLING -->
+                    <section id="scr-errors" class="playground-ref__screen" data-title="Error Handling">
+                        <h1>Error Handling</h1>
+                        <p>Utkrisht uses explicit try, fix, and crash blocks to manage runtime errors.</p>
+                        <pre><code>try 
+    result = divide 10, 0
+fix error
+    write "An error occurred: |error|"</code></pre>
+                    </section>
+        
+                    <!-- SCREEN 10: PACKAGES -->
+                    <section id="scr-packages" class="playground-ref__screen" data-title="Packages">
+                        <h1>Packages</h1>
+                        <p>A package is a reusable unit of code that organizes logic into separate files and folders.</p>
+                        <pre><code>import components/footer
+export multiply a, b = { return a * b }</code></pre>
+                    </section>
+        
+                    <!-- KEYBINDINGS -->
+                    <section id="scr-keybindings-ace" class="playground-ref__screen" data-title="Ace Keybindings">
+                        <h2>Line Operations</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows/Linux</th>
+                                    <th>Mac</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Ctrl-D</code></td>
+                                    <td><code>Command-D</code></td>
+                                    <td>Remove line</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-Down</code></td>
+                                    <td><code>Command-Option-Down</code></td>
+                                    <td>Copy lines down</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-Up</code></td>
+                                    <td><code>Command-Option-Up</code></td>
+                                    <td>Copy lines up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Down</code></td>
+                                    <td><code>Option-Down</code></td>
+                                    <td>Move lines down</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Up</code></td>
+                                    <td><code>Option-Up</code></td>
+                                    <td>Move lines up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Delete</code></td>
+                                    <td><code>Ctrl-K</code></td>
+                                    <td>Remove to line end</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Backspace</code></td>
+                                    <td><code>Command-Backspace</code></td>
+                                    <td>Remove to linestart</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Backspace</code></td>
+                                    <td><code>Option-Backspace</code>, <code>Ctrl-Option-Backspace</code></td>
+                                    <td>Remove word left</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Delete</code></td>
+                                    <td><code>Option-Delete</code></td>
+                                    <td>Remove word right</td>
+                                </tr>
+                                <tr>
+                                    <td>—</td>
+                                    <td><code>Ctrl-O</code></td>
+                                    <td>Split line</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2>Selection</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows/Linux</th>
+                                    <th>Mac</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Ctrl-A</code></td>
+                                    <td><code>Command-A</code></td>
+                                    <td>Select all</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Left</code></td>
+                                    <td><code>Shift-Left</code></td>
+                                    <td>Select left</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Right</code></td>
+                                    <td><code>Shift-Right</code></td>
+                                    <td>Select right</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Left</code></td>
+                                    <td><code>Option-Shift-Left</code></td>
+                                    <td>Select word left</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Right</code></td>
+                                    <td><code>Option-Shift-Right</code></td>
+                                    <td>Select word right</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Home</code></td>
+                                    <td><code>Shift-Home</code></td>
+                                    <td>Select line start</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-End</code></td>
+                                    <td><code>Shift-End</code></td>
+                                    <td>Select line end</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-Right</code></td>
+                                    <td><code>Command-Shift-Right</code></td>
+                                    <td>Select to line end</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-Left</code></td>
+                                    <td><code>Command-Shift-Left</code></td>
+                                    <td>Select to line start</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Up</code></td>
+                                    <td><code>Shift-Up</code></td>
+                                    <td>Select up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Down</code></td>
+                                    <td><code>Shift-Down</code></td>
+                                    <td>Select down</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-PageUp</code></td>
+                                    <td><code>Shift-PageUp</code></td>
+                                    <td>Select page up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-PageDown</code></td>
+                                    <td><code>Shift-PageDown</code></td>
+                                    <td>Select page down</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Home</code></td>
+                                    <td><code>Command-Shift-Up</code></td>
+                                    <td>Select to start</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-End</code></td>
+                                    <td><code>Command-Shift-Down</code></td>
+                                    <td>Select to end</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-D</code></td>
+                                    <td><code>Command-Shift-D</code></td>
+                                    <td>Duplicate selection</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-P</code></td>
+                                    <td>—</td>
+                                    <td>Select to matching bracket</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-M</code></td>
+                                    <td><code>Ctrl-Shift-M</code></td>
+                                    <td>Expand to matching</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-\</code>, <code>Ctrl-P</code></td>
+                                    <td><code>Command-\</code></td>
+                                    <td>Jump to matching</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-\</code>, <code>Ctrl-Shift-P</code></td>
+                                    <td><code>Command-Shift-\</code></td>
+                                    <td>Select to matching</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-L</code></td>
+                                    <td><code>Command-Shift-L</code></td>
+                                    <td>Expand to line</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2>Multicursor</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows/Linux</th>
+                                    <th>Mac</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Up</code></td>
+                                    <td><code>Ctrl-Option-Up</code></td>
+                                    <td>Add cursor above</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Down</code></td>
+                                    <td><code>Ctrl-Option-Down</code></td>
+                                    <td>Add cursor below</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Right</code></td>
+                                    <td><code>Ctrl-Option-Right</code></td>
+                                    <td>Add next occurrence to multi-selection</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Left</code></td>
+                                    <td><code>Ctrl-Option-Left</code></td>
+                                    <td>Add previous occurrence to multi-selection</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Shift-Up</code></td>
+                                    <td><code>Ctrl-Option-Shift-Up</code></td>
+                                    <td>Move multicursor from current line to the line above</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Shift-Down</code></td>
+                                    <td><code>Ctrl-Option-Shift-Down</code></td>
+                                    <td>Move multicursor from current line to the line below</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Shift-Right</code></td>
+                                    <td><code>Ctrl-Option-Shift-Right</code></td>
+                                    <td>Remove current occurrence from multi-selection and move to next</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Shift-Left</code></td>
+                                    <td><code>Ctrl-Option-Shift-Left</code></td>
+                                    <td>Remove current occurrence from multi-selection and move to previous</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-L</code></td>
+                                    <td><code>Ctrl-Shift-L</code></td>
+                                    <td>Select all from multi-selection</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-A</code></td>
+                                    <td><code>Ctrl-Alt-A</code></td>
+                                    <td>Align cursors</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2>Go to</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows/Linux</th>
+                                    <th>Mac</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Left</code></td>
+                                    <td><code>Left</code>, <code>Ctrl-B</code></td>
+                                    <td>Go to left</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Right</code></td>
+                                    <td><code>Right</code>, <code>Ctrl-F</code></td>
+                                    <td>Go to right</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Left</code></td>
+                                    <td><code>Option-Left</code></td>
+                                    <td>Go to word left</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Right</code></td>
+                                    <td><code>Option-Right</code></td>
+                                    <td>Go to word right</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Up</code></td>
+                                    <td><code>Up</code>, <code>Ctrl-P</code></td>
+                                    <td>Go line up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Down</code></td>
+                                    <td><code>Down</code>, <code>Ctrl-N</code></td>
+                                    <td>Go line down</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Left</code>, <code>Home</code></td>
+                                    <td><code>Command-Left</code>, <code>Home</code>, <code>Ctrl-A</code></td>
+                                    <td>Go to line start</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Right</code>, <code>End</code></td>
+                                    <td><code>Command-Right</code>, <code>End</code>, <code>Ctrl-E</code></td>
+                                    <td>Go to line end</td>
+                                </tr>
+                                <tr>
+                                    <td><code>PageUp</code></td>
+                                    <td><code>Option-PageUp</code></td>
+                                    <td>Go to page up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>PageDown</code></td>
+                                    <td><code>Option-PageDown</code>, <code>Ctrl-V</code></td>
+                                    <td>Go to page down</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Home</code></td>
+                                    <td><code>Command-Home</code>, <code>Command-Up</code></td>
+                                    <td>Go to start</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-End</code></td>
+                                    <td><code>Command-End</code>, <code>Command-Down</code></td>
+                                    <td>Go to end</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-L</code></td>
+                                    <td><code>Command-L</code></td>
+                                    <td>Go to line...</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Down</code></td>
+                                    <td><code>Command-Down</code></td>
+                                    <td>Scroll line down</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Up</code></td>
+                                    <td>—</td>
+                                    <td>Scroll line up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-P</code></td>
+                                    <td>—</td>
+                                    <td>Go to matching bracket</td>
+                                </tr>
+                                <tr>
+                                    <td>—</td>
+                                    <td><code>Option-PageDown</code></td>
+                                    <td>Scroll page down</td>
+                                </tr>
+                                <tr>
+                                    <td>—</td>
+                                    <td><code>Option-PageUp</code></td>
+                                    <td>Scroll page up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-E</code></td>
+                                    <td><code>F4</code></td>
+                                    <td>Go to next error</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-E</code></td>
+                                    <td><code>Shift-F4</code></td>
+                                    <td>Go to previous error</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2>Find/Replace</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows/Linux</th>
+                                    <th>Mac</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Ctrl-F</code></td>
+                                    <td><code>Command-F</code></td>
+                                    <td>Find</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-H</code></td>
+                                    <td><code>Command-Option-F</code></td>
+                                    <td>Replace</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K</code></td>
+                                    <td><code>Command-G</code></td>
+                                    <td>Find next</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-K</code></td>
+                                    <td><code>Command-Shift-G</code></td>
+                                    <td>Find previous</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-K</code></td>
+                                    <td><code>Ctrl-Alt-G</code></td>
+                                    <td>Find all</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-K</code></td>
+                                    <td><code>Ctrl-G</code></td>
+                                    <td>Select or find next</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-K</code></td>
+                                    <td><code>Ctrl-Shift-G</code></td>
+                                    <td>Select or find previous</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2>Folding</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows/Linux</th>
+                                    <th>Mac</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>F2</code></td>
+                                    <td><code>F2</code></td>
+                                    <td>Toggle fold widget</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-F2</code></td>
+                                    <td><code>Alt-F2</code></td>
+                                    <td>Toggle parent fold widget</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-L</code>, <code>Ctrl-F1</code></td>
+                                    <td><code>Command-Option-L</code>, <code>Command-F1</code></td>
+                                    <td>Fold selection</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-L</code>, <code>Ctrl-Shift-F1</code></td>
+                                    <td><code>Command-Option-Shift-L</code>, <code>Command-Shift-F1</code></td>
+                                    <td>Unfold</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-0</code></td>
+                                    <td><code>Command-Option-0</code></td>
+                                    <td>Fold all</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-0</code></td>
+                                    <td><code>Command-Option-Shift-0</code></td>
+                                    <td>Unfold all</td>
+                                </tr>
+                                <tr>
+                                    <td>—</td>
+                                    <td><code>Ctrl-Command-Option-0</code></td>
+                                    <td>Fold all comments</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2>Other</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows/Linux</th>
+                                    <th>Mac</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>F1</code></td>
+                                    <td><code>F1</code></td>
+                                    <td>Open command palette</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Tab</code></td>
+                                    <td><code>Tab</code></td>
+                                    <td>Indent</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-]</code></td>
+                                    <td><code>Ctrl-]</code></td>
+                                    <td>Block indent</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Tab</code></td>
+                                    <td><code>Shift-Tab</code></td>
+                                    <td>Outdent</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-[</code></td>
+                                    <td><code>Ctrl-[</code></td>
+                                    <td>Block outdent</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Z</code></td>
+                                    <td><code>Command-Z</code></td>
+                                    <td>Undo</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Z</code>, <code>Ctrl-Y</code></td>
+                                    <td><code>Command-Shift-Z</code>, <code>Command-Y</code></td>
+                                    <td>Redo</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-,</code></td>
+                                    <td><code>Command-,</code></td>
+                                    <td>Show the settings menu</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-/</code></td>
+                                    <td><code>Command-/</code></td>
+                                    <td>Toggle comment</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-/</code></td>
+                                    <td><code>Command-Shift-/</code></td>
+                                    <td>Toggle block comment</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-T</code></td>
+                                    <td><code>Ctrl-T</code></td>
+                                    <td>Transpose letters</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Enter</code></td>
+                                    <td><code>Command-Enter</code></td>
+                                    <td>Enter full screen</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-U</code></td>
+                                    <td><code>Ctrl-Shift-U</code></td>
+                                    <td>Change to lower case</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-U</code></td>
+                                    <td><code>Ctrl-U</code></td>
+                                    <td>Change to upper case</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Insert</code></td>
+                                    <td><code>Insert</code></td>
+                                    <td>Overwrite</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-E</code></td>
+                                    <td><code>Command-Shift-E</code></td>
+                                    <td>Macros replay</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-E</code></td>
+                                    <td>—</td>
+                                    <td>Macros recording</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Delete</code></td>
+                                    <td>—</td>
+                                    <td>Delete</td>
+                                </tr>
+                                <tr>
+                                    <td>—</td>
+                                    <td><code>Ctrl-L</code></td>
+                                    <td>Center selection</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-U</code></td>
+                                    <td><code>Ctrl-U</code></td>
+                                    <td>To uppercase</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-U</code></td>
+                                    <td><code>Ctrl-Shift-U</code></td>
+                                    <td>To lowercase</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-S</code></td>
+                                    <td><code>Command-Alt-S</code></td>
+                                    <td>Sort lines</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Up</code></td>
+                                    <td><code>Alt-Shift-Up</code></td>
+                                    <td>Modify number up</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Down</code></td>
+                                    <td><code>Alt-Shift-Down</code></td>
+                                    <td>Modify number down</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-B</code></td>
+                                    <td><code>Ctrl-Shift-B</code></td>
+                                    <td>Format selection (Beautify)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="scr-keybindings-vs-code" class="playground-ref__screen" data-title="VS Code Keybindings">
+                        <h2>VS Code Core Extension Keymap</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows / Linux</th>
+                                    <th>macOS</th>
+                                    <th>Action Name</th>
+                                    <th>Functional Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Ctrl-G</code></td>
+                                    <td><code>Ctrl-G</code></td>
+                                    <td>gotoline</td>
+                                    <td>Jump directly to specified row number marker</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-L</code> / <code>Ctrl-F2</code></td>
+                                    <td><code>Command-Shift-L</code> / <code>Command-F2</code></td>
+                                    <td>findAll</td>
+                                    <td>Select all matching occurrences of current text string</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-F8</code> / <code>Ctrl-K Ctrl-D</code></td>
+                                    <td><code>Command-G</code></td>
+                                    <td>findnext</td>
+                                    <td>Find next occurrence of search query match</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-F3</code></td>
+                                    <td><code>Command-Shift-G</code></td>
+                                    <td>findprevious</td>
+                                    <td>Find previous occurrence of search query match</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Enter</code></td>
+                                    <td><code>Option-Enter</code></td>
+                                    <td>selectAllMatches</td>
+                                    <td>Select all found instances within search parameters</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-D</code></td>
+                                    <td><code>Command-D</code></td>
+                                    <td>selectMoreAfter</td>
+                                    <td>Add next matching symbol element to selection track</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-D</code></td>
+                                    <td><code>Command-K Command-D</code></td>
+                                    <td>selectOrFindNext</td>
+                                    <td>Select or skip directly to next match track segment</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Enter</code></td>
+                                    <td><code>Command-Alt-Enter</code></td>
+                                    <td>replaceAll</td>
+                                    <td>Execute search box batch string replace all function</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-1</code></td>
+                                    <td><code>Command-Shift-1</code></td>
+                                    <td>replaceOne</td>
+                                    <td>Execute search box single isolated match string replacement</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-C</code></td>
+                                    <td><code>Option-C</code></td>
+                                    <td>toggleFindCaseSensitive</td>
+                                    <td>Toggle case sensitivity filter on search module query</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-L</code></td>
+                                    <td><code>Option-L</code></td>
+                                    <td>toggleFindInSelection</td>
+                                    <td>Limit search sequence boundaries strictly to chosen target text block</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-R</code></td>
+                                    <td><code>Option-R</code></td>
+                                    <td>toggleFindRegex</td>
+                                    <td>Toggle Regular Expression text parser search configuration</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-W</code></td>
+                                    <td><code>Option-W</code></td>
+                                    <td>toggleFindWholeWord</td>
+                                    <td>Toggle full text isolation constraint parameters on query word matching</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-F8</code> / <code>Shift-Alt-F8</code></td>
+                                    <td><code>Shift-F8</code> / <code>Shift-Option-F8</code></td>
+                                    <td>goToPreviousError</td>
+                                    <td>Jump directly backwards onto previous console diagnostic log or error syntax position</td>
+                                </tr>
+                                <tr>
+                                    <td><code>F8</code> / <code>Alt-F8</code></td>
+                                    <td><code>F8</code> / <code>Option-F8</code></td>
+                                    <td>goToNextError</td>
+                                    <td>Jump forward onto next log error or breaking syntax trace element</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-P</code> / <code>F1</code></td>
+                                    <td><code>Command-Shift-P</code> / <code>F1</code></td>
+                                    <td>openCommandPalette</td>
+                                    <td>Initialize and focus layout Command Palette overlay HUD console context</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-Up</code></td>
+                                    <td><code>Shift-Option-Up</code></td>
+                                    <td>copylinesup</td>
+                                    <td>Clone current line contents up one text index level</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-Down</code></td>
+                                    <td><code>Shift-Option-Down</code></td>
+                                    <td>copylinesdown</td>
+                                    <td>Clone current line contents down one text index level</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-K</code></td>
+                                    <td><code>Command-Shift-K</code></td>
+                                    <td>removeline</td>
+                                    <td>Instantly slice current text array line indices out entirely</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Enter</code></td>
+                                    <td><code>Command-Enter</code></td>
+                                    <td>addLineAfter</td>
+                                    <td>Insert new empty clean code line index tracking row immediately below</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Enter</code></td>
+                                    <td><code>Command-Shift-Enter</code></td>
+                                    <td>addLineBefore</td>
+                                    <td>Insert new empty clean code line index tracking row immediately above</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-\\</code></td>
+                                    <td><code>Command-Shift-\\</code></td>
+                                    <td>jumptomatching</td>
+                                    <td>Instantly jump file cursor to paired opposite syntax wrapping block context element</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-]</code></td>
+                                    <td><code>Command-]</code></td>
+                                    <td>blockindent</td>
+                                    <td>Push text blocks forward by one tab dimension setting</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-[</code></td>
+                                    <td><code>Command-[</code></td>
+                                    <td>blockoutdent</td>
+                                    <td>Pull text blocks back backward by one tab dimension setting</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-PageDown</code></td>
+                                    <td><code>Ctrl-PageDown</code></td>
+                                    <td>pagedown</td>
+                                    <td>Scroll cursor view downwards by full window frame boundary block height</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-PageUp</code></td>
+                                    <td><code>Ctrl-PageUp</code></td>
+                                    <td>pageup</td>
+                                    <td>Scroll cursor view upwards by full window frame boundary block height</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Alt-A</code></td>
+                                    <td><code>Shift-Option-A</code></td>
+                                    <td>toggleBlockComment</td>
+                                    <td>Wrap targeted segment cleanly using standard multi-line syntax comment characters</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Z</code></td>
+                                    <td><code>Option-Z</code></td>
+                                    <td>toggleWordWrap</td>
+                                    <td>Toggle horizontal screen layout auto edge line wrapping rules dynamically</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Alt-I</code></td>
+                                    <td><code>Shift-Option-I</code></td>
+                                    <td>splitSelectionIntoLines</td>
+                                    <td>Spawn separate line operations cursors directly at tail edges of multi-line selection array</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K M</code></td>
+                                    <td><code>Command-K M</code></td>
+                                    <td>modeSelect</td>
+                                    <td>Initialize drop menu to set target source file programming language code parsing rules</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-[</code></td>
+                                    <td><code>Command-Option-[</code></td>
+                                    <td>toggleFoldWidget</td>
+                                    <td>Collapse current text or logical block context container frame state</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-]</code></td>
+                                    <td><code>Command-Option-]</code></td>
+                                    <td>toggleFoldWidget</td>
+                                    <td>Expand current text or logical block context container frame state</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-0</code></td>
+                                    <td><code>Command-K Command-0</code></td>
+                                    <td>foldall</td>
+                                    <td>Collapse all nested structural fold groups across total file canvas index bounds</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-J</code></td>
+                                    <td><code>Command-K Command-J</code></td>
+                                    <td>unfoldall</td>
+                                    <td>Expand total nested hidden text structural lines back into clear workspace layout visibility</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-1</code></td>
+                                    <td><code>Command-K Command-1</code></td>
+                                    <td>foldOther</td>
+                                    <td>Collapse all unselected peripheral block components relative to focal context cursor block</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-Q</code></td>
+                                    <td><code>Command-K Command-Q</code></td>
+                                    <td>navigateToLastEditLocation</td>
+                                    <td>Snap file screen coordinates back immediately onto last modification delta footprint pointer</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-R</code> / <code>Ctrl-K Ctrl-S</code></td>
+                                    <td><code>Command-K Command-R</code> / <code>Command-K Command-S</code></td>
+                                    <td>showKeyboardShortcuts</td>
+                                    <td>Launch main application keyboard mapping preferences control hub display panel</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-X</code></td>
+                                    <td><code>Command-K Command-X</code></td>
+                                    <td>trimTrailingSpace</td>
+                                    <td>Purge unnecessary trailing hidden spacing sequences off ends of code array index rows</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Down</code> / <code>Ctrl-Shift-Down</code></td>
+                                    <td><code>Shift-Down</code> / <code>Command-Shift-Down</code></td>
+                                    <td>selectdown</td>
+                                    <td>Add next row line boundary text explicitly into selected content registry selection bounds</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Up</code> / <code>Ctrl-Shift-Up</code></td>
+                                    <td><code>Shift-Up</code> / <code>Command-Shift-Up</code></td>
+                                    <td>selectup</td>
+                                    <td>Add previous row line boundary text explicitly into selected content registry selection bounds</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-L</code></td>
+                                    <td><code>Command-L</code></td>
+                                    <td>expandtoline</td>
+                                    <td>Forcibly cast active line selection boundary metrics clean across to final column index wrapper</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Esc</code></td>
+                                    <td><code>Shift-Esc</code></td>
+                                    <td>removeSecondaryCursors</td>
+                                    <td>Clear all secondary multicursor instances down onto single parent workspace position</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <h2>Unimplemented Feature Extensions (Reference Map Data Only)</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows / Linux</th>
+                                    <th>macOS</th>
+                                    <th>Action Name Identifier</th>
+                                    <th>Functional Target Roadmap</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Shift-Alt-Right</code></td>
+                                    <td><code>Option-Shift-Command-Right</code></td>
+                                    <td>smartSelect.expand</td>
+                                    <td>Intelligently scale text highlight bounds outward via syntax tree markers</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Alt-Left</code></td>
+                                    <td><code>Ctrl-Shift-Command-Left</code></td>
+                                    <td>smartSelect.shrink</td>
+                                    <td>Intelligently scale text highlight bounds inward via syntax tree markers</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Alt-F</code></td>
+                                    <td><code>Shift-Option-F</code></td>
+                                    <td>beautify</td>
+                                    <td>Prettify layout formatting parameters rules cleanly on document array text metrics</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-F</code></td>
+                                    <td><code>Command-K Command-F</code></td>
+                                    <td>formatSelection</td>
+                                    <td>Format selected range syntax to conform to code styling regulations</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-C</code></td>
+                                    <td><code>Command-K Command-C</code></td>
+                                    <td>addCommentLine</td>
+                                    <td>Prepend comment characters directly on current text row position tracking index lines</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-U</code></td>
+                                    <td><code>Command-K Command-U</code></td>
+                                    <td>removeCommentLine</td>
+                                    <td>Strip comment tokens off highlighted script target bounds string data rows</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-/</code></td>
+                                    <td><code>Command-K Command-/</code></td>
+                                    <td>foldAllBlockComments</td>
+                                    <td>Collapse block formatting script comments systematically out of window workspace panel sight lines</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-2</code></td>
+                                    <td><code>Command-K Command-2</code></td>
+                                    <td>foldLevel2</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 2</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-3</code></td>
+                                    <td><code>Command-K Command-3</code></td>
+                                    <td>foldLevel3</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 3</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-4</code></td>
+                                    <td><code>Command-K Command-4</code></td>
+                                    <td>foldLevel4</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 4</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-5</code></td>
+                                    <td><code>Command-K Command-5</code></td>
+                                    <td>foldLevel5</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 5</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-6</code></td>
+                                    <td><code>Command-K Command-6</code></td>
+                                    <td>foldLevel6</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 6</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-7</code></td>
+                                    <td><code>Command-K Command-7</code></td>
+                                    <td>foldLevel7</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 7</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-[</code></td>
+                                    <td><code>Command-K Command-[</code></td>
+                                    <td>foldRecursively</td>
+                                    <td>Recursively collapse selected code blocks inward down through children branches</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-8</code></td>
+                                    <td><code>Command-K Command-8</code></td>
+                                    <td>foldAllMarkerRegions</td>
+                                    <td>Locate and collapse all custom region metadata wrapper parameters within document module boundaries</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-9</code></td>
+                                    <td><code>Command-K Command-9</code></td>
+                                    <td>unfoldAllMarkerRegions</td>
+                                    <td>Unfurl layout views across total region markers embedded anywhere deep inside current module document
+                                        scope</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-]</code></td>
+                                    <td><code>Command-K Command-]</code></td>
+                                    <td>unfoldRecursively</td>
+                                    <td>Recursively open nested tree nodes down through child structural objects entirely</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-T</code></td>
+                                    <td><code>Command-K Command-T</code></td>
+                                    <td>selectTheme</td>
+                                    <td>Initialize selector interface panel options workflow for color application presentation layer styles
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-M</code></td>
+                                    <td><code>Command-K Command-M</code></td>
+                                    <td>selectKeymap</td>
+                                    <td>Initialize active configuration mapping switcher console channel utilities preferences module</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-U</code></td>
+                                    <td><code>Command-U</code></td>
+                                    <td>cursorUndo</td>
+                                    <td>Revert focus array changes backwards one transaction segment without modifying underlying structural
+                                        content buffers</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="scr-keybindings-sublime" class="playground-ref__screen" data-title="Sublime Text Keybindings">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Windows</th>
+                                    <th>Mac</th>
+                                    <th>Action</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Backspace</code> / <code>Ctrl-K Ctrl-Backspace</code></td>
+                                    <td><code>Command-K Command-Backspace</code> / <code>Command-Backspace</code></td>
+                                    <td>removetolinestarthard</td>
+                                    <td>Remove all characters back to the hard beginning of line</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Delete</code> / <code>Ctrl-K Ctrl-K</code></td>
+                                    <td><code>Command-K Command-K</code> / <code>Command-Delete</code> / <code>Ctrl-K</code></td>
+                                    <td>removetolineendhard</td>
+                                    <td>Remove all characters forward to the hard end of line</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-K</code></td>
+                                    <td><code>Ctrl-Shift-K</code></td>
+                                    <td>removeline</td>
+                                    <td>Instantly delete the active text row array line entirely</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-Shift-D</code></td>
+                                    <td><code>Command-Shift-D</code></td>
+                                    <td>duplicateSelection</td>
+                                    <td>Duplicate current cursor line context index or highlighted block elements</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-L</code></td>
+                                    <td><code>Command-L</code></td>
+                                    <td>expandtoline</td>
+                                    <td>Extend explicit highlight selection metric tracks to fill total line constraints</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-A</code></td>
+                                    <td><code>Command-Shift-A</code></td>
+                                    <td>expandSelection</td>
+                                    <td><code>{to: "tag"}</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-J</code></td>
+                                    <td><code>Command-Shift-J</code></td>
+                                    <td>expandSelection</td>
+                                    <td><code>{to: "indentation"}</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-M</code></td>
+                                    <td><code>Ctrl-Shift-M</code></td>
+                                    <td>expandSelection</td>
+                                    <td><code>{to: "brackets"}</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Space</code></td>
+                                    <td><code>Command-Shift-Space</code></td>
+                                    <td>expandSelection</td>
+                                    <td><code>{to: "scope"}</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-L</code></td>
+                                    <td><code>Command-Shift-L</code></td>
+                                    <td>splitSelectionIntoLines</td>
+                                    <td>Spawn isolated operational cursors across lines of a multiline highlight block</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Alt-F3</code></td>
+                                    <td><code>Ctrl-Command-G</code></td>
+                                    <td>find_all_under</td>
+                                    <td>Select and highlight all matching string instances within canvas boundaries</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-F3</code></td>
+                                    <td><code>Alt-Command-G</code></td>
+                                    <td>find_under</td>
+                                    <td>Find next matching target string segment located directly under active position</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-F3</code></td>
+                                    <td><code>Shift-Alt-Command-G</code></td>
+                                    <td>find_under_prev</td>
+                                    <td>Find previous matching target string segment located directly under active position</td>
+                                </tr>
+                                <tr>
+                                    <td><code>F3</code></td>
+                                    <td><code>Command-G</code></td>
+                                    <td>findnext</td>
+                                    <td>Advance tracking query path to next find index location matching target rules</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-F3</code></td>
+                                    <td><code>Shift-Command-G</code></td>
+                                    <td>findprevious</td>
+                                    <td>Reverse tracking query path to previous find index location matching target rules</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-D</code></td>
+                                    <td><code>Command-D</code></td>
+                                    <td>find_under_expand</td>
+                                    <td>Add next occurrence of text match selection string context explicitly into active tracks</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-D</code></td>
+                                    <td><code>Command-K Command-D</code></td>
+                                    <td>find_under_expand_skip</td>
+                                    <td>Skip context segment forward directly onto next distinct query trace location</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-Shift-[</code></td>
+                                    <td><code>Command-Alt-[</code></td>
+                                    <td>toggleFoldWidget</td>
+                                    <td>Collapse active logic block frame structural boundaries dynamically</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-]</code></td>
+                                    <td><code>Command-Alt-]</code></td>
+                                    <td>unfold</td>
+                                    <td>Expand targeted hidden fold widgets structures seamlessly back to viewport space</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-0</code> / <code>Ctrl-K Ctrl-J</code></td>
+                                    <td><code>Command-K Command-0</code> / <code>Command-K Command-J</code></td>
+                                    <td>unfoldall</td>
+                                    <td>Unfurl absolute nested structural code nodes throughout overall active open files</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-1</code></td>
+                                    <td><code>Command-K Command-1</code></td>
+                                    <td>foldOther</td>
+                                    <td><code>{level: 1}</code> (Collapse peripheral blocks outside current level tier)</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-Left</code></td>
+                                    <td><code>Alt-Left</code></td>
+                                    <td>moveToWordStartLeft</td>
+                                    <td>Snap workspace pointer coordinates leftward directly onto line word start edges</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Right</code></td>
+                                    <td><code>Alt-Right</code></td>
+                                    <td>moveToWordEndRight</td>
+                                    <td>Snap workspace pointer coordinates rightward directly onto line word terminal edges</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Left</code></td>
+                                    <td><code>Alt-Shift-Left</code></td>
+                                    <td>selectToWordStartLeft</td>
+                                    <td>Extend current highlight selection markers to target starting point of word leftwards</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Right</code></td>
+                                    <td><code>Alt-Shift-Right</code></td>
+                                    <td>selectToWordEndRight</td>
+                                    <td>Extend current highlight selection markers to target ending point of word rightwards</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Alt-Shift-Right</code></td>
+                                    <td><code>Ctrl-Alt-Shift-Right</code> / <code>Ctrl-Shift-Right</code></td>
+                                    <td>selectSubWordRight</td>
+                                    <td>Extend text selection boundary to the next internal CamelCase subword component right</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-Left</code></td>
+                                    <td><code>Ctrl-Alt-Shift-Left</code> / <code>Ctrl-Shift-Left</code></td>
+                                    <td>selectSubWordLeft</td>
+                                    <td>Extend text selection boundary to the previous internal CamelCase subword component left</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Right</code></td>
+                                    <td><code>Ctrl-Alt-Right</code> / <code>Ctrl-Right</code></td>
+                                    <td>moveSubWordRight</td>
+                                    <td>Advance navigation cursor to the next internal CamelCase subword component right</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Left</code></td>
+                                    <td><code>Ctrl-Alt-Left</code> / <code>Ctrl-Left</code></td>
+                                    <td>moveSubWordLeft</td>
+                                    <td>Advance navigation cursor to the previous internal CamelCase subword component left</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-M</code></td>
+                                    <td><code>Ctrl-M</code></td>
+                                    <td>jumptomatching</td>
+                                    <td><code>{to: "brackets"}</code> (Snap to matched opposite block wrapper parameter)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-F6</code></td>
+                                    <td><code>Ctrl-F6</code></td>
+                                    <td>goToNextError</td>
+                                    <td>Advance trace view focus points onto subsequent logic validation logs</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-F6</code></td>
+                                    <td><code>Ctrl-Shift-F6</code></td>
+                                    <td>goToPreviousError</td>
+                                    <td>Regress trace view focus points back onto preceding logic validation logs</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt--</code></td>
+                                    <td><code>Ctrl--</code></td>
+                                    <td>jumpBack</td>
+                                    <td>Snap structural file path coordinate trace indices backward down history tracker</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift--</code></td>
+                                    <td><code>Ctrl-Shift--</code></td>
+                                    <td>jumpForward</td>
+                                    <td>Snap structural file path coordinate trace indices forward up history tracker</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-O</code></td>
+                                    <td><code>Ctrl-O</code></td>
+                                    <td>splitline</td>
+                                    <td>Inject separate programmatic tracking space components directly onto lines array</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Shift-W</code></td>
+                                    <td><code>Ctrl-Shift-W</code></td>
+                                    <td>surrowndWithTag</td>
+                                    <td>Wrap active targeted strings explicitly into HTML markup element nodes tag structures</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-.</code></td>
+                                    <td><code>Command-Alt-.</code></td>
+                                    <td>close_tag</td>
+                                    <td>Evaluate document arrays context structure up line indices and balance terminal tag strings</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-J</code></td>
+                                    <td><code>Command-J</code></td>
+                                    <td>joinlines</td>
+                                    <td>Truncate spacing limits and stitch neighboring rows text structures cleanly into single lines</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-L</code></td>
+                                    <td><code>Command-K Command-L</code></td>
+                                    <td>tolowercase</td>
+                                    <td>Transform highlighted range data characters into lowercase typography array metrics</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-U</code></td>
+                                    <td><code>Command-K Command-U</code></td>
+                                    <td>touppercase</td>
+                                    <td>Transform highlighted range data characters into uppercase typography array metrics</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-Shift-V</code></td>
+                                    <td><code>Command-Shift-V</code></td>
+                                    <td>paste_and_indent</td>
+                                    <td>Output system clipboard buffer payload and structure layout tab index indentation</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-V</code></td>
+                                    <td><code>Command-K Command-V</code> / <code>Command-Alt-V</code></td>
+                                    <td>paste_from_history</td>
+                                    <td>Initialize historical text buffers tracking loop stack interface arrays output utilities</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-Shift-Enter</code></td>
+                                    <td><code>Command-Shift-Enter</code></td>
+                                    <td>addLineBefore</td>
+                                    <td>Generate clean blank structural track line space rows immediately above active bounds</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Enter</code></td>
+                                    <td><code>Command-Enter</code></td>
+                                    <td>addLineAfter</td>
+                                    <td>Generate clean blank structural track line space rows immediately below active bounds</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Up</code></td>
+                                    <td><code>Ctrl-Alt-Up</code></td>
+                                    <td>scrollup</td>
+                                    <td>Shift editor scroll offset viewport upward line metrics tracks indices boundaries</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Down</code></td>
+                                    <td><code>Ctrl-Alt-Down</code></td>
+                                    <td>scrolldown</td>
+                                    <td>Shift editor scroll offset viewport downward line metrics tracks indices boundaries</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-A</code></td>
+                                    <td><code>Command-A</code></td>
+                                    <td>selectall</td>
+                                    <td>Cast text selection matrices endpoints across the entire active file session canvas boundaries</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-Alt-Down</code> <br><em>Linux:</em> <code>Alt-Shift-Down</code></td>
+                                    <td><code>Ctrl-Shift-Down</code></td>
+                                    <td>addCursorBelow</td>
+                                    <td>Instantiate parallel workflow tracking multicursor directly on adjacent lower line indices</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Alt-Up</code> <br><em>Linux:</em> <code>Alt-Shift-Up</code></td>
+                                    <td><code>Ctrl-Shift-Up</code></td>
+                                    <td>addCursorAbove</td>
+                                    <td>Instantiate parallel workflow tracking multicursor directly on adjacent upper line indices</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-K Ctrl-C</code></td>
+                                    <td><code>Command-K Command-C</code> / <code>Ctrl-L</code></td>
+                                    <td>centerselection</td>
+                                    <td>Adjust workspace renderer container alignment focal scopes center paths onto text pointers</td>
+                                </tr>
+                                <tr>
+                                    <td><code>F9</code></td>
+                                    <td><code>F5</code></td>
+                                    <td>sortlines</td>
+                                    <td>Reorder text tracking blocks by line string structures contents indexes alpha arrays</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-F9</code></td>
+                                    <td><code>Ctrl-F5</code></td>
+                                    <td>sortlines</td>
+                                    <td><code>{caseSensitive: true}</code> (Reorder lines enforcing absolute string byte rules)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Down</code></td>
+                                    <td><code>Ctrl-Command-Down</code></td>
+                                    <td>movelinesdown</td>
+                                    <td>Shift targeted structural code row nodes position indicators downward matching line layout indices</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Up</code></td>
+                                    <td><code>Ctrl-Command-Up</code></td>
+                                    <td>movelinesup</td>
+                                    <td>Shift targeted structural code row nodes position indicators upward matching line layout indices</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Alt-Down</code></td>
+                                    <td><code>Alt-Down</code></td>
+                                    <td>modifyNumberDown</td>
+                                    <td>Parse line index points metrics location targets and decrease active numerical digits data</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Up</code></td>
+                                    <td><code>Alt-Up</code></td>
+                                    <td>modifyNumberUp</td>
+                                    <td>Parse line index points metrics location targets and increase active numerical digits data</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-/</code></td>
+                                    <td><code>Command-/</code></td>
+                                    <td>togglecomment</td>
+                                    <td>Prefix inline code comment parameters sequences straight onto current active layout entries</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-/</code></td>
+                                    <td><code>Command-Alt-/</code></td>
+                                    <td>toggleBlockComment</td>
+                                    <td>Wrap designated highlighted parameters arrays targets in multiline block comments</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-Q</code> <br><em>Linux:</em> <code>Ctrl-Alt-Q</code></td>
+                                    <td><code>Ctrl-Q</code></td>
+                                    <td>togglerecording</td>
+                                    <td>Toggle sequential runtime command history keystrokes collection tracker logging</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Shift-Q</code> <br><em>Linux:</em> <code>Ctrl-Alt-Shift-Q</code></td>
+                                    <td><code>Ctrl-Shift-Q</code></td>
+                                    <td>replaymacro</td>
+                                    <td>Execute and run structural stored programmatic input command streams array transactions</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-T</code></td>
+                                    <td><code>Ctrl-T</code></td>
+                                    <td>transpose</td>
+                                    <td>Swap spatial values matching adjacent letter markers coordinates loops tracks</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="scr-keybindings-vim" class="playground-ref__screen" data-title="Vim Keybindings">
+                        <h2>Vim Mode</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Command Key</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>i</code> / <code>a</code></td>
+                                    <td>Enter standard Text Insert / Append modes</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Esc</code></td>
+                                    <td>Return to clean Command mode state</td>
+                                </tr>
+                                <tr>
+                                    <td><code>h</code> / <code>j</code> / <code>k</code> / <code>l</code></td>
+                                    <td>Navigate cursor positions</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="scr-keybindings-emacs" class="playground-ref__screen" data-title="Emacs Keybindings">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Key Binding</th>
+                                    <th>Action Name Identifier</th>
+                                    <th>Functional Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>Up</code> / <code>Ctrl-P</code></td>
+                                    <td>goorselect [golineup, selectup]</td>
+                                    <td>Move cursor up or extend selection upward</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Down</code> / <code>Ctrl-N</code></td>
+                                    <td>goorselect [golinedown, selectdown]</td>
+                                    <td>Move cursor down or extend selection downward</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Left</code> / <code>Ctrl-B</code></td>
+                                    <td>goorselect [gotoleft, selectleft]</td>
+                                    <td>Move cursor left or extend selection left</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Right</code> / <code>Ctrl-F</code></td>
+                                    <td>goorselect [gotoright, selectright]</td>
+                                    <td>Move cursor right or extend selection right</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Left</code> / <code>Alt-B</code></td>
+                                    <td>goorselect [gotowordleft, selectwordleft]</td>
+                                    <td>Move cursor left by word or extend selection left by word</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Right</code> / <code>Alt-F</code></td>
+                                    <td>goorselect [gotowordright, selectwordright]</td>
+                                    <td>Move cursor right by word or extend selection right by word</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Home</code> / <code>Ctrl-A</code></td>
+                                    <td>goorselect [gotolinestart, selecttolinestart]</td>
+                                    <td>Go to start of line or select to start of line</td>
+                                </tr>
+                                <tr>
+                                    <td><code>End</code> / <code>Ctrl-E</code></td>
+                                    <td>goorselect [gotolineend, selecttolineend]</td>
+                                    <td>Go to end of line or select to end of line</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Home</code> / <code>Shift-Alt-,</code></td>
+                                    <td>goorselect [gotostart, selecttostart]</td>
+                                    <td>Go to start of document or select to start of document</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-End</code> / <code>Shift-Alt-.</code></td>
+                                    <td>goorselect [gotoend, selecttoend]</td>
+                                    <td>Go to end of document or select to end of document</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Shift-Up</code> / <code>Shift-Ctrl-P</code></td>
+                                    <td>selectup</td>
+                                    <td>Select text content moving upward</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Down</code> / <code>Shift-Ctrl-N</code></td>
+                                    <td>selectdown</td>
+                                    <td>Select text content moving downward</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Left</code> / <code>Shift-Ctrl-B</code></td>
+                                    <td>selectleft</td>
+                                    <td>Select text content moving left</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Right</code> / <code>Shift-Ctrl-F</code></td>
+                                    <td>selectright</td>
+                                    <td>Select text content moving right</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Ctrl-Left</code> / <code>Shift-Alt-B</code></td>
+                                    <td>selectwordleft</td>
+                                    <td>Select text content moving left by word units</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Ctrl-Right</code> / <code>Shift-Alt-F</code></td>
+                                    <td>selectwordright</td>
+                                    <td>Select text content moving right by word units</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Home</code> / <code>Shift-Ctrl-A</code></td>
+                                    <td>selecttolinestart</td>
+                                    <td>Select horizontal line boundaries from cursor to start position</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-End</code> / <code>Shift-Ctrl-E</code></td>
+                                    <td>selecttolineend</td>
+                                    <td>Select horizontal line boundaries from cursor to end position</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Ctrl-Home</code></td>
+                                    <td>selecttostart</td>
+                                    <td>Select running text upward to the absolute top of the text canvas</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Ctrl-End</code></td>
+                                    <td>selecttoend</td>
+                                    <td>Select running text downward to the absolute end of the text canvas</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-L</code></td>
+                                    <td>recenterTopBottom</td>
+                                    <td>Cycle editor screen rendering views to center or position active cursor selection line</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-S</code></td>
+                                    <td>centerselection</td>
+                                    <td>Center visual alignment focus on current active selection parameters</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-G</code></td>
+                                    <td>gotoline</td>
+                                    <td>Jump directly to specified line row position data metrics</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-X Ctrl-P</code></td>
+                                    <td>selectall</td>
+                                    <td>Select entire document tracking boundaries content</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Down</code></td>
+                                    <td>goorselect [gotopagedown, selectpagedown]</td>
+                                    <td>Scroll viewport page block downward or selection block downward</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Up</code></td>
+                                    <td>goorselect [gotopageup, selectpageup]</td>
+                                    <td>Scroll viewport page block upward or selection block upward</td>
+                                </tr>
+                                <tr>
+                                    <td><code>PageDown</code> / <code>Ctrl-V</code></td>
+                                    <td>goorselect [gotopagedown, selectpagedown]</td>
+                                    <td>Page block move or selection tracking transition downward</td>
+                                </tr>
+                                <tr>
+                                    <td><code>PageUp</code> / <code>Alt-V</code></td>
+                                    <td>goorselect [gotopageup, selectpageup]</td>
+                                    <td>Page block move or selection tracking transition upward</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Ctrl-Down</code></td>
+                                    <td>selectpagedown</td>
+                                    <td>Extend explicit active selection bounds downward a full frame window unit</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Ctrl-Up</code></td>
+                                    <td>selectpageup</td>
+                                    <td>Extend explicit active selection bounds upward a full frame window unit</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-S</code></td>
+                                    <td>iSearch</td>
+                                    <td>Initialize real-time forwards interactive incremental search configuration</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-R</code></td>
+                                    <td>iSearchBackwards</td>
+                                    <td>Initialize real-time backwards interactive incremental search configuration</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Ctrl-S</code></td>
+                                    <td>findnext</td>
+                                    <td>Query find match forward instances sequence</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Ctrl-R</code></td>
+                                    <td>findprevious</td>
+                                    <td>Query find match backward instances sequence</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Alt-5</code></td>
+                                    <td>replace</td>
+                                    <td>Trigger document string values replacement wizard</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Backspace</code></td>
+                                    <td>backspace</td>
+                                    <td>Remove character matching immediately behind cursor position tracker</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Delete</code> / <code>Ctrl-D</code></td>
+                                    <td>del</td>
+                                    <td>Delete direct trailing character at current cursor tracking column index</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Return</code> / <code>Ctrl-M</code></td>
+                                    <td>insertstring [\n]</td>
+                                    <td>Insert standard explicit line break feed character string break into workspace rows</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-O</code></td>
+                                    <td>splitline</td>
+                                    <td>Split active working text index line cleanly at targeted point mapping location</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-D</code> / <code>Ctrl-Delete</code></td>
+                                    <td>killWord [right]</td>
+                                    <td>Kill text content string matching towards right word boundary and push to kill ring</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Backspace</code> / <code>Alt-Backspace</code> / <code>Alt-Delete</code></td>
+                                    <td>killWord [left]</td>
+                                    <td>Kill text content string matching towards left word boundary and push to kill ring</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-K</code></td>
+                                    <td>killLine</td>
+                                    <td>Slice trailing row workspace data entirely off lines past active cursor point positions</td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-Y</code> / <code>Shift-Delete</code></td>
+                                    <td>yank</td>
+                                    <td>Insert string storage buffer payload contents fetched directly from current kill ring cache location
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-Y</code></td>
+                                    <td>yankRotate</td>
+                                    <td>Cycle and replace previous yank target down through the available ring history cache index array</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-G</code></td>
+                                    <td>keyboardQuit</td>
+                                    <td>Abort active workflow execution scopes, selection matrices, and baseline counts loops</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-W</code> / <code>Ctrl-Shift-W</code></td>
+                                    <td>killRegion</td>
+                                    <td>Cut highlighted region text completely into the system kill ring object</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-W</code></td>
+                                    <td>killRingSave</td>
+                                    <td>Copy context range highlights into storage container blocks without modifying baseline source code text
+                                        layers</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-Space</code></td>
+                                    <td>setMark</td>
+                                    <td>Drop explicit marking coordinate pins directly at workspace tracking anchor positions</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-X Ctrl-X</code></td>
+                                    <td>exchangePointAndMark</td>
+                                    <td>Invert point selections or alternate cursor positioning vectors with previous marked reference nodes
+                                    </td>
+                                </tr>
+                        
+                                <tr>
+                                    <td><code>Ctrl-T</code></td>
+                                    <td>transposeletters</td>
+                                    <td>Swap adjacent layout letters coordinates mapping pairs smoothly</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-U</code></td>
+                                    <td>touppercase</td>
+                                    <td>Cast text parameters to uppercase characters (Unimplemented note: flagged natively as non-functional)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-L</code></td>
+                                    <td>tolowercase</td>
+                                    <td>Cast text parameters to lowercase characters</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-/</code></td>
+                                    <td>autocomplete</td>
+                                    <td>Trigger automated word completion menu parameters (Unimplemented note: flagged natively as
+                                        non-functional)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-U</code></td>
+                                    <td>universalArgument</td>
+                                    <td>Configure numerical repetition factor loops overrides directly against pending keystroke commands</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-;</code></td>
+                                    <td>togglecomment</td>
+                                    <td>Toggle line parsing comment syntax tags across selected rows arrays targets</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-/</code> / <code>Ctrl-X U</code> / <code>Shift-Ctrl--</code> / <code>Ctrl-Z</code></td>
+                                    <td>undo</td>
+                                    <td>Revert changes state index structures backward sequentially down history stack indices</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Shift-Ctrl-/</code> / <code>Shift-Ctrl-X U</code> / <code>Ctrl--</code> /
+                                        <code>Shift-Ctrl-Z</code></td>
+                                    <td>redo</td>
+                                    <td>Advance active operational canvas metrics forward tracking along the redo array vectors</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Ctrl-X R</code></td>
+                                    <td>selectRectangularRegion</td>
+                                    <td>Toggle multi-select configuration modes over to standard block rectangular selection layers</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Alt-X</code></td>
+                                    <td>focusCommandLine [M-x ]</td>
+                                    <td>Initialize and prompt layout interactive input line console modules</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+        
+                </div>
+            </div>
         </div>
+
     </div>
 
 
@@ -183,8 +2491,8 @@
             <div class="entry">
                 <div>Keybinding</div>
                 <div class="keybindings">
-                    <button data-settings-keybinding="active" value="null">Ace</button>
-                    <button data-settings-keybinding value="ace/keyboard/vscode">VS Code</button>
+                    <button data-settings-keybinding value="null">Ace</button>
+                    <button data-settings-keybinding="active" value="ace/keyboard/vscode">VS Code</button>
                     <button data-settings-keybinding value="ace/keyboard/sublime">Sublime</button>
                     <button data-settings-keybinding value="ace/keyboard/vim">Vim</button>
                     <button data-settings-keybinding value="ace/keyboard/emacs">Emacs</button>
