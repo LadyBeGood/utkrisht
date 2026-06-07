@@ -44,13 +44,15 @@ merge-sort array = {
                 insert result, right.(j)
                 j ~ j + 1
 
-        # Concatenate any leftover elements (one array might finish before the other)
+        # Concatenate any leftover elements 
+        # (one array might finish before the other)
         return [...result, ...(slice left, i), ...(slice right, j)]
     }
 
     # Merge
     return merge (merge-sort left), merge-sort right
 }
+
 
 write merge-sort [10, -1, 2, 5, 0, 9]
 
