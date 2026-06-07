@@ -1,6 +1,10 @@
 import { examples } from "./examples.js"
 import { elements } from "./elements.js"
 
+function debug(x) {
+    console.log(x);
+    return x;
+}
 
 function showSettingsMenu() {
     elements.settingsOverlay.style.display = "block"
@@ -48,34 +52,46 @@ function setupSettings(editor) {
     })
 
 
+    /* Theme */
     editor.setTheme(elements.settingsTheme.value);
     elements.settingsTheme.addEventListener("change", function () {
         editor.setTheme(elements.settingsTheme.value)
     });
 
+    
+    /* Keybindings */
+    const currentKeybinding = document.querySelector("[data-settings-keybinding='active']");
+    editor.setKeyboardHandler(currentKeybinding !== "null" ? currentKeybinding : null);
+
+    elements.settingsKeybindings.forEach(function (element) {
+        element.addEventListener("click", function () {
+            
+            elements.settingsKeybindings.forEach(function (button) {
+                if (button === element) {
+                    button.dataset.settingsKeybinding = "active"
+                    editor.setKeyboardHandler(button.value !== "null" ? button.value : null);
+                } else {
+                    button.dataset.settingsKeybinding = ""
+                }
+            })
+        })
+    })
+
+
+    /* Font size */
     editor.setFontSize(Number(elements.settingsFontSize.value));
     elements.settingsFontSize.addEventListener("change", function () {
         editor.setFontSize(Number(elements.settingsFontSize.value))
     });
 
+
+    /* Cursor style */
     elements.settingsCursorStyle.addEventListener("change", function () {
-        editor.setOptions({ cursorStyle: elements.settingsCursorStyle.value })
+        editor.setOption("cursorStyle", debug(elements.settingsCursorStyle.value))
     })
 
 
-    // const newSize = Number(elements.settingsTabSize.value);
-    // const oldSize = editor.session.getTabSize();
-
-    // if (elements.settingsInsertSpaces.checked && oldSize !== newSize && newSize > 0) {
-    //     const source = editor.getValue();
-    //     const updatedSource = source.replace(/^( +)/gm, (match) => {
-    //         return " ".repeat(Math.round(match.length / oldSize) * newSize);
-    //     });
-    //     editor.setValue(updatedSource, 0);
-    //     editor.clearSelection();
-    // }
-
-    // editor.session.setTabSize(newSize);
+    /* Tab size */
     elements.settingsTabSize.addEventListener("change", function () {
         const newSize = Number(this.value);
         console.log(newSize)
@@ -95,13 +111,7 @@ function setupSettings(editor) {
     })
 
 
-
-    // editor.session.setUseSoftTabs(elements.settingsInsertSpaces.checked);
-    // if (elements.settingsInsertSpaces.checked) {
-    //     tabToSpaces(editor, Number(elements.settingsTabSize.value))
-    // } else {
-    //     spacesToTab(editor, Number(elements.settingsTabSize.value))
-    // }
+    /* Insert spaces */
     elements.settingsInsertSpaces.addEventListener("click", function () {
         editor.session.setUseSoftTabs(elements.settingsInsertSpaces.checked);
         if (elements.settingsInsertSpaces.checked) {
@@ -112,11 +122,14 @@ function setupSettings(editor) {
     })
 
     
+    /* Show invisible characters */
     editor.setShowInvisibles(elements.settingsShowInvisibleCharacters.checked)
     elements.settingsShowInvisibleCharacters.addEventListener("change", function () {
         editor.setShowInvisibles(elements.settingsShowInvisibleCharacters.checked);
     })
 
+
+    /* Settings keyboard accessibility mode */
     editor.setOptions({ enableKeyboardAccessibility: elements.settingsKeyboardAccessibilityMode.checked })
     elements.settingsKeyboardAccessibilityMode.addEventListener("change", function () {
         editor.setOptions({ enableKeyboardAccessibility: elements.settingsKeyboardAccessibilityMode.checked })
@@ -150,6 +163,15 @@ function setupExampleSelection(editor) {
 
 function setupAceEditor(editor) {
     editor.getSession().setMode("ace/mode/utkrisht");
+
+    // source: https://groups.google.com/g/ace-discuss/c/FDyNuFJCvTw?pli=1
+    editor.setOption("scrollPastEnd", 0.7);
+    editor.setOption("showPrintMargin", false);
+
+    // Adds 200 pixels of extra scrollable space to the right of the last column
+    editor.renderer.setScrollMargin(0, 0, 0, 50);
+
+    
 
     setupExampleSelection(editor);
     setupSettings(editor);
