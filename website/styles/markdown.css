@@ -1,0 +1,65 @@
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+    color: var(--utk-accent);
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.markdown-body h1 {
+    font-size: 1.6rem;
+    border-bottom: 1px solid var(--utk-border);
+    padding-bottom: 8px;
+}
+
+.markdown-body h2 {
+    font-size: 1.35rem;
+    border-bottom: 1px solid var(--utk-border);
+    padding-bottom: 6px;
+}
+
+.markdown-body p,
+.markdown-body li {
+    color: var(--utk-text-dim);
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+    padding-left: 20px;
+    margin-bottom: 16px;
+}
+
+.markdown-body code {
+    font-family: monospace;
+    background-color: var(--utk-bg-code);
+    color: #ff79c6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.markdown-body pre {
+    background-color: var(--utk-bg-code);
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--utk-border);
+    overflow-x: auto;
+    margin-bottom: 16px;
+}
+
+.markdown-body pre code {
+    background: none;
+    color: #f8f8f2;
+    padding: 0;
+    border-radius: 0;
+}
+
+.markdown-body blockquote {
+    margin: 0 0 16px 0;
+    padding: 0 16px;
+    color: #8be9fd;
+    border-left: 4px solid var(--utk-accent);
+}

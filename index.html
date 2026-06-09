@@ -18,6 +18,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="./website/styles/reset.css">
     <link rel="stylesheet" href="./website/styles/style.css">
+    <link rel="stylesheet" href="./website/styles/markdown.css">
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.js"></script>
@@ -107,8 +108,98 @@
     </div>
 
     <div class="right markdown" data-right>
-        <div>
-            aaa
+        
+
+
+
+
+
+
+
+        <div class="explorer-container">
+            <div class="explorer-tabs">
+                <button class="tab-btn active" data-tab="console">
+                    <img src="./website/assets/terminal.svg" alt="Console" height="14px" width="14px"
+                        onerror="this.style.display='none'">
+                    Console
+                </button>
+                <button class="tab-btn" data-tab="ast">
+                    <img src="./website/assets/git-branch.svg" alt="AST" height="14px" width="14px"
+                        onerror="this.style.display='none'">
+                    AST Explorer
+                </button>
+                <button class="tab-btn" data-tab="tokens">
+                    <img src="./website/assets/list.svg" alt="Tokens" height="14px" width="14px"
+                        onerror="this.style.display='none'">
+                    Token Explorer
+                </button>
+            </div>
+        
+            <div class="explorer-panes">
+                <div class="pane active" id="pane-console">
+                    <div class="pane-toolbar">
+                        <span class="pane-status">Ready</span>
+                        <button class="clear-btn" id="clear-console">Clear</button>
+                    </div>
+                    <div class="pane-content console-log">
+                        <div class="log-line system">> Utkrisht Playground initialized successfully.</div>
+                        <div class="log-line error">> Error: Example error line presentation.</div>
+                        <div class="log-line">> 2, 3, 5, 7, 11, 13 (Prime Finder output)</div>
+                    </div>
+                </div>
+        
+                <div class="pane" id="pane-ast">
+                    <div class="pane-content ast-tree">
+                        <details open class="tree-node">
+                            <summary><span class="node-type">Program</span> <span class="node-meta">[1:0 - 12:40]</span>
+                            </summary>
+                            <div class="tree-children">
+                                <details open class="tree-node">
+                                    <summary><span class="node-type">FunctionDeclaration</span> <span
+                                            class="node-id">"isPrime"</span></summary>
+                                    <div class="tree-children">
+                                        <div class="tree-leaf"><span class="leaf-key">param:</span> <span
+                                                class="node-type">Identifier</span>(<span class="leaf-val">n</span>)</div>
+                                        <div class="tree-leaf"><span class="leaf-key">returnType:</span> <span
+                                                class="node-type">Boolean</span></div>
+                                    </div>
+                                </details>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+        
+                <div class="pane" id="pane-tokens">
+                    <div class="pane-content">
+                        <table class="token-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Value</th>
+                                    <th>Range</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="tok-type keyword">KEYWORD</span></td>
+                                    <td><code>func</code></td>
+                                    <td class="tok-range">1:0 - 1:4</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tok-type ident">IDENTIFIER</span></td>
+                                    <td><code>isPrime</code></td>
+                                    <td class="tok-range">1:5 - 1:12</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tok-type punct">PUNCTUATION</span></td>
+                                    <td><code>(</code></td>
+                                    <td class="tok-range">1:12 - 1:13</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         
 
@@ -118,7 +209,7 @@
 
         <div class="playground-ref">
         
-            <!-- LEFT PANEL: NAVIGATION MATRIX / HUD LIVE SNIPPET CONTAINER -->
+            <!-- LEFT PANEL -->
             <div class="playground-ref__sidebar" id="refSidebar" data-collapsed="false">
                 
                 <!-- SIDEBAR HEAD HEADER: COLLAPSE & EXPAND UTILITY CONTROLS -->
@@ -224,7 +315,7 @@
                 <div class="playground-ref__search-results" id="refSearchResultsHUD" style="display: none;"></div>
             </div>
         
-            <!-- RIGHT PANEL: MAIN VIEWPORT HUB -->
+            <!-- RIGHT PANEL -->
             <div class="playground-ref__content" id="refContentArea">
                 <div class="markdown-body">
         
@@ -1684,7 +1775,7 @@ export multiply a, b = { return a * b }</code></pre>
                                     <th>Description</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody> 
                                 <tr>
                                     <td><code>Ctrl-Shift-Backspace</code> / <code>Ctrl-K Ctrl-Backspace</code></td>
                                     <td><code>Command-K Command-Backspace</code> / <code>Command-Backspace</code></td>

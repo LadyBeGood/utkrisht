@@ -800,3 +800,49 @@ export function initUtkrishtReference() {
 }
 
 initUtkrishtReference();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panes = document.querySelectorAll(".pane");
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            // Remove active status from current active tabs & panes
+            document.querySelector(".tab-btn.active")?.classList.remove("active");
+            document.querySelector(".pane.active")?.classList.remove("active");
+
+            // Add active class to clicked elements
+            tab.classList.add("active");
+            const targetPaneId = `pane-${tab.dataset.tab}`;
+            document.getElementById(targetPaneId)?.classList.add("active");
+        });
+    });
+
+    // Wire up Clear Console utility button
+    document.getElementById("clear-console")?.addEventListener("click", () => {
+        const consoleLog = document.querySelector(".console-log");
+        if (consoleLog) consoleLog.innerHTML = `<div class="log-line system">> Console cleared.</div>`;
+    });
+});
+
