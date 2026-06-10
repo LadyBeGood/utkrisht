@@ -298,6 +298,9 @@
 
 
             .playground-ref__category {
+                .playground-ref__tree {
+                    
+                }
                 .playground-ref__category-header {
                     padding: 8px 12px;
                     font-size: 14px;

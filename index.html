@@ -107,7 +107,7 @@
         </div>
     </div>
 
-    <div class="right markdown" data-right>
+    <div class="right" data-right>
         
 
 
@@ -120,13 +120,9 @@
             <div class="display"></div>
             <div class="panes">
                 <button class="pane">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none" />
-                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m5 7l5 5l-5 5m7 2h7" />
-                    </svg>
-
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 7l5 5l-5 5m7 2h7" /></svg>
                 </button>
+
                 <button class="pane">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -134,6 +130,7 @@
                             fill="#E3E3E3" />
                     </svg>
                 </button>
+
                 <button class="pane">
 
                 </button>
@@ -257,19 +254,19 @@
         
             <!-- RIGHT PANEL -->
             <div class="playground-ref__content" id="refContentArea">
-                <div class="markdown-body">
+                <div class="markdown">
         
                     <!-- SCREEN 1: COMMENTS -->
                     <section id="scr-comments" class="playground-ref__screen active" data-title="Comments">
                         <h1>Comments</h1>
-                        <h3>Regular Comments</h3>
+                        <h2>Regular Comments</h2>
                         <p>Used for notes. They can be placed anywhere.</p>
                         <pre><code># This is a regular comment
 when 10 &gt; 5  
 # This is also a comment
     write "Condition is correct" # This is also a valid comment</code></pre>
 
-                        <h3>Documentation Comments</h3>
+                        <h2>Documentation Comments</h2>
                         <p>Placed directly above declarations to describe variables. They use standard text and Markdown without
                             any special tag syntax.</p>
                         <pre><code># The unique identifier for the active user session.
@@ -336,7 +333,7 @@ divide a, b = {
                         <p>Symbols are non-alphanumeric tokens that have special meaning in the language syntax. Symbols are context sensitive.</p>
                         <p>In Utkrisht, symbols are grouped into operators, separators, delimiters, and terminators.</p>
         
-                        <h3>Operators</h3>
+                        <h2>Operators</h2>
                         <table>
                             <thead>
                                 <tr>
@@ -465,7 +462,7 @@ divide a, b = {
                         </table>
                         <blockquote>[1] Unary Plus does not perform any operation. It is simply there for symmetry with unary minus.</blockquote>
         
-                        <h3>Separators</h3>
+                        <h2>Separators</h2>
                         <table>
                             <thead>
                                 <tr>
@@ -485,7 +482,7 @@ divide a, b = {
                             </tbody>
                         </table>
         
-                        <h3>Delimiters</h3>
+                        <h2>Delimiters</h2>
                         <table>
                             <thead>
                                 <tr>
@@ -529,7 +526,7 @@ divide a, b = {
                             </tbody>
                         </table>
         
-                        <h3>Terminators</h3>
+                        <h2>Terminators</h2>
                         <table>
                             <thead>
                                 <tr>
@@ -563,12 +560,12 @@ import components/footer</code></pre>
                         <p>A valid identifier contains only lowercase letters (a–z), numbers (0–9), and hyphens (-). It must
                             start with a letter, end with a letter or number, and cannot contain consecutive hyphens.</p>
         
-                        <h3>Valid Identifiers</h3>
+                        <h2>Valid Identifiers</h2>
                         <pre><code>name
 user-123
 file-path</code></pre>
         
-                        <h3>Invalid Identifiers</h3>
+                        <h2>Invalid Identifiers</h2>
                         <pre><code>myName    # contains uppercase letter
 1080p     # starts with a number
 user_name # contains underscore</code></pre>
@@ -629,23 +626,23 @@ user_name # contains underscore</code></pre>
                         <blockquote>[1] All numbers including nan are hashable. Structure maps use the SameValueZero protocol,
                             meaning nan matches nan.</blockquote>
         
-                        <h3>String</h3>
+                        <h2>String</h2>
                         <pre><code>"This is a single line string."</code></pre>
                         <p>String elements are accessible via 1-based indexing using the accessor dot: <code>"webapp".1</code>
                             evaluates to w.</p>
         
-                        <h3>Number</h3>
+                        <h2>Number</h2>
                         <pre><code>write 0.1 + 0.2  # 0.30000000000000004
 is-nan nan       # yes</code></pre>
         
-                        <h3>Boolean</h3>
+                        <h2>Boolean</h2>
                         <p>Literals are explicitly mapped via keywords <code>yes</code> and <code>no</code>.</p>
         
-                        <h3>Procedure</h3>
+                        <h2>Procedure</h2>
                         <pre><code>greet name = { write "Hi |name|" }
 greet "Dmitri"</code></pre>
         
-                        <h3>Structure</h3>
+                        <h2>Structure</h2>
                         <pre><code>mixed = ["first-item", status = active, 42]</code></pre>
                     </section>
         
@@ -666,12 +663,12 @@ quantity ~ "high" # Data type of the value does not matter</code></pre>
                         <h1>Conditionals</h1>
                         <p>Conditionals control which block will be executed based on a condition. The condition must be a
                             boolean value; Utkrisht does not have truthy or falsy values.</p>
-                        <h3>Conditional statement</h3>
+                        <h2>Conditional statement</h2>
                         <pre><code>when age &lt; 13 
     write "You're a child"
 else
     write "You're a teen"</code></pre>
-                        <h3>Conditional expression</h3>
+                        <h2>Conditional expression</h2>
                         <pre><code>status = when (age &lt; 13) "child" else "teen"</code></pre>
                     </section>
         
