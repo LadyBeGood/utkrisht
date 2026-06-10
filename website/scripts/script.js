@@ -171,6 +171,8 @@ function setupAceEditor(editor) {
     // Adds 200 pixels of extra scrollable space to the right of the last column
     editor.renderer.setScrollMargin(0, 0, 0, 50);
 
+    // Target the internal scroller element of Ace
+    editor.renderer.scroller.style.touchAction = "pan-x pan-y";
     
 
     setupExampleSelection(editor);
@@ -228,25 +230,9 @@ function setupShortcutButtonsToggle() {
     handleClick()
 }
 
-function main() {
-    const editor = ace.edit("editor");
-    setupResponsiveness(editor);
-    setupAceEditor(editor);
-    setupShortcutButtonsToggle();
 
 
-
-
-}
-
-
-
-main()
-
-
-
-
-export function initUtkrishtReference() {
+export function setupReference() {
     const sidebar = document.getElementById("refSidebar");
     const defaultNav = document.getElementById("refDefaultNav");
     const resultsHUD = document.getElementById("refSearchResultsHUD");
@@ -514,7 +500,22 @@ export function initUtkrishtReference() {
     });
 }
 
-initUtkrishtReference();
+
+
+
+function main() {
+    const editor = ace.edit("editor");
+    setupResponsiveness(editor);
+    setupAceEditor(editor);
+    setupShortcutButtonsToggle();
+    setupReference();
+}
+
+
+
+main()
+
+
 
 
 
