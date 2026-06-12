@@ -1,4 +1,8 @@
-body>.left {
+
+
+
+
+body> .left {
     --transition-duration: 0s;
 
     display: grid;
@@ -112,7 +116,7 @@ body>.left {
 }
 
 
-body>.right {
+body> .right {
     overflow-y: auto;
     height: 100svh;
     background-color: #44475a;
@@ -155,7 +159,7 @@ body>.right {
                     /* &::before {
                         content: "";
                         display: block;
-                        height: 45px;
+                        height: 42px;
                         width: 2px;
                         position: absolute;
                         top: 0;
@@ -196,14 +200,14 @@ body>.right {
             &[data-collapsed="true"] {
                 width: 40px;
 
-                .documentation__search-input,
-                .documentation__search-controls {
+                .search-input,
+                .search-controls {
                     display: none !important;
                 }
             }
 
             /* Control HUD Utility Styles */
-            .documentation__search-box {
+            .search-box {
                 display: flex;
                 flex-direction: column;
                 padding: 8px;
@@ -214,13 +218,13 @@ body>.right {
                 border-bottom: 2px solid #44475a;
 
 
-                .documentation__search-row {
+                .search-row {
                     display: flex;
                     align-items: center;
                     gap: 6px;
                     width: 100%;
 
-                    .documentation__search-input {
+                    .search-input {
                         flex: 1;
                         padding: 6px 10px;
                         font-size: 14px;
@@ -247,23 +251,23 @@ body>.right {
 
                 }
 
-                .documentation__search-controls {
+                .search-controls {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     padding: 2px 4px;
 
-                    .documentation__match-count {
+                    .search-result-count {
                         font-size: 14px;
                         /* color: var(--utk-text-dim); */
                         font-family: monospace;
                     }
 
-                    .documentation__nav-arrows {
+                    .navigation-arrows {
                         display: flex;
                         gap: 4px;
 
-                        .documentation__nav-btn {
+                        .navigation-button {
                             background: var(--utk-bg-main);
                             border: 1px solid var(--utk-border);
                             /* color: var(--utk-text); */
@@ -286,16 +290,14 @@ body>.right {
 
 
             /* Left Sidebar Accordion Nav styling */
-            .documentation__nav {
+            .topics {
                 flex: 1;
                 overflow-y: auto;
                 padding: 8px 0;
 
 
-                .documentation__category {
-                    /* .documentation__tree {} */
-
-                    .documentation__category-header {
+                .topic {
+                    .topic-name {
                         padding: 8px 12px;
                         font-size: 14px;
                         font-weight: 600;
@@ -325,13 +327,13 @@ body>.right {
                         }
                     }
 
-                    .documentation__branch {
+                    .sub-topics {
                         display: none;
                         padding-left: 8px;
                         margin-bottom: 8px;
 
 
-                        .documentation__link {
+                        .sub-topic {
                             display: block;
                             padding: 6px 16px;
                             color: #ffffff98;
@@ -348,11 +350,11 @@ body>.right {
                     }
 
                     &.open {
-                        .documentation__branch {
+                        .sub-topics {
                             display: block;
                         }
 
-                        .documentation__category-header::after {
+                        .topic-name::after {
                             transform: rotate(-180deg);
                             color: var(--utk-accent);
                         }
@@ -361,7 +363,7 @@ body>.right {
             }
 
 
-            .documentation__search-results {
+            .search-results {
                 flex: 1;
                 overflow-y: auto;
                 padding: 8px;
@@ -451,13 +453,13 @@ body>.right {
 
 
 /* Custom Scrollbars */
-.documentation__nav::-webkit-scrollbar,
+.nav::-webkit-scrollbar,
 .content::-webkit-scrollbar {
     width: 6px;
     width: 0px;
 }
 
-.documentation__nav::-webkit-scrollbar-thumb,
+.nav::-webkit-scrollbar-thumb,
 .content::-webkit-scrollbar-thumb {
     /* background-color: var(--utk-border); */
     background-color: #ffffff20;
@@ -466,12 +468,12 @@ body>.right {
 
 
 /* Screen Engine Base Isolation Rules */
-.documentation__screen {
+.screen {
     display: none;
     /* Make screens completely invisible when non-active */
 }
 
-.documentation__screen.active {
+.screen.active {
     display: block;
     /* Reveal exclusively selected screen section */
 }
@@ -531,15 +533,15 @@ body>.right {
 
 
 /* Hide standard components entirely when data-collapsed is true */
-.sidebar[data-collapsed="true"] .documentation__search-row,
-.sidebar[data-collapsed="true"] .documentation__search-controls,
+.sidebar[data-collapsed="true"] .search-row,
+.sidebar[data-collapsed="true"] .search-controls,
 .sidebar[data-collapsed="true"] #refDefaultNav,
 .sidebar[data-collapsed="true"] #refSearchResultsHUD {
     display: none !important;
 }
 
 /* Collapsed Icon Strip Styles */
-.documentation__collapsed-icons {
+.collapsed-icons {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -548,7 +550,7 @@ body>.right {
     width: 100%;
 }
 
-.documentation__icon-btn {
+.icon-btn {
     background: transparent;
     border: none;
     color: var(--utk-text, #f8f8f2);
@@ -563,7 +565,7 @@ body>.right {
     transition: background-color 0.1s;
 }
 
-.documentation__icon-btn:hover {
+.icon-btn:hover {
     background-color: var(--utk-hover, #343746);
     color: var(--utk-accent, #bd93f9);
 }

@@ -1,23 +1,19 @@
 
 
-.markdown h1 {
+.markdown h3 {
     font-size: 24px;
     margin-bottom: 20px;
     color: white;
 }
 
-.markdown h2 {
+.markdown h4 {
     font-size: 18px;
     color: white;
     margin-bottom: 6px;
     margin-top: 32px;
 }
 
-.markdown h3 {
-    font-size: 18px;
-    margin-top: 24px;
-    margin-bottom: 4px;
-}
+
 
 .markdown p,
 .markdown li {
@@ -45,7 +41,7 @@
 }
 
 .markdown pre {
-    background-color: var(--utk-bg-code);
+    background-color: #191d28;
     padding: 4px 8px;
     overflow-x: auto;
     margin-top: 8px;

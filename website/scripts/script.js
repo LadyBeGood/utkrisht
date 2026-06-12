@@ -63,7 +63,7 @@ function setupSettings(editor) {
     const currentKeybinding = document.querySelector("[data-settings-keybinding='active']").value;
     editor.setKeyboardHandler(currentKeybinding !== "null" ? currentKeybinding : null);
 
-    elements.settingsKeybindings.forEach(function (element) {
+    elements.settingsKeybindingCollection.forEach(function (element) {
         element.addEventListener("click", function () {
 
             elements.settingsKeybindings.forEach(function (button) {
@@ -232,206 +232,716 @@ function setupShortcutButtonsToggle() {
 
 
 
-export function setupDocumentation() {
-    // Cache clean text nodes across all individual isolated screens
-    const screens = document.querySelectorAll(".playground-ref__screen");
-    let originalHTMLCache = {};
-    screens.forEach(screen => {
-        originalHTMLCache[screen.id] = screen.innerHTML;
-    });
+// export function setupDocumentation() {
+//     const fileContentCache = {};
+//     let searchMatches = [];
+//     let currentMatchIndex = -1;
 
-    let activeMatches = [];
+
+//     // Load the active item on startup, or fall back to the first available sub-topic item
+//     const initialActiveSubtopic =
+//         elements.documentationSidebar.querySelector("[data-sub-topic].active") ??
+//         elements.documentationSubTopicCollection[0];
+
+//     if (initialActiveSubtopic) {
+//         loadDocumentationFile(initialActiveSubtopic.dataset.fileName);
+//     }
+
+
+
+//     async function loadDocumentationFile(fileKey, skipContentInsertion = false) {
+//         if (!fileKey) return "";
+
+//         const filePath = `./documentations/${fileKey}.md`;
+
+//         try {
+//             // Fetch from network if the file is not already in the cache
+//             if (!fileContentCache[fileKey]) {
+//                 const response = await fetch(filePath);
+//                 if (!response.ok) {
+//                     throw new Error(`Could not load file: ${filePath}`);
+//                 }
+
+//                 const markdownText = await response.text();
+//                 const HTMLText = marked.parse(markdownText);
+
+//                 fileContentCache[fileKey] = HTMLText;
+//             }
+
+//             // Insert into main content pane if we are not in the middle of a background search scan
+//             if (!skipContentInsertion) {
+//                 elements.documentationContent.innerHTML = fileContentCache[fileKey];
+//                 elements.documentationContent.scrollTop = 0;
+//             }
+
+//             return fileContentCache[fileKey];
+//         } catch (error) {
+//             console.error(`Documentation Loader Error:`, error);
+//             if (!skipContentInsertion) {
+//                 elements.documentationContent.innerHTML = `<div style="padding: 20px; color: #ff6b6b;">Error: Failed to load document.</div>`;
+//             }
+//             return "";
+//         }
+//     }
+
+//     // Handle switching between sub-topics
+//     elements.documentationSubTopicCollection.forEach(subTopic => {
+//         subTopic.addEventListener("click", async () => {
+//             elements.documentationSubTopicCollection.forEach(item => item.classList.remove("active"));
+//             subTopic.classList.add("active");
+
+//             const fileKey = subTopic.dataset.fileName;
+//             await loadDocumentationFile(fileKey);
+//         });
+//     });
+
+
+//     // Handle opening and closing folder directories (Language, Keybindings)
+//     elements.documentationTopicNameCollection.forEach(heading => {
+//         heading.addEventListener("click", () => {
+//             const parentTopicElement = heading.closest("[data-topic]");
+//             if (parentTopicElement) {
+//                 parentTopicElement.classList.toggle("open");
+//             }
+//         });
+//     });
+
+
+
+//     async function executeSearch() {
+//         const searchQuery = elements.documentationSearchField.value.toLowerCase().trim();
+
+//         // If the search input is empty, reset the UI to standard navigation
+//         if (searchQuery === "") {
+//             elements.documentationSearchControls.style.display = "none";
+//             elements.documentationSearchResults.style.display = "none";
+//             elements.documentationTopics.style.display = "block"; // Show the standard topics tree
+
+//             // Re-render the active document to remove highlighted mark elements
+//             const currentActiveButton = elements.documentationSidebar.querySelector("[data-sub-topic].active");
+//             if (currentActiveButton) {
+//                 const fileKey = currentActiveButton.dataset.fileName;
+//                 elements.documentationContent.innerHTML = fileContentCache[fileKey] || "";
+//             }
+
+//             searchMatches = [];
+//             currentMatchIndex = -1;
+//             return;
+//         }
+
+//         // Hide standard topic tree and show search results container
+//         elements.documentationTopics.style.display = "none";
+//         elements.documentationSearchResults.style.display = "block";
+//         elements.documentationSearchResults.innerHTML = "";
+//         searchMatches = [];
+
+//         // Force download any files that are not yet loaded into memory
+//         for (const button of elements.documentationSubTopicCollection) {
+//             const fileKey = button.dataset.fileName;
+//             if (!fileContentCache[fileKey]) {
+//                 await loadDocumentationFile(fileKey, true);
+//             }
+//         }
+
+//         // Scan text across all cached content
+//         elements.documentationSubTopicCollection.forEach(button => {
+//             const fileKey = button.dataset.fileName;
+//             const fileHTML = fileContentCache[fileKey] || "";
+//             const pageTitle = button.textContent.trim();
+
+//             // Create an isolated HTML element to extract raw text content safely without tags
+//             const temporaryParser = document.createElement("div");
+//             temporaryParser.innerHTML = fileHTML;
+//             const textContent = temporaryParser.textContent || temporaryParser.innerText || "";
+
+//             // Escape special characters to construct a safe regular expression
+//             const escapedQuery = searchQuery.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+//             const searchRegex = new RegExp(escapedQuery, "gi");
+//             let executionMatch;
+
+//             while ((executionMatch = searchRegex.exec(textContent)) !== null) {
+//                 const textIndex = executionMatch.index;
+//                 const windowStart = Math.max(0, textIndex - 40);
+//                 const windowEnd = Math.min(textContent.length, textIndex + executionMatch[0].length + 45);
+
+//                 let snippetText = textContent.substring(windowStart, windowEnd);
+//                 if (windowStart > 0) snippetText = "..." + snippetText;
+//                 if (windowEnd < textContent.length) snippetText = snippetText + "...";
+
+//                 const highlightedSnippetHTML = snippetText.replace(searchRegex, match => `<mark>${match}</mark>`);
+
+//                 searchMatches.push({
+//                     fileKey: fileKey,
+//                     metaText: pageTitle,
+//                     snippetHTML: highlightedSnippetHTML,
+//                     subTopicButton: button
+//                 });
+//             }
+//         });
+
+//         // Render search result cards or show "no matches found" feedback
+//         if (searchMatches.length > 0) {
+//             elements.documentationSearchControls.style.display = "flex";
+//             currentMatchIndex = 0;
+
+//             searchMatches.forEach((match, index) => {
+//                 const resultCard = document.createElement("div");
+//                 resultCard.className = "utk-search-card";
+//                 resultCard.innerHTML = `
+//                     <div class="utk-search-card__meta">${match.metaText}</div>
+//                     <div class="utk-search-card__snippet">${match.snippetHTML}</div>
+//                 `;
+
+//                 resultCard.addEventListener("click", () => {
+//                     currentMatchIndex = index;
+//                     syncSearchNavigationState();
+//                 });
+
+//                 elements.documentationSearchResults.appendChild(resultCard);
+//             });
+
+//             syncSearchNavigationState();
+//         } else {
+//             elements.documentationSearchControls.style.display = "flex";
+//             elements.documentationSearchResultCount.textContent = "0/0 results";
+//             elements.documentationSearchResults.innerHTML = `<div style="padding: 16px; text-align: center; font-size: 13px; color: #a9b2c3;">No matches found.</div>`;
+//             currentMatchIndex = -1;
+//         }
+//     }
+
+//     // ==========================================
+//     // SELECTION STATE SYNCHRONIZATION
+//     // ==========================================
+//     function syncSearchNavigationState() {
+//         if (currentMatchIndex < 0 || currentMatchIndex >= searchMatches.length) return;
+
+//         const currentMatch = searchMatches[currentMatchIndex];
+
+//         // Update the active button highlight state in the sidebar menu list
+//         elements.documentationSubTopicCollection.forEach(item => item.classList.remove("active"));
+//         currentMatch.subTopicButton.classList.add("active");
+
+//         // Inject content text combined with structural text highlight tags
+//         const sourceHTML = fileContentCache[currentMatch.fileKey];
+//         const escapedQuery = elements.documentationSearchField.value.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+//         const highlightRegex = new RegExp(`(${escapedQuery})`, "gi");
+
+//         elements.documentationContent.innerHTML = sourceHTML.replace(highlightRegex, `<mark class="utk-mark">$1</mark>`);
+
+//         // Calculate and scroll to the correct match item index within the active page content viewport
+//         const pageHighlightMarks = elements.documentationContent.querySelectorAll(".utk-mark");
+//         if (pageHighlightMarks.length > 0) {
+//             let relativeMatchCount = 0;
+//             for (let i = 0; i < currentMatchIndex; i++) {
+//                 if (searchMatches[i].fileKey === currentMatch.fileKey) {
+//                     relativeMatchCount++;
+//                 }
+//             }
+
+//             const activeMarkElement = pageHighlightMarks[relativeMatchCount] || pageHighlightMarks[0];
+//             if (activeMarkElement) {
+//                 activeMarkElement.classList.add("utk-mark--active");
+//                 activeMarkElement.scrollIntoView({ behavior: "smooth", block: "center" });
+//             }
+//         }
+
+//         // Highlight and center the selected search result card inside the sidebar
+//         const resultCards = elements.documentationSearchResults.querySelectorAll(".utk-search-card");
+//         resultCards.forEach((card, index) => {
+//             if (index === currentMatchIndex) {
+//                 card.classList.add("utk-search-card--active");
+//                 card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+//             } else {
+//                 card.classList.remove("utk-search-card--active");
+//             }
+//         });
+
+//         elements.documentationSearchResultCount.textContent = `${currentMatchIndex + 1}/${searchMatches.length} results`;
+//     }
+
+//     function navigateToNextMatch() {
+//         if (searchMatches.length === 0) return;
+//         currentMatchIndex = (currentMatchIndex + 1) % searchMatches.length;
+//         syncSearchNavigationState();
+//     }
+
+//     // ==========================================
+//     // EVENT LISTENERS
+//     // ==========================================
+//     elements.documentationSearchField.addEventListener("input", executeSearch);
+//     elements.documentationSearchNextButton.addEventListener("click", navigateToNextMatch);
+
+//     elements.documentationSearchPreviousButton.addEventListener("click", () => {
+//         if (searchMatches.length === 0) return;
+//         currentMatchIndex = (currentMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+//         syncSearchNavigationState();
+//     });
+
+//     elements.documentationSearchField.addEventListener("keydown", (event) => {
+//         if (event.key === "Enter") {
+//             event.preventDefault();
+//             navigateToNextMatch();
+//         }
+//     });
+// }
+
+// export async function setupDocumentation() {
+//     const fileContentCache = {};
+//     const fileTextCache = {}; // Pre-stripped clean text cache for fast searching
+//     let searchMatches = [];
+//     let currentMatchIndex = -1;
+
+//     // Load the active item on startup, or fall back to the first available sub-topic item
+//     const initialActiveSubtopic =
+//         elements.documentationSidebar.querySelector("[data-sub-topic].active") ??
+//         elements.documentationSubTopicCollection[0];
+
+//     // ==========================================
+//     // PRELOAD MATRIX (Load everything concurrently)
+//     // ==========================================
+//     async function preloadAllFiles() {
+//         const fetchPromises = Array.from(elements.documentationSubTopicCollection).map(async (button) => {
+//             const fileKey = button.dataset.fileName;
+//             const filePath = `./documentations/${fileKey}.md`;
+
+//             try {
+//                 const response = await fetch(filePath);
+//                 if (!response.ok) throw new Error(`Could not fetch ${filePath}`);
+
+//                 const markdownText = await response.text();
+//                 const htmlText = marked.parse(markdownText);
+
+//                 // Cache the HTML for structural rendering
+//                 fileContentCache[fileKey] = htmlText;
+
+//                 // Cache a clean text version instantly to keep memory operations light
+//                 fileTextCache[fileKey] = htmlText.replace(/<\/?[^>]+(>|$)/g, "");
+//             } catch (error) {
+//                 console.error(`Preload failed for ${fileKey}:`, error);
+//                 fileContentCache[fileKey] = `<div style="padding: 20px; color: #ff6b6b;">Error: Failed to load document.</div>`;
+//                 fileTextCache[fileKey] = "";
+//             }
+//         });
+
+//         // Wait for all files to be downloaded and parsed into memory
+//         await Promise.all(fetchPromises);
+
+//         // Once fully loaded, render the initial view
+//         if (initialActiveSubtopic) {
+//             renderDocument(initialActiveSubtopic.dataset.fileName);
+//         }
+//     }
+
+//     function renderDocument(fileKey) {
+//         if (!fileKey || !fileContentCache[fileKey]) return;
+//         elements.documentationContent.innerHTML = fileContentCache[fileKey];
+//         elements.documentationContent.scrollTop = 0;
+//     }
+
+//     // Trigger the global preload sequence immediately
+//     await preloadAllFiles();
+
+//     // ==========================================
+//     // SIDEBAR INTERACTION LISTENERS
+//     // ==========================================
+
+//     // Handle switching between sub-topics (Instant from cache)
+//     elements.documentationSubTopicCollection.forEach(subTopic => {
+//         subTopic.addEventListener("click", () => {
+//             elements.documentationSubTopicCollection.forEach(item => item.classList.remove("active"));
+//             subTopic.classList.add("active");
+
+//             const fileKey = subTopic.dataset.fileName;
+//             renderDocument(fileKey);
+//         });
+//     });
+
+//     // Handle opening and closing folder directories
+//     elements.documentationTopicNameCollection.forEach(heading => {
+//         heading.addEventListener("click", () => {
+//             const parentTopicElement = heading.closest("[data-topic]");
+//             if (parentTopicElement) {
+//                 parentTopicElement.classList.toggle("open");
+//             }
+//         });
+//     });
+
+//     // ==========================================
+//     // INSTANT SYNCHRONOUS SEARCH ENGINE
+//     // ==========================================
+//     function executeSearch() {
+//         const searchQuery = elements.documentationSearchField.value.toLowerCase().trim();
+
+//         // Empty search reset
+//         if (searchQuery === "") {
+//             elements.documentationSearchControls.style.display = "none";
+//             elements.documentationSearchResults.style.display = "none";
+//             elements.documentationTopics.style.display = "block";
+
+//             const currentActiveButton = elements.documentationSidebar.querySelector("[data-sub-topic].active");
+//             if (currentActiveButton) {
+//                 renderDocument(currentActiveButton.dataset.fileName);
+//             }
+
+//             searchMatches = [];
+//             currentMatchIndex = -1;
+//             return;
+//         }
+
+//         elements.documentationTopics.style.display = "none";
+//         elements.documentationSearchResults.style.display = "block";
+//         elements.documentationSearchResults.innerHTML = "";
+//         searchMatches = [];
+
+//         // Scan the pre-rendered text cache synchronously
+//         elements.documentationSubTopicCollection.forEach(button => {
+//             const fileKey = button.dataset.fileName;
+//             const textContent = fileTextCache[fileKey] || "";
+//             const pageTitle = button.textContent.trim();
+
+//             const escapedQuery = searchQuery.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+//             const searchRegex = new RegExp(escapedQuery, "gi");
+//             let executionMatch;
+
+//             while ((executionMatch = searchRegex.exec(textContent)) !== null) {
+//                 const textIndex = executionMatch.index;
+//                 const windowStart = Math.max(0, textIndex - 40);
+//                 const windowEnd = Math.min(textContent.length, textIndex + executionMatch[0].length + 45);
+
+//                 let snippetText = textContent.substring(windowStart, windowEnd);
+//                 if (windowStart > 0) snippetText = "..." + snippetText;
+//                 if (windowEnd < textContent.length) snippetText = snippetText + "...";
+
+//                 const highlightedSnippetHTML = snippetText.replace(searchRegex, match => `<mark>${match}</mark>`);
+
+//                 searchMatches.push({
+//                     fileKey: fileKey,
+//                     metaText: pageTitle,
+//                     snippetHTML: highlightedSnippetHTML,
+//                     subTopicButton: button
+//                 });
+//             }
+//         });
+
+//         // Display results
+//         if (searchMatches.length > 0) {
+//             elements.documentationSearchControls.style.display = "flex";
+//             currentMatchIndex = 0;
+
+//             const fragment = document.createDocumentFragment();
+
+//             searchMatches.forEach((match, index) => {
+//                 const resultCard = document.createElement("div");
+//                 resultCard.className = "utk-search-card";
+//                 resultCard.innerHTML = `
+//                     <div class="utk-search-card__meta">${match.metaText}</div>
+//                     <div class="utk-search-card__snippet">${match.snippetHTML}</div>
+//                 `;
+
+//                 resultCard.addEventListener("click", () => {
+//                     currentMatchIndex = index;
+//                     syncSearchNavigationState();
+//                 });
+
+//                 fragment.appendChild(resultCard);
+//             });
+
+//             elements.documentationSearchResults.appendChild(fragment);
+//             syncSearchNavigationState();
+//         } else {
+//             elements.documentationSearchControls.style.display = "flex";
+//             elements.documentationSearchResultCount.textContent = "0/0 results";
+//             elements.documentationSearchResults.innerHTML = `<div style="padding: 16px; text-align: center; font-size: 13px; color: #a9b2c3;">No matches found.</div>`;
+//             currentMatchIndex = -1;
+//         }
+//     }
+
+//     function syncSearchNavigationState() {
+//         if (currentMatchIndex < 0 || currentMatchIndex >= searchMatches.length) return;
+
+//         const currentMatch = searchMatches[currentMatchIndex];
+
+//         elements.documentationSubTopicCollection.forEach(item => item.classList.remove("active"));
+//         currentMatch.subTopicButton.classList.add("active");
+
+//         const sourceHTML = fileContentCache[currentMatch.fileKey];
+//         const escapedQuery = elements.documentationSearchField.value.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+//         const highlightRegex = new RegExp(`(${escapedQuery})`, "gi");
+
+//         elements.documentationContent.innerHTML = sourceHTML.replace(highlightRegex, `<mark class="utk-mark">$1</mark>`);
+
+//         const pageHighlightMarks = elements.documentationContent.querySelectorAll(".utk-mark");
+//         if (pageHighlightMarks.length > 0) {
+//             let relativeMatchCount = 0;
+//             for (let i = 0; i < currentMatchIndex; i++) {
+//                 if (searchMatches[i].fileKey === currentMatch.fileKey) {
+//                     relativeMatchCount++;
+//                 }
+//             }
+
+//             const activeMarkElement = pageHighlightMarks[relativeMatchCount] || pageHighlightMarks[0];
+//             if (activeMarkElement) {
+//                 activeMarkElement.classList.add("utk-mark--active");
+//                 activeMarkElement.scrollIntoView({ behavior: "smooth", block: "center" });
+//             }
+//         }
+
+//         const resultCards = elements.documentationSearchResults.querySelectorAll(".utk-search-card");
+//         resultCards.forEach((card, index) => {
+//             if (index === currentMatchIndex) {
+//                 card.classList.add("utk-search-card--active");
+//                 card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+//             } else {
+//                 card.classList.remove("utk-search-card--active");
+//             }
+//         });
+
+//         elements.documentationSearchResultCount.textContent = `${currentMatchIndex + 1}/${searchMatches.length} results`;
+//     }
+
+//     function navigateToNextMatch() {
+//         if (searchMatches.length === 0) return;
+//         currentMatchIndex = (currentMatchIndex + 1) % searchMatches.length;
+//         syncSearchNavigationState();
+//     }
+
+//     // ==========================================
+//     // INSTANT INPUT WIRE (No debounce needed anymore)
+//     // ==========================================
+//     elements.documentationSearchField.addEventListener("input", executeSearch);
+//     elements.documentationSearchNextButton.addEventListener("click", navigateToNextMatch);
+
+//     elements.documentationSearchPreviousButton.addEventListener("click", () => {
+//         if (searchMatches.length === 0) return;
+//         currentMatchIndex = (currentMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+//         syncSearchNavigationState();
+//     });
+
+//     elements.documentationSearchField.addEventListener("keydown", (event) => {
+//         if (event.key === "Enter") {
+//             event.preventDefault();
+//             navigateToNextMatch();
+//         }
+//     });
+// }
+
+
+export async function setupDocumentation() {
+    const fileContentCache = {};
+    const fileTextCache = {}; // Pre-stripped clean text cache for fast searching
+    let searchMatches = [];
     let currentMatchIndex = -1;
 
-
+    // Load the active item on startup, or fall back to the first available sub-topic item
+    const initialActiveSubtopic =
+        elements.documentationSidebar.querySelector("[data-sub-topic].active") ??
+        elements.documentationSubTopicCollection[0];
 
     // ==========================================
-    // ROUTER & TAB SWITCH CHANNELS
+    // PRELOAD MATRIX (Load everything concurrently)
     // ==========================================
-    function showTargetScreen(screenId) {
-        screens.forEach(screen => {
-            screen.classList.remove("active");
-        });
+    async function preloadAllFiles() {
+        const fetchPromises = Array.from(elements.documentationSubTopicCollection).map(async (button) => {
+            const fileKey = button.dataset.fileName;
+            const filePath = `./documentations/${fileKey}.md`;
 
-        const targetScreen = document.getElementById(screenId);
-        if (targetScreen) {
-            targetScreen.classList.add("active");
-            contentArea.scrollTop = 0;
-        }
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) throw new Error(`Could not fetch ${filePath}`);
 
-        document.querySelectorAll(".playground-ref__link").forEach(link => {
-            if (link.getAttribute("data-screen") === screenId) {
-                link.classList.add("active");
-            } else {
-                link.classList.remove("active");
+                const markdownText = await response.text();
+                const htmlText = marked.parse(markdownText);
+
+                // Cache the HTML for structural rendering
+                fileContentCache[fileKey] = htmlText;
+
+                // Cache a clean text version instantly to keep memory operations light
+                fileTextCache[fileKey] = htmlText.replace(/<\/?[^>]+(>|$)/g, "");
+            } catch (error) {
+                console.error(`Preload failed for ${fileKey}:`, error);
+                fileContentCache[fileKey] = `<div style="padding: 20px; color: #ff6b6b;">Error: Failed to load document.</div>`;
+                fileTextCache[fileKey] = "";
             }
         });
+
+        // Wait for all files to be downloaded and parsed into memory
+        await Promise.all(fetchPromises);
+
+        // Once fully loaded, render the initial view
+        if (initialActiveSubtopic) {
+            renderDocument(initialActiveSubtopic.dataset.fileName);
+        }
     }
 
-    document.querySelectorAll(".playground-ref__link").forEach(link => {
-        link.addEventListener("click", (e) => {
-            e.preventDefault();
-            showTargetScreen(link.getAttribute("data-screen"));
+    function renderDocument(fileKey) {
+        if (!fileKey || !fileContentCache[fileKey]) return;
+        elements.documentationContent.innerHTML = fileContentCache[fileKey];
+        elements.documentationContent.scrollTop = 0;
+    }
+
+    // Trigger the global preload sequence immediately
+    await preloadAllFiles();
+
+    // ==========================================
+    // SIDEBAR INTERACTION LISTENERS
+    // ==========================================
+
+    // Handle switching between sub-topics (Instant from cache)
+    elements.documentationSubTopicCollection.forEach(subTopic => {
+        subTopic.addEventListener("click", () => {
+            elements.documentationSubTopicCollection.forEach(item => item.classList.remove("active"));
+            subTopic.classList.add("active");
+
+            const fileKey = subTopic.dataset.fileName;
+            renderDocument(fileKey);
         });
     });
 
-    document.querySelectorAll("[data-heading]").forEach(heading => {
+    // Handle opening and closing folder directories
+    elements.documentationTopicNameCollection.forEach(heading => {
         heading.addEventListener("click", () => {
-            heading.parentElement.classList.toggle("open");
+            const parentTopicElement = heading.closest("[data-topic]");
+            if (parentTopicElement) {
+                parentTopicElement.classList.toggle("open");
+            }
         });
     });
 
     // ==========================================
-    // CROSS-SCREEN TEXT SNIPPET SEARCH ENGINE
+    // ZERO-REGEX STRING SEARCH ENGINE
     // ==========================================
-    function executeGlobalRefSearch() {
-        const query = searchInput.value.toLowerCase().trim();
+    function executeSearch() {
+        const rawQuery = elements.documentationSearchField.value.trim();
+        const searchQuery = rawQuery.toLowerCase();
 
-        // If search bar cleared, roll back out to basic directory state
-        if (query === "") {
-            searchControls.style.display = "none";
-            resultsHUD.style.display = "none";
-            if (sidebar.getAttribute("data-collapsed") === "false") {
-                defaultNav.style.display = "block";
+        // Safety Gate: If the query is empty or just spaces, completely reset and exit
+        if (!searchQuery) {
+            elements.documentationSearchControls.style.display = "none";
+            elements.documentationSearchResults.style.display = "none";
+            elements.documentationTopics.style.display = "block";
+
+            const currentActiveButton = elements.documentationSidebar.querySelector("[data-sub-topic].active");
+            if (currentActiveButton) {
+                renderDocument(currentActiveButton.dataset.fileName);
             }
 
-            screens.forEach(screen => {
-                screen.innerHTML = originalHTMLCache[screen.id];
-            });
-
-            activeMatches = [];
+            searchMatches = [];
             currentMatchIndex = -1;
             return;
         }
 
-        // Display results HUD panels if sidebar expanded
-        if (sidebar.getAttribute("data-collapsed") === "false") {
-            defaultNav.style.display = "none";
-            resultsHUD.style.display = "flex";
-        }
-        resultsHUD.innerHTML = "";
+        elements.documentationTopics.style.display = "none";
+        elements.documentationSearchResults.style.display = "block";
+        elements.documentationSearchResults.innerHTML = "";
+        searchMatches = [];
 
-        screens.forEach(screen => {
-            screen.innerHTML = originalHTMLCache[screen.id];
-        });
-        activeMatches = [];
+        // Scan the pre-rendered text cache using rapid string indexing
+        elements.documentationSubTopicCollection.forEach(button => {
+            const fileKey = button.dataset.fileName;
+            const textContent = fileTextCache[fileKey] || "";
+            const lowerTextContent = textContent.toLowerCase();
+            const pageTitle = button.textContent.trim();
 
-        // Scan text nodes
-        screens.forEach(screen => {
-            const walker = document.createTreeWalker(screen, NodeFilter.SHOW_TEXT, null, false);
-            const textNodes = [];
-            let currentNode;
+            let position = lowerTextContent.indexOf(searchQuery);
 
-            while (currentNode = walker.nextNode()) {
-                const parent = currentNode.parentElement;
-                if (parent.tagName !== "SCRIPT" && parent.tagName !== "STYLE" && currentNode.nodeValue.toLowerCase().includes(query)) {
-                    textNodes.push(currentNode);
-                }
-            }
+            // loop through all matching indices via direct index tracking offset
+            while (position !== -1) {
+                const windowStart = Math.max(0, position - 40);
+                const windowEnd = Math.min(textContent.length, position + searchQuery.length + 45);
 
-            textNodes.forEach(node => {
-                const parent = node.parentNode;
-                if (!parent) return;
+                let snippetText = textContent.substring(windowStart, windowEnd);
+                if (windowStart > 0) snippetText = "..." + snippetText;
+                if (windowEnd < textContent.length) snippetText = snippetText + "...";
 
-                const text = node.nodeValue;
-                const regex = new RegExp(query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), "gi");
-                const fragment = document.createDocumentFragment();
-                let lastIndex = 0;
+                // Highlight using basic string manipulation instead of an unsafe execution pattern
+                const queryLength = searchQuery.length;
+                const matchIndex = snippetText.toLowerCase().indexOf(searchQuery);
+                const originalValue = snippetText.substring(matchIndex, matchIndex + queryLength);
 
-                const screenTitle = screen.getAttribute("data-title") || "documentation";
+                const highlightedSnippetHTML = snippetText.substring(0, matchIndex) +
+                    `<mark>${originalValue}</mark>` +
+                    snippetText.substring(matchIndex + queryLength);
 
-                text.replace(regex, (match, index) => {
-                    if (index > lastIndex) {
-                        fragment.appendChild(document.createTextNode(text.substring(lastIndex, index)));
-                    }
-
-                    const mark = document.createElement("mark");
-                    mark.className = "utk-mark";
-                    mark.textContent = match;
-                    fragment.appendChild(mark);
-
-                    const startPos = Math.max(0, index - 40);
-                    const endPos = Math.min(text.length, index + match.length + 45);
-                    let snippetString = text.substring(startPos, endPos);
-
-                    if (startPos > 0) snippetString = "..." + snippetString;
-                    if (endPos < text.length) snippetString = snippetString + "...";
-
-                    const visualHUDHtml = snippetString.replace(regex, m => `<mark>${m}</mark>`);
-
-                    activeMatches.push({
-                        screenId: screen.id,
-                        metaText: screenTitle,
-                        snippetHTML: visualHUDHtml,
-                        contentMarkElement: mark
-                    });
-
-                    lastIndex = index + match.length;
+                searchMatches.push({
+                    fileKey: fileKey,
+                    metaText: pageTitle,
+                    snippetHTML: highlightedSnippetHTML,
+                    subTopicButton: button
                 });
 
-                if (lastIndex < text.length) {
-                    fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
-                }
-                parent.replaceChild(fragment, node);
-            });
-        });
-
-        const totalMarks = contentArea.querySelectorAll(".utk-mark");
-        activeMatches.forEach((match, index) => {
-            match.contentMarkElement = totalMarks[index];
-        });
-
-        if (activeMatches.length > 0) {
-            if (sidebar.getAttribute("data-collapsed") === "false") {
-                searchControls.style.display = "flex";
+                // Advance position index past the current match length to find next match
+                position = lowerTextContent.indexOf(searchQuery, position + queryLength);
             }
+        });
+
+        // Display results
+        if (searchMatches.length > 0) {
+            elements.documentationSearchControls.style.display = "flex";
             currentMatchIndex = 0;
 
-            activeMatches.forEach((match, index) => {
-                const card = document.createElement("div");
-                card.className = "utk-search-card";
-                card.innerHTML = `
+            const fragment = document.createDocumentFragment();
+
+            searchMatches.forEach((match, index) => {
+                const resultCard = document.createElement("div");
+                resultCard.className = "utk-search-card";
+                resultCard.innerHTML = `
                     <div class="utk-search-card__meta">${match.metaText}</div>
                     <div class="utk-search-card__snippet">${match.snippetHTML}</div>
                 `;
 
-                card.addEventListener("click", () => {
+                resultCard.addEventListener("click", () => {
                     currentMatchIndex = index;
-                    syncHUDNavStates();
+                    syncSearchNavigationState();
                 });
 
-                resultsHUD.appendChild(card);
+                fragment.appendChild(resultCard);
             });
 
-            syncHUDNavStates();
+            elements.documentationSearchResults.appendChild(fragment);
+            syncSearchNavigationState();
         } else {
-            if (sidebar.getAttribute("data-collapsed") === "false") {
-                searchControls.style.display = "flex";
-            }
-            matchCountEl.textContent = "0/0 results";
-            resultsHUD.innerHTML = `<div style="padding:16px;text-align:center;font-size:13px;color:var(--utk-text-dim, #a9b2c3)">No matches found.</div>`;
+            elements.documentationSearchControls.style.display = "flex";
+            elements.documentationSearchResultCount.textContent = "0/0 results";
+            elements.documentationSearchResults.innerHTML = `<div style="padding: 16px; text-align: center; font-size: 13px; color: #a9b2c3;">No matches found.</div>`;
             currentMatchIndex = -1;
         }
     }
 
-    function syncHUDNavStates() {
-        if (currentMatchIndex < 0 || currentMatchIndex >= activeMatches.length) return;
+    function syncSearchNavigationState() {
+        if (currentMatchIndex < 0 || currentMatchIndex >= searchMatches.length) return;
 
-        const currentMatch = activeMatches[currentMatchIndex];
-        showTargetScreen(currentMatch.screenId);
+        const currentMatch = searchMatches[currentMatchIndex];
 
-        const documentMarks = contentArea.querySelectorAll(".utk-mark");
-        documentMarks.forEach((mark, index) => {
-            if (index === currentMatchIndex) {
-                mark.classList.add("utk-mark--active");
-                mark.scrollIntoView({ behavior: "smooth", block: "center" });
-            } else {
-                mark.classList.remove("utk-mark--active");
+        elements.documentationSubTopicCollection.forEach(item => item.classList.remove("active"));
+        currentMatch.subTopicButton.classList.add("active");
+
+        const sourceHTML = fileContentCache[currentMatch.fileKey];
+        const rawQuery = elements.documentationSearchField.value.trim();
+
+        // Highlight active page elements using primitive split/join mechanics to preserve system safety
+        const searchParts = sourceHTML.split(new RegExp(`(${rawQuery.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, "gi"));
+        elements.documentationContent.innerHTML = searchParts.map(part => {
+            return part.toLowerCase() === rawQuery.toLowerCase() ? `<mark class="utk-mark">${part}</mark>` : part;
+        }).join("");
+
+        const pageHighlightMarks = elements.documentationContent.querySelectorAll(".utk-mark");
+        if (pageHighlightMarks.length > 0) {
+            let relativeMatchCount = 0;
+            for (let i = 0; i < currentMatchIndex; i++) {
+                if (searchMatches[i].fileKey === currentMatch.fileKey) {
+                    relativeMatchCount++;
+                }
             }
-        });
 
-        const sidebarCards = resultsHUD.querySelectorAll(".utk-search-card");
-        sidebarCards.forEach((card, index) => {
+            const activeMarkElement = pageHighlightMarks[relativeMatchCount] || pageHighlightMarks[0];
+            if (activeMarkElement) {
+                activeMarkElement.classList.add("utk-mark--active");
+                activeMarkElement.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+
+        const resultCards = elements.documentationSearchResults.querySelectorAll(".utk-search-card");
+        resultCards.forEach((card, index) => {
             if (index === currentMatchIndex) {
                 card.classList.add("utk-search-card--active");
                 card.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -440,34 +950,34 @@ export function setupDocumentation() {
             }
         });
 
-        matchCountEl.textContent = `${currentMatchIndex + 1}/${activeMatches.length} results`;
+        elements.documentationSearchResultCount.textContent = `${currentMatchIndex + 1}/${searchMatches.length} results`;
     }
 
-    function jumpToNextMatch() {
-        if (activeMatches.length === 0) return;
-        currentMatchIndex = (currentMatchIndex + 1) % activeMatches.length;
-        syncHUDNavStates();
+    function navigateToNextMatch() {
+        if (searchMatches.length === 0) return;
+        currentMatchIndex = (currentMatchIndex + 1) % searchMatches.length;
+        syncSearchNavigationState();
     }
 
-    // Wiring Input Events
-    searchInput.addEventListener("input", executeGlobalRefSearch);
-    nextBtn.addEventListener("click", jumpToNextMatch);
-    prevBtn.addEventListener("click", () => {
-        if (activeMatches.length === 0) return;
-        currentMatchIndex = (currentMatchIndex - 1 + activeMatches.length) % activeMatches.length;
-        syncHUDNavStates();
+    // ==========================================
+    // EVENTS
+    // ==========================================
+    elements.documentationSearchField.addEventListener("input", executeSearch);
+    elements.documentationSearchNextButton.addEventListener("click", navigateToNextMatch);
+
+    elements.documentationSearchPreviousButton.addEventListener("click", () => {
+        if (searchMatches.length === 0) return;
+        currentMatchIndex = (currentMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+        syncSearchNavigationState();
     });
 
-    searchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            jumpToNextMatch();
+    elements.documentationSearchField.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            navigateToNextMatch();
         }
     });
 }
-
-
-
 
 function main() {
     const editor = ace.edit("editor");

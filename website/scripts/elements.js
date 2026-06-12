@@ -12,7 +12,7 @@ export const elements = {
     settingsMenu: $("[data-settings-menu]"),
     settingsOverlay: $("[data-settings-overlay]"),
     settingsTheme: $("[data-settings-theme]"),
-    settingsKeybindings: $$("[data-settings-keybinding]"),
+    settingsKeybindingCollection: $$("[data-settings-keybinding]"),
     settingsFontSize: $("[data-settings-font-size]"),
     settingsCursorStyle: $("[data-settings-cursor-style]"),
     settingsTabSize: $("[data-settings-tab-size]"),
@@ -26,11 +26,17 @@ export const elements = {
 
     documentationSidebar: $("[data-documentation-sidebar]"),
     documentationContent: $("[data-documentation-content]"),
+
+    documentationTopics: $("[data-topics]"),
+    documentationTopicNameCollection: $$("[data-topic-name]"),
+    documentationSubTopicCollection: $$("[data-sub-topic]"),
+
     documentationSearchPreviousButton: $("[data-documentation-search-previous-button]"),
     documentationSearchNextButton: $("[data-documentation-search-next-button]"),
-    documentationSearchResultCount: $("[data-documentation-search-result-count ]"),
+    documentationSearchResultCount: $("[data-documentation-search-result-count]"),
     documentationSearchControls: $("[data-documentation-search-controls]"),
     documentationSearchField: $("[data-documentation-search-field]"),
-    
+    documentationSearchResults: $("[data-documentation-search-results]"),
+
 }
 
