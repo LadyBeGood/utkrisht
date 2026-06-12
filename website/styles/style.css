@@ -2,7 +2,7 @@
 
 
 
-body> .left {
+body > .left {
     --transition-duration: 0s;
 
     display: grid;
@@ -116,7 +116,7 @@ body> .left {
 }
 
 
-body> .right {
+body > .right {
     overflow-y: auto;
     height: 100svh;
     background-color: #44475a;
@@ -787,9 +787,6 @@ body> .right {
 
 
 
-.ace_mobile-menu {
-    display: none;
-}
 
 
 

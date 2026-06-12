@@ -20,7 +20,7 @@ A valid identifier:
 - does not contain consecutive hyphens (`--`, `---` etc.)
 
 
-Valid Identifiers
+Valid Identifiers:
 ```
 name
 user-123
@@ -30,7 +30,7 @@ data-set-3
 a1-b2
 ```
 
-Invalid Identifiers
+Invalid Identifiers:
 ```
 myName       # contains uppercase letter
 1080p        # starts with a number
