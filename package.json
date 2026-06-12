@@ -11,11 +11,10 @@
         "javascript"
     ],
     "files": [
-        "compiler",
-        "uki"
+        "compiler"
     ],
     "bin": {
-        "uki": "./uki/uki.js"
+        "uki": "./compiler/uki.js"
     },
     "bugs": {
         "url": "https://github.com/LadyBeGood/utkrisht/issues"
