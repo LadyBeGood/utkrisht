@@ -58,14 +58,14 @@ function setupSettings(editor) {
         editor.setTheme(elements.settingsTheme.value)
     });
 
-    
+
     /* Keybindings */
     const currentKeybinding = document.querySelector("[data-settings-keybinding='active']").value;
     editor.setKeyboardHandler(currentKeybinding !== "null" ? currentKeybinding : null);
 
     elements.settingsKeybindings.forEach(function (element) {
         element.addEventListener("click", function () {
-            
+
             elements.settingsKeybindings.forEach(function (button) {
                 if (button === element) {
                     button.dataset.settingsKeybinding = "active"
@@ -107,7 +107,7 @@ function setupSettings(editor) {
         }
 
         editor.session.setTabSize(newSize);
-        
+
     })
 
 
@@ -121,7 +121,7 @@ function setupSettings(editor) {
         }
     })
 
-    
+
     /* Show invisible characters */
     editor.setShowInvisibles(elements.settingsShowInvisibleCharacters.checked)
     elements.settingsShowInvisibleCharacters.addEventListener("change", function () {
@@ -173,7 +173,7 @@ function setupAceEditor(editor) {
 
     // Target the internal scroller element of Ace
     editor.renderer.scroller.style.touchAction = "pan-x pan-y";
-    
+
 
     setupExampleSelection(editor);
     setupSettings(editor);
@@ -186,7 +186,7 @@ function setupResponsiveness() {
     function handleTabletChange(event) {
         let fontSize = 16;
         let tabSize = 4;
-        
+
         if (event.matches) {
             fontSize = 14;
             tabSize = 2;
@@ -232,25 +232,7 @@ function setupShortcutButtonsToggle() {
 
 
 
-export function setupReference() {
-    const sidebar = document.getElementById("refSidebar");
-    const defaultNav = document.getElementById("refDefaultNav");
-    const resultsHUD = document.getElementById("refSearchResultsHUD");
-    const searchInput = document.getElementById("refSearch");
-    const searchControls = document.getElementById("refSearchControls");
-    const matchCountEl = document.getElementById("refMatchCount");
-    const prevBtn = document.getElementById("refPrevBtn");
-    const nextBtn = document.getElementById("refNextBtn");
-    const contentArea = document.getElementById("refContentArea");
-
-    // Collapse UI Controls
-    const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
-    const collapsedIconsStrip = document.getElementById("collapsedIconsStrip");
-    const uncollapseSidebarBtn = document.getElementById("uncollapseSidebarBtn");
-    const quickSearchBtn = document.getElementById("quickSearchBtn");
-
-    if (!sidebar || !searchInput || !contentArea) return;
-
+export function setupDocumentation() {
     // Cache clean text nodes across all individual isolated screens
     const screens = document.querySelectorAll(".playground-ref__screen");
     let originalHTMLCache = {};
@@ -261,23 +243,7 @@ export function setupReference() {
     let activeMatches = [];
     let currentMatchIndex = -1;
 
-    // Collapse Button Listener (Left Arrow)
-    toggleSidebarBtn.addEventListener("click", () => {
-        setSidebarCollapseState(true);
-    });
 
-    // Uncollapse Button Listener (Right Arrow)
-    uncollapseSidebarBtn.addEventListener("click", () => {
-        setSidebarCollapseState(false);
-    });
-
-    // Quick Search Icon Trigger
-    quickSearchBtn.addEventListener("click", () => {
-        setSidebarCollapseState(false);
-        setTimeout(() => {
-            searchInput.focus();
-        }, 100); // Small timeout allows sidebar width transit calculation to finish
-    });
 
     // ==========================================
     // ROUTER & TAB SWITCH CHANNELS
@@ -372,7 +338,7 @@ export function setupReference() {
                 const fragment = document.createDocumentFragment();
                 let lastIndex = 0;
 
-                const screenTitle = screen.getAttribute("data-title") || "Reference";
+                const screenTitle = screen.getAttribute("data-title") || "documentation";
 
                 text.replace(regex, (match, index) => {
                     if (index > lastIndex) {
@@ -508,7 +474,7 @@ function main() {
     setupResponsiveness(editor);
     setupAceEditor(editor);
     setupShortcutButtonsToggle();
-    setupReference();
+    setupDocumentation();
 }
 
 

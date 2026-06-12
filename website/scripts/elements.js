@@ -1,27 +1,36 @@
 
+const $ = document.querySelector.bind(document);
+const $$ = document.querySelectorAll.bind(document);
+
 export const elements = {
-    left: document.querySelector("[data-left]"),
-    right: document.querySelector("[data-right]"),
+    left: $("[data-left]"),
+    right: $("[data-right]"),
 
-    examples: document.querySelector("[data-examples]"),
+    examples: $("[data-examples]"),
 
-    settings: document.querySelector("[data-settings]"),
-    settingsMenu: document.querySelector("[data-settings-menu]"),
-    settingsOverlay: document.querySelector("[data-settings-overlay]"),
-    settingsTheme: document.querySelector("[data-settings-theme]"),
-    settingsKeybindings: document.querySelectorAll("[data-settings-keybinding]"),
-    settingsFontSize: document.querySelector("[data-settings-font-size]"),
-    settingsCursorStyle: document.querySelector("[data-settings-cursor-style]"),
-    settingsTabSize: document.querySelector("[data-settings-tab-size]"),
-    settingsInsertSpaces: document.querySelector("[data-settings-insert-spaces]"),
-    settingsShowInvisibleCharacters: document.querySelector("[data-settings-show-invisible-characters]"),
-    settingsKeyboardAccessibilityMode: document.querySelector("[data-settings-keyboard-accessibility-mode]"),
+    settings: $("[data-settings]"),
+    settingsMenu: $("[data-settings-menu]"),
+    settingsOverlay: $("[data-settings-overlay]"),
+    settingsTheme: $("[data-settings-theme]"),
+    settingsKeybindings: $$("[data-settings-keybinding]"),
+    settingsFontSize: $("[data-settings-font-size]"),
+    settingsCursorStyle: $("[data-settings-cursor-style]"),
+    settingsTabSize: $("[data-settings-tab-size]"),
+    settingsInsertSpaces: $("[data-settings-insert-spaces]"),
+    settingsShowInvisibleCharacters: $("[data-settings-show-invisible-characters]"),
+    settingsKeyboardAccessibilityMode: $("[data-settings-keyboard-accessibility-mode]"),
 
-    shortcutButtons: document.querySelector("[data-shortcut-buttons]"),
-    shortcutButtonsToggler: document.querySelector("[data-shortcut-buttons-toggler]"),
+    shortcutButtons: $("[data-shortcut-buttons]"),
+    shortcutButtonsToggler: $("[data-shortcut-buttons-toggler]"),
 
 
-    // Templates
-    referenceTemplate: document.querySelector("[data-template-reference]"),
+    documentationSidebar: $("[data-documentation-sidebar]"),
+    documentationContent: $("[data-documentation-content]"),
+    documentationSearchPreviousButton: $("[data-documentation-search-previous-button]"),
+    documentationSearchNextButton: $("[data-documentation-search-next-button]"),
+    documentationSearchResultCount: $("[data-documentation-search-result-count ]"),
+    documentationSearchControls: $("[data-documentation-search-controls]"),
+    documentationSearchField: $("[data-documentation-search-field]"),
+    
 }
 

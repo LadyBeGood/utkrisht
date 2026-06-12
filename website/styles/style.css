@@ -1,14 +1,4 @@
-.ace_gutter-cell {
-    padding-left: 4px;
-}
-
-/* Remove the shadow separating the gutter and the text editor */
-.ace_scroller.ace_scroll-left::after {
-    box-shadow: none !important;
-}
-
-
-.left {
+body>.left {
     --transition-duration: 0s;
 
     display: grid;
@@ -122,14 +112,13 @@
 }
 
 
-.right {
+body>.right {
     overflow-y: auto;
     height: 100svh;
     background-color: #44475a;
     display: grid;
     grid-template-rows: 1fr 1fr;
     gap: 2px;
-
 
 
     .screen {
@@ -148,7 +137,7 @@
             display: flex;
             flex-direction: column;
             /* gap: 1px; */
-            
+
             .pane {
                 width: 100%;
                 aspect-ratio: 1/1;
@@ -179,7 +168,7 @@
     }
 
 
-    .playground-ref {
+    .documentation {
         display: flex;
         width: 100%;
         flex: 1;
@@ -190,7 +179,7 @@
         gap: 2px;
 
 
-        .playground-ref__sidebar {
+        .sidebar {
             width: 200px;
             height: 100%;
             background-color: #282a36;
@@ -207,14 +196,14 @@
             &[data-collapsed="true"] {
                 width: 40px;
 
-                .playground-ref__search-input,
-                .playground-ref__search-controls {
+                .documentation__search-input,
+                .documentation__search-controls {
                     display: none !important;
                 }
             }
 
             /* Control HUD Utility Styles */
-            .playground-ref__search-box {
+            .documentation__search-box {
                 display: flex;
                 flex-direction: column;
                 padding: 8px;
@@ -225,13 +214,13 @@
                 border-bottom: 2px solid #44475a;
 
 
-                .playground-ref__search-row {
+                .documentation__search-row {
                     display: flex;
                     align-items: center;
                     gap: 6px;
                     width: 100%;
 
-                    .playground-ref__search-input {
+                    .documentation__search-input {
                         flex: 1;
                         padding: 6px 10px;
                         font-size: 14px;
@@ -243,7 +232,7 @@
                         }
                     }
 
-                    /* .playground-ref__sidebar-toggle {
+                    /* .sidebar-toggle {
                         background: none;
                         border: none;
                         color: var(--utk-text-dim);
@@ -258,23 +247,23 @@
 
                 }
 
-                .playground-ref__search-controls {
+                .documentation__search-controls {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     padding: 2px 4px;
 
-                    .playground-ref__match-count {
+                    .documentation__match-count {
                         font-size: 14px;
                         /* color: var(--utk-text-dim); */
                         font-family: monospace;
                     }
 
-                    .playground-ref__nav-arrows {
+                    .documentation__nav-arrows {
                         display: flex;
                         gap: 4px;
 
-                        .playground-ref__nav-btn {
+                        .documentation__nav-btn {
                             background: var(--utk-bg-main);
                             border: 1px solid var(--utk-border);
                             /* color: var(--utk-text); */
@@ -297,16 +286,16 @@
 
 
             /* Left Sidebar Accordion Nav styling */
-            .playground-ref__nav {
+            .documentation__nav {
                 flex: 1;
                 overflow-y: auto;
                 padding: 8px 0;
 
 
-                .playground-ref__category {
-                    /* .playground-ref__tree {} */
+                .documentation__category {
+                    /* .documentation__tree {} */
 
-                    .playground-ref__category-header {
+                    .documentation__category-header {
                         padding: 8px 12px;
                         font-size: 14px;
                         font-weight: 600;
@@ -336,13 +325,13 @@
                         }
                     }
 
-                    .playground-ref__branch {
+                    .documentation__branch {
                         display: none;
                         padding-left: 8px;
                         margin-bottom: 8px;
 
 
-                        .playground-ref__link {
+                        .documentation__link {
                             display: block;
                             padding: 6px 16px;
                             color: #ffffff98;
@@ -359,11 +348,11 @@
                     }
 
                     &.open {
-                        .playground-ref__branch {
+                        .documentation__branch {
                             display: block;
                         }
 
-                        .playground-ref__category-header::after {
+                        .documentation__category-header::after {
                             transform: rotate(-180deg);
                             color: var(--utk-accent);
                         }
@@ -372,7 +361,7 @@
             }
 
 
-            .playground-ref__search-results {
+            .documentation__search-results {
                 flex: 1;
                 overflow-y: auto;
                 padding: 8px;
@@ -384,7 +373,7 @@
         }
 
         /* Right Viewport styling */
-        .playground-ref__content {
+        .content {
             flex: 1;
             padding: 24px;
             overflow-y: auto;
@@ -410,27 +399,6 @@
 
 
 
-
-
-
-
-
-
-
-/* :root {
-    --utk-bg-main: #17191a;
-    --utk-bg-side: #17191a;
-    --utk-border: #1f1f1f;
-    --utk-text: #f8f8f2;
-    --utk-text-dim: #6272a4;
-    --utk-hover: #212634;
-
-    Highlighter tokens
-    --utk-bg-code: #191d28;
-    --utk-highlight: rgba(241, 250, 140, 0.25);
-    --utk-highlight-active: #f1fa8c;
-    --utk-highlight-text: #282a36;
-} */
 
 
 
@@ -483,14 +451,14 @@
 
 
 /* Custom Scrollbars */
-.playground-ref__nav::-webkit-scrollbar,
-.playground-ref__content::-webkit-scrollbar {
+.documentation__nav::-webkit-scrollbar,
+.content::-webkit-scrollbar {
     width: 6px;
     width: 0px;
 }
 
-.playground-ref__nav::-webkit-scrollbar-thumb,
-.playground-ref__content::-webkit-scrollbar-thumb {
+.documentation__nav::-webkit-scrollbar-thumb,
+.content::-webkit-scrollbar-thumb {
     /* background-color: var(--utk-border); */
     background-color: #ffffff20;
 }
@@ -498,12 +466,12 @@
 
 
 /* Screen Engine Base Isolation Rules */
-.playground-ref__screen {
+.documentation__screen {
     display: none;
     /* Make screens completely invisible when non-active */
 }
 
-.playground-ref__screen.active {
+.documentation__screen.active {
     display: block;
     /* Reveal exclusively selected screen section */
 }
@@ -563,15 +531,15 @@
 
 
 /* Hide standard components entirely when data-collapsed is true */
-.playground-ref__sidebar[data-collapsed="true"] .playground-ref__search-row,
-.playground-ref__sidebar[data-collapsed="true"] .playground-ref__search-controls,
-.playground-ref__sidebar[data-collapsed="true"] #refDefaultNav,
-.playground-ref__sidebar[data-collapsed="true"] #refSearchResultsHUD {
+.sidebar[data-collapsed="true"] .documentation__search-row,
+.sidebar[data-collapsed="true"] .documentation__search-controls,
+.sidebar[data-collapsed="true"] #refDefaultNav,
+.sidebar[data-collapsed="true"] #refSearchResultsHUD {
     display: none !important;
 }
 
 /* Collapsed Icon Strip Styles */
-.playground-ref__collapsed-icons {
+.documentation__collapsed-icons {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -580,7 +548,7 @@
     width: 100%;
 }
 
-.playground-ref__icon-btn {
+.documentation__icon-btn {
     background: transparent;
     border: none;
     color: var(--utk-text, #f8f8f2);
@@ -595,7 +563,7 @@
     transition: background-color 0.1s;
 }
 
-.playground-ref__icon-btn:hover {
+.documentation__icon-btn:hover {
     background-color: var(--utk-hover, #343746);
     color: var(--utk-accent, #bd93f9);
 }

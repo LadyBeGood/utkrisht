@@ -18,6 +18,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="./website/styles/reset.css">
     <link rel="stylesheet" href="./website/styles/style.css">
+    <link rel="stylesheet" href="./website/styles/ace.css">
     <link rel="stylesheet" href="./website/styles/markdown.css">
 
     <!-- Scripts -->
@@ -42,16 +43,28 @@
                 </select>
             </div>
             <div class="actions">
-                <button class="reference">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M508.5-291.5Q520-303 520-320v-160q0-17-11.5-28.5T480-520q-17 0-28.5 11.5T440-480v160q0 17 11.5 28.5T480-280q17 0 28.5-11.5Zm0-320Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg>
+                <button class="documentation">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"
+                        fill="currentColor">
+                        <path
+                            d="M508.5-291.5Q520-303 520-320v-160q0-17-11.5-28.5T480-520q-17 0-28.5 11.5T440-480v160q0 17 11.5 28.5T480-280q17 0 28.5-11.5Zm0-320Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+                    </svg>
                 </button>
 
                 <button class="play">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 19.5425V4.45749C6 4.04453 6.13827 3.69838 6.41481 3.41903C6.69136 3.13968 7.01399 3 7.38272 3C7.49794 3 7.61893 3.01822 7.74568 3.05466C7.87243 3.09109 7.99342 3.14575 8.10864 3.21862L19.3778 10.7611C19.5852 10.9069 19.7407 11.0891 19.8444 11.3077C19.9481 11.5263 20 11.7571 20 12C20 12.2429 19.9481 12.4737 19.8444 12.6923C19.7407 12.9109 19.5852 13.0931 19.3778 13.2389L8.10864 20.7814C7.99342 20.8542 7.87243 20.9089 7.74568 20.9453C7.61893 20.9818 7.49794 21 7.38272 21C7.01399 21 6.69136 20.8603 6.41481 20.581C6.13827 20.3016 6 19.9555 6 19.5425Z" fill="currentColor" /></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M6 19.5425V4.45749C6 4.04453 6.13827 3.69838 6.41481 3.41903C6.69136 3.13968 7.01399 3 7.38272 3C7.49794 3 7.61893 3.01822 7.74568 3.05466C7.87243 3.09109 7.99342 3.14575 8.10864 3.21862L19.3778 10.7611C19.5852 10.9069 19.7407 11.0891 19.8444 11.3077C19.9481 11.5263 20 11.7571 20 12C20 12.2429 19.9481 12.4737 19.8444 12.6923C19.7407 12.9109 19.5852 13.0931 19.3778 13.2389L8.10864 20.7814C7.99342 20.8542 7.87243 20.9089 7.74568 20.9453C7.61893 20.9818 7.49794 21 7.38272 21C7.01399 21 6.69136 20.8603 6.41481 20.581C6.13827 20.3016 6 19.9555 6 19.5425Z"
+                            fill="currentColor" />
+                    </svg>
                 </button>
 
                 <button data-settings class="settings">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M433-80q-27 0-46.5-18T363-142l-9-66q-13-5-24.5-12T307-235l-62 26q-25 11-50 2t-39-32l-47-82q-14-23-8-49t27-43l53-40q-1-7-1-13.5v-27q0-6.5 1-13.5l-53-40q-21-17-27-43t8-49l47-82q14-23 39-32t50 2l62 26q11-8 23-15t24-12l9-66q4-26 23.5-44t46.5-18h94q27 0 46.5 18t23.5 44l9 66q13 5 24.5 12t22.5 15l62-26q25-11 50-2t39 32l47 82q14 23 8 49t-27 43l-53 40q1 7 1 13.5v27q0 6.5-2 13.5l53 40q21 17 27 43t-8 49l-48 82q-14 23-39 32t-50-2l-60-26q-11 8-23 15t-24 12l-9 66q-4 26-23.5 44T527-80h-94Zm49-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"
+                        fill="currentColor">
+                        <path
+                            d="M433-80q-27 0-46.5-18T363-142l-9-66q-13-5-24.5-12T307-235l-62 26q-25 11-50 2t-39-32l-47-82q-14-23-8-49t27-43l53-40q-1-7-1-13.5v-27q0-6.5 1-13.5l-53-40q-21-17-27-43t8-49l47-82q14-23 39-32t50 2l62 26q11-8 23-15t24-12l9-66q4-26 23.5-44t46.5-18h94q27 0 46.5 18t23.5 44l9 66q13 5 24.5 12t22.5 15l62-26q25-11 50-2t39 32l47 82q14 23 8 49t-27 43l-53 40q1 7 1 13.5v27q0 6.5-2 13.5l53 40q21 17 27 43t-8 49l-48 82q-14 23-39 32t-50-2l-60-26q-11 8-23 15t-24 12l-9 66q-4 26-23.5 44T527-80h-94Zm49-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
+                    </svg>
                 </button>
             </div>
         </div>
@@ -108,7 +121,7 @@
     </div>
 
     <div class="right" data-right>
-        
+
 
 
 
@@ -121,9 +134,10 @@
 
             <div class="panes">
 
-                
+
                 <button class="pane">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#e3e3e3">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px"
+                        fill="#e3e3e3">
                         <path
                             d="M607.5-372.5Q660-425 660-500t-52.5-127.5Q555-680 480-680t-127.5 52.5Q300-575 300-500t52.5 127.5Q405-320 480-320t127.5-52.5Zm-204-51Q372-455 372-500t31.5-76.5Q435-608 480-608t76.5 31.5Q588-545 588-500t-31.5 76.5Q525-392 480-392t-76.5-31.5ZM235.5-272Q125-344 61-462q-5-9-7.5-18.5T51-500q0-10 2.5-19.5T61-538q64-118 174.5-190T480-800q134 0 244.5 72T899-538q5 9 7.5 18.5T909-500q0 10-2.5 19.5T899-462q-64 118-174.5 190T480-200q-134 0-244.5-72ZM480-500Zm207.5 160.5Q782-399 832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280q113 0 207.5-59.5Z" />
                     </svg>
@@ -147,11 +161,11 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="23" height="23">
                         <path d="M10 9 L7.5 14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
                         <path d="M14 9 L16.5 14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                    
+
                         <circle cx="12" cy="6" r="3" fill="none" stroke="currentColor" stroke-width="1.6" />
-                    
+
                         <circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="1.6" />
-                    
+
                         <circle cx="18" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="1.6" />
                     </svg>
                     <!-- <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -195,128 +209,123 @@
                 </button>
             </div>
         </div>
-        
 
 
-        
 
 
-        <div class="playground-ref">
-        
-            <!-- LEFT PANEL -->
-            <div class="playground-ref__sidebar" id="refSidebar" data-collapsed="false">
-                
-                <!-- SIDEBAR HEAD HEADER: COLLAPSE & EXPAND UTILITY CONTROLS -->
-                <div class="playground-ref__search-box">
-                    <div class="playground-ref__search-row">
-                        <input type="text" id="refSearch" class="playground-ref__search-input" placeholder="Search..."
-                            autocomplete="off">
-                        <button id="toggleSidebarBtn" class="playground-ref__sidebar-toggle" title="Collapse Sidebar">
-                            
-                        </button>
+
+
+        <div class="documentation">
+
+            <div class="sidebar" data-documentation-sidebar data-collapsed="false">
+                <div class="search-box">
+                    <div class="search-row">
+                        <input type="text" data-documentation-search-field class="search-input" placeholder="Search..." autocomplete="off">
                     </div>
-                
-                    <!-- NEW: ICON UTILITY STRIP (Only visible when sidebar has data-collapsed="true") -->
-                    <div class="playground-ref__collapsed-icons" id="collapsedIconsStrip" style="display: none;">
-                        <button id="uncollapseSidebarBtn" class="playground-ref__icon-btn" title="Expand Sidebar">▶</button>
-                        <button id="quickSearchBtn" class="playground-ref__icon-btn" title="Open Search">🔍</button>
-                    </div>
-                
-                    <!-- SEARCH NAVIGATIONAL HUD OVERLAY -->
-                    <div id="refSearchControls" class="playground-ref__search-controls" style="display: none;">
-                        <span id="refMatchCount" class="playground-ref__match-count">0/0 results</span>
-                        <div class="playground-ref__nav-arrows">
-                            <button id="refPrevBtn" class="playground-ref__nav-btn" title="Previous Result">▲</button>
-                            <button id="refNextBtn" class="playground-ref__nav-btn" title="Next Result">▼</button>
+
+                    <div data-documentation-search-controls class="search-controls" style="display: none;">
+                        <span data-documentation-search-result-count class="search-result-count">0/0 results</span>
+                        <div class="navigation-arrows">
+                            <button data-documentation-search-previous-button class="navigation-button" title="Previous Result">▲</button>
+                            <button data-documentation-search-next-button class="navigation-button" title="Next Result">▼</button>
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- MODE A: STANDARD TREE DIRECTORY (Hidden automatically during search execution) -->
-                <nav class="playground-ref__nav" id="refDefaultNav">
-                    <ul class="playground-ref__tree">
-                        <li class="playground-ref__category open">
-                            <div class="playground-ref__category-header" data-heading>Language</div>
-                            <ul class="playground-ref__branch">
+                <nav class="documentation__nav" id="refDefaultNav">
+                    <ul class="topics">
+                        <li class="topic open">
+                            <div class="topic-name" data-topic-name>Language</div>
+                            
+                            <ul class="sub-topics">
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-comments" class="playground-ref__link active">Comments</a>
+                                    <a href="javascript:void(0)" data-screen="scr-comments" class="documentation__link active">Comments</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-keywords" class="playground-ref__link">Keywords</a>
+                                    <a href="javascript:void(0)" data-screen="scr-keywords" class="documentation__link">Keywords</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-symbols" class="playground-ref__link">Symbols</a>
+                                    <a href="javascript:void(0)" data-screen="scr-symbols" class="documentation__link">Symbols</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-identifiers" class="playground-ref__link">Identifiers</a>
+                                    <a href="javascript:void(0)" data-screen="scr-identifiers" class="documentation__link">Identifiers</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-datatypes" class="playground-ref__link">Data Types</a>
+                                    <a href="javascript:void(0)" data-screen="scr-datatypes" class="documentation__link">Data Types</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-variables" class="playground-ref__link">Variables</a>
+                                    <a href="javascript:void(0)" data-screen="scr-variables" class="documentation__link">Variables</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-conditionals" class="playground-ref__link">Conditionals</a>
+                                    <a href="javascript:void(0)" data-screen="scr-conditionals" class="documentation__link">Conditionals</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-loops" class="playground-ref__link">Loops</a>
+                                    <a href="javascript:void(0)" data-screen="scr-loops"
+                                        class="documentation__link">Loops</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-errors" class="playground-ref__link">Error Handling</a>
+                                    <a href="javascript:void(0)" data-screen="scr-errors"
+                                        class="documentation__link">Error
+                                        Handling</a>
                                 </li>
-                                
+
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-packages" class="playground-ref__link">Packages</a>
+                                    <a href="javascript:void(0)" data-screen="scr-packages"
+                                        class="documentation__link">Packages</a>
                                 </li>
                             </ul>
                         </li>
-        
-                        <li class="playground-ref__category open">
-                            <div class="playground-ref__category-header" data-heading>Keybindings</div>
-                            <ul class="playground-ref__branch">
+
+                        <li class="documentation__category open">
+                            <div class="documentation__category-header" data-heading>Keybindings</div>
+                            <ul class="documentation__branch">
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-keybindings-ace" class="playground-ref__link">Ace</a>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-ace"
+                                        class="documentation__link">Ace</a>
                                 </li>
 
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-keybindings-vs-code" class="playground-ref__link">VS Code</a>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-vs-code"
+                                        class="documentation__link">VS Code</a>
                                 </li>
 
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-keybindings-sublime" class="playground-ref__link">Sublime</a>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-sublime"
+                                        class="documentation__link">Sublime</a>
                                 </li>
 
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-keybindings-vim" class="playground-ref__link">Vim</a>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-vim"
+                                        class="documentation__link">Vim</a>
                                 </li>
 
                                 <li>
-                                    <a href="javascript:void(0)" data-screen="scr-keybindings-emacs" class="playground-ref__link">Emacs</a>
+                                    <a href="javascript:void(0)" data-screen="scr-keybindings-emacs"
+                                        class="documentation__link">Emacs</a>
                                 </li>
                             </ul>
                         </li>
                     </ul>
                 </nav>
-        
+
                 <!-- MODE B: LIVE SNIPPET HUD VIEW -->
-                <div class="playground-ref__search-results" id="refSearchResultsHUD" style="display: none;"></div>
+                <div class="documentation__search-results" id="refSearchResultsHUD" style="display: none;"></div>
             </div>
-        
-            <!-- RIGHT PANEL -->
-            <div class="playground-ref__content" id="refContentArea">
+
+            <div class="content" data-documentation-content>
                 <div class="markdown">
-        
+
                     <!-- SCREEN 1: COMMENTS -->
-                    <section id="scr-comments" class="playground-ref__screen active" data-title="Comments">
+                    <section id="scr-comments" class="documentation__screen active" data-title="Comments">
                         <h1>Comments</h1>
                         <h2>Regular Comments</h2>
                         <p>Used for notes. They can be placed anywhere.</p>
@@ -326,7 +335,8 @@ when 10 &gt; 5
     write "Condition is correct" # This is also a valid comment</code></pre>
 
                         <h2>Documentation Comments</h2>
-                        <p>Placed directly above declarations to describe variables. They use standard text and Markdown without
+                        <p>Placed directly above declarations to describe variables. They use standard text and Markdown
+                            without
                             any special tag syntax.</p>
                         <pre><code># The unique identifier for the active user session.
 session-id = "usr_9x82j1"
@@ -348,12 +358,14 @@ divide a, b = {
     return a / b
 }</code></pre>
                     </section>
-        
+
                     <!-- SCREEN 2: KEYWORDS -->
-                    <section id="scr-keywords" class="playground-ref__screen" data-title="Keywords">
+                    <section id="scr-keywords" class="documentation__screen" data-title="Keywords">
                         <h1>Keywords</h1>
-                        <p>Keywords are predefined words used by the language to perform internal operations or represent built-in behavior.</p>
-                        <p>Utkrisht has <strong>12 keywords</strong>. All of them are reserved and cannot be used as identifiers.</p>
+                        <p>Keywords are predefined words used by the language to perform internal operations or
+                            represent built-in behavior.</p>
+                        <p>Utkrisht has <strong>12 keywords</strong>. All of them are reserved and cannot be used as
+                            identifiers.</p>
                         <table>
                             <thead>
                                 <tr>
@@ -385,13 +397,14 @@ divide a, b = {
                             </tbody>
                         </table>
                     </section>
-        
+
                     <!-- SCREEN 3: SYMBOLS -->
-                    <section id="scr-symbols" class="playground-ref__screen" data-title="Symbols">
+                    <section id="scr-symbols" class="documentation__screen" data-title="Symbols">
                         <h1>Symbols</h1>
-                        <p>Symbols are non-alphanumeric tokens that have special meaning in the language syntax. Symbols are context sensitive.</p>
+                        <p>Symbols are non-alphanumeric tokens that have special meaning in the language syntax. Symbols
+                            are context sensitive.</p>
                         <p>In Utkrisht, symbols are grouped into operators, separators, delimiters, and terminators.</p>
-        
+
                         <h2>Operators</h2>
                         <table>
                             <thead>
@@ -519,8 +532,9 @@ divide a, b = {
                                 </tr>
                             </tbody>
                         </table>
-                        <blockquote>[1] Unary Plus does not perform any operation. It is simply there for symmetry with unary minus.</blockquote>
-        
+                        <blockquote>[1] Unary Plus does not perform any operation. It is simply there for symmetry with
+                            unary minus.</blockquote>
+
                         <h2>Separators</h2>
                         <table>
                             <thead>
@@ -540,7 +554,7 @@ divide a, b = {
                                 </tr>
                             </tbody>
                         </table>
-        
+
                         <h2>Delimiters</h2>
                         <table>
                             <thead>
@@ -584,7 +598,7 @@ divide a, b = {
                                 </tr>
                             </tbody>
                         </table>
-        
+
                         <h2>Terminators</h2>
                         <table>
                             <thead>
@@ -605,9 +619,9 @@ divide a, b = {
                             </tbody>
                         </table>
                     </section>
-        
+
                     <!-- SCREEN 4: IDENTIFIERS -->
-                    <section id="scr-identifiers" class="playground-ref__screen" data-title="Identifiers">
+                    <section id="scr-identifiers" class="documentation__screen" data-title="Identifiers">
                         <h1>Identifiers</h1>
                         <p>Identifiers are names given to entities to uniquely isolate them within source files.</p>
                         <pre><code># variables
@@ -616,22 +630,24 @@ message = "hi"
 [name = "Uki"]
 # packages
 import components/footer</code></pre>
-                        <p>A valid identifier contains only lowercase letters (a–z), numbers (0–9), and hyphens (-). It must
-                            start with a letter, end with a letter or number, and cannot contain consecutive hyphens.</p>
-        
+                        <p>A valid identifier contains only lowercase letters (a–z), numbers (0–9), and hyphens (-). It
+                            must
+                            start with a letter, end with a letter or number, and cannot contain consecutive hyphens.
+                        </p>
+
                         <h2>Valid Identifiers</h2>
                         <pre><code>name
 user-123
 file-path</code></pre>
-        
+
                         <h2>Invalid Identifiers</h2>
                         <pre><code>myName    # contains uppercase letter
 1080p     # starts with a number
 user_name # contains underscore</code></pre>
                     </section>
-        
+
                     <!-- SCREEN 5: DATA TYPES -->
-                    <section id="scr-datatypes" class="playground-ref__screen" data-title="Data Types">
+                    <section id="scr-datatypes" class="documentation__screen" data-title="Data Types">
                         <h1>Data Types</h1>
                         <p>Utkrisht features 5 fundamental data types.</p>
                         <table>
@@ -668,47 +684,51 @@ user_name # contains underscore</code></pre>
                                 </tr>
                                 <tr>
                                     <td><strong>Procedure</strong></td>
-                                    <td>Reference</td>
+                                    <td>documentation</td>
                                     <td>No</td>
                                     <td>No</td>
                                     <td>Yes</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Structure</strong></td>
-                                    <td>Reference</td>
+                                    <td>documentation</td>
                                     <td>Yes</td>
                                     <td>Yes</td>
                                     <td>Yes</td>
                                 </tr>
                             </tbody>
                         </table>
-                        <blockquote>[1] All numbers including nan are hashable. Structure maps use the SameValueZero protocol,
+                        <blockquote>[1] All numbers including nan are hashable. Structure maps use the SameValueZero
+                            protocol,
                             meaning nan matches nan.</blockquote>
-        
+
                         <h2>String</h2>
                         <pre><code>"This is a single line string."</code></pre>
-                        <p>String elements are accessible via 1-based indexing using the accessor dot: <code>"webapp".1</code>
-                            evaluates to w.</p>
-        
+                        <p>String elements are accessible via 1-based indexing using the accessor dot:
+                            <code>"webapp".1</code>
+                            evaluates to w.
+                        </p>
+
                         <h2>Number</h2>
                         <pre><code>write 0.1 + 0.2  # 0.30000000000000004
 is-nan nan       # yes</code></pre>
-        
+
                         <h2>Boolean</h2>
                         <p>Literals are explicitly mapped via keywords <code>yes</code> and <code>no</code>.</p>
-        
+
                         <h2>Procedure</h2>
                         <pre><code>greet name = { write "Hi |name|" }
 greet "Dmitri"</code></pre>
-        
+
                         <h2>Structure</h2>
                         <pre><code>mixed = ["first-item", status = active, 42]</code></pre>
                     </section>
-        
+
                     <!-- SCREEN 6: VARIABLES -->
-                    <section id="scr-variables" class="playground-ref__screen" data-title="Variables">
+                    <section id="scr-variables" class="documentation__screen" data-title="Variables">
                         <h1>Variables</h1>
-                        <p>Variables are identifiers used to store data. All variables are mutable and can be reassigned.</p>
+                        <p>Variables are identifiers used to store data. All variables are mutable and can be
+                            reassigned.</p>
                         <p>Declare a variable using <code>=</code></p>
                         <pre><code>message = "Hello World"</code></pre>
                         <p>Reassign a value using <code>~</code></p>
@@ -716,11 +736,12 @@ greet "Dmitri"</code></pre>
 quantity ~ 65
 quantity ~ "high" # Data type of the value does not matter</code></pre>
                     </section>
-        
+
                     <!-- SCREEN 7: CONDITIONALS -->
-                    <section id="scr-conditionals" class="playground-ref__screen" data-title="Conditionals">
+                    <section id="scr-conditionals" class="documentation__screen" data-title="Conditionals">
                         <h1>Conditionals</h1>
-                        <p>Conditionals control which block will be executed based on a condition. The condition must be a
+                        <p>Conditionals control which block will be executed based on a condition. The condition must be
+                            a
                             boolean value; Utkrisht does not have truthy or falsy values.</p>
                         <h2>Conditional statement</h2>
                         <pre><code>when age &lt; 13 
@@ -730,22 +751,24 @@ else
                         <h2>Conditional expression</h2>
                         <pre><code>status = when (age &lt; 13) "child" else "teen"</code></pre>
                     </section>
-        
+
                     <!-- SCREEN 8: LOOPS -->
-                    <section id="scr-loops" class="playground-ref__screen" data-title="Loops">
+                    <section id="scr-loops" class="documentation__screen" data-title="Loops">
                         <h1>Loops</h1>
-                        <p>Loop is a type sensitive construct. Therefore the behaviour of the loop depends upon the type of the
+                        <p>Loop is a type sensitive construct. Therefore the behaviour of the loop depends upon the type
+                            of the
                             data following it.</p>
                         <pre><code>loop 5 with i
     write i # Executes exactly 5 times
         
 loop 1..9..3 with i
     write i # 1, 4, 7</code></pre>
-                        <p>Use <code>exit</code> statement to stop loops entirely, and <code>skip</code> statement to advance the current iteration.</p>
+                        <p>Use <code>exit</code> statement to stop loops entirely, and <code>skip</code> statement to
+                            advance the current iteration.</p>
                     </section>
-        
+
                     <!-- SCREEN 9: ERROR HANDLING -->
-                    <section id="scr-errors" class="playground-ref__screen" data-title="Error Handling">
+                    <section id="scr-errors" class="documentation__screen" data-title="Error Handling">
                         <h1>Error Handling</h1>
                         <p>Utkrisht uses explicit try, fix, and crash blocks to manage runtime errors.</p>
                         <pre><code>try 
@@ -753,17 +776,18 @@ loop 1..9..3 with i
 fix error
     write "An error occurred: |error|"</code></pre>
                     </section>
-        
+
                     <!-- SCREEN 10: PACKAGES -->
-                    <section id="scr-packages" class="playground-ref__screen" data-title="Packages">
+                    <section id="scr-packages" class="documentation__screen" data-title="Packages">
                         <h1>Packages</h1>
-                        <p>A package is a reusable unit of code that organizes logic into separate files and folders.</p>
+                        <p>A package is a reusable unit of code that organizes logic into separate files and folders.
+                        </p>
                         <pre><code>import components/footer
 export multiply a, b = { return a * b }</code></pre>
                     </section>
-        
+
                     <!-- KEYBINDINGS -->
-                    <section id="scr-keybindings-ace" class="playground-ref__screen" data-title="Ace Keybindings">
+                    <section id="scr-keybindings-ace" class="documentation__screen" data-title="Ace Keybindings">
                         <h2>Line Operations</h2>
                         <table>
                             <thead>
@@ -826,7 +850,7 @@ export multiply a, b = { return a * b }</code></pre>
                                 </tr>
                             </tbody>
                         </table>
-                        
+
                         <h2>Selection</h2>
                         <table>
                             <thead>
@@ -944,7 +968,7 @@ export multiply a, b = { return a * b }</code></pre>
                                 </tr>
                             </tbody>
                         </table>
-                        
+
                         <h2>Multicursor</h2>
                         <table>
                             <thead>
@@ -1007,7 +1031,7 @@ export multiply a, b = { return a * b }</code></pre>
                                 </tr>
                             </tbody>
                         </table>
-                        
+
                         <h2>Go to</h2>
                         <table>
                             <thead>
@@ -1120,7 +1144,7 @@ export multiply a, b = { return a * b }</code></pre>
                                 </tr>
                             </tbody>
                         </table>
-                        
+
                         <h2>Find/Replace</h2>
                         <table>
                             <thead>
@@ -1168,7 +1192,7 @@ export multiply a, b = { return a * b }</code></pre>
                                 </tr>
                             </tbody>
                         </table>
-                        
+
                         <h2>Folding</h2>
                         <table>
                             <thead>
@@ -1216,7 +1240,7 @@ export multiply a, b = { return a * b }</code></pre>
                                 </tr>
                             </tbody>
                         </table>
-                        
+
                         <h2>Other</h2>
                         <table>
                             <thead>
@@ -1356,7 +1380,8 @@ export multiply a, b = { return a * b }</code></pre>
                         </table>
                     </section>
 
-                    <section id="scr-keybindings-vs-code" class="playground-ref__screen" data-title="VS Code Keybindings">
+                    <section id="scr-keybindings-vs-code" class="documentation__screen"
+                        data-title="VS Code Keybindings">
                         <h2>VS Code Core Extension Keymap</h2>
                         <table>
                             <thead>
@@ -1450,7 +1475,8 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Shift-F8</code> / <code>Shift-Alt-F8</code></td>
                                     <td><code>Shift-F8</code> / <code>Shift-Option-F8</code></td>
                                     <td>goToPreviousError</td>
-                                    <td>Jump directly backwards onto previous console diagnostic log or error syntax position</td>
+                                    <td>Jump directly backwards onto previous console diagnostic log or error syntax
+                                        position</td>
                                 </tr>
                                 <tr>
                                     <td><code>F8</code> / <code>Alt-F8</code></td>
@@ -1498,7 +1524,8 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Ctrl-Shift-\\</code></td>
                                     <td><code>Command-Shift-\\</code></td>
                                     <td>jumptomatching</td>
-                                    <td>Instantly jump file cursor to paired opposite syntax wrapping block context element</td>
+                                    <td>Instantly jump file cursor to paired opposite syntax wrapping block context
+                                        element</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-]</code></td>
@@ -1528,7 +1555,8 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Shift-Alt-A</code></td>
                                     <td><code>Shift-Option-A</code></td>
                                     <td>toggleBlockComment</td>
-                                    <td>Wrap targeted segment cleanly using standard multi-line syntax comment characters</td>
+                                    <td>Wrap targeted segment cleanly using standard multi-line syntax comment
+                                        characters</td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-Z</code></td>
@@ -1540,13 +1568,15 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Shift-Alt-I</code></td>
                                     <td><code>Shift-Option-I</code></td>
                                     <td>splitSelectionIntoLines</td>
-                                    <td>Spawn separate line operations cursors directly at tail edges of multi-line selection array</td>
+                                    <td>Spawn separate line operations cursors directly at tail edges of multi-line
+                                        selection array</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K M</code></td>
                                     <td><code>Command-K M</code></td>
                                     <td>modeSelect</td>
-                                    <td>Initialize drop menu to set target source file programming language code parsing rules</td>
+                                    <td>Initialize drop menu to set target source file programming language code parsing
+                                        rules</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-[</code></td>
@@ -1564,66 +1594,77 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Ctrl-K Ctrl-0</code></td>
                                     <td><code>Command-K Command-0</code></td>
                                     <td>foldall</td>
-                                    <td>Collapse all nested structural fold groups across total file canvas index bounds</td>
+                                    <td>Collapse all nested structural fold groups across total file canvas index bounds
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-J</code></td>
                                     <td><code>Command-K Command-J</code></td>
                                     <td>unfoldall</td>
-                                    <td>Expand total nested hidden text structural lines back into clear workspace layout visibility</td>
+                                    <td>Expand total nested hidden text structural lines back into clear workspace
+                                        layout visibility</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-1</code></td>
                                     <td><code>Command-K Command-1</code></td>
                                     <td>foldOther</td>
-                                    <td>Collapse all unselected peripheral block components relative to focal context cursor block</td>
+                                    <td>Collapse all unselected peripheral block components relative to focal context
+                                        cursor block</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-Q</code></td>
                                     <td><code>Command-K Command-Q</code></td>
                                     <td>navigateToLastEditLocation</td>
-                                    <td>Snap file screen coordinates back immediately onto last modification delta footprint pointer</td>
+                                    <td>Snap file screen coordinates back immediately onto last modification delta
+                                        footprint pointer</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-R</code> / <code>Ctrl-K Ctrl-S</code></td>
                                     <td><code>Command-K Command-R</code> / <code>Command-K Command-S</code></td>
                                     <td>showKeyboardShortcuts</td>
-                                    <td>Launch main application keyboard mapping preferences control hub display panel</td>
+                                    <td>Launch main application keyboard mapping pdocumentations control hub display
+                                        panel
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-X</code></td>
                                     <td><code>Command-K Command-X</code></td>
                                     <td>trimTrailingSpace</td>
-                                    <td>Purge unnecessary trailing hidden spacing sequences off ends of code array index rows</td>
+                                    <td>Purge unnecessary trailing hidden spacing sequences off ends of code array index
+                                        rows</td>
                                 </tr>
                                 <tr>
                                     <td><code>Shift-Down</code> / <code>Ctrl-Shift-Down</code></td>
                                     <td><code>Shift-Down</code> / <code>Command-Shift-Down</code></td>
                                     <td>selectdown</td>
-                                    <td>Add next row line boundary text explicitly into selected content registry selection bounds</td>
+                                    <td>Add next row line boundary text explicitly into selected content registry
+                                        selection bounds</td>
                                 </tr>
                                 <tr>
                                     <td><code>Shift-Up</code> / <code>Ctrl-Shift-Up</code></td>
                                     <td><code>Shift-Up</code> / <code>Command-Shift-Up</code></td>
                                     <td>selectup</td>
-                                    <td>Add previous row line boundary text explicitly into selected content registry selection bounds</td>
+                                    <td>Add previous row line boundary text explicitly into selected content registry
+                                        selection bounds</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-L</code></td>
                                     <td><code>Command-L</code></td>
                                     <td>expandtoline</td>
-                                    <td>Forcibly cast active line selection boundary metrics clean across to final column index wrapper</td>
+                                    <td>Forcibly cast active line selection boundary metrics clean across to final
+                                        column index wrapper</td>
                                 </tr>
                                 <tr>
                                     <td><code>Shift-Esc</code></td>
                                     <td><code>Shift-Esc</code></td>
                                     <td>removeSecondaryCursors</td>
-                                    <td>Clear all secondary multicursor instances down onto single parent workspace position</td>
+                                    <td>Clear all secondary multicursor instances down onto single parent workspace
+                                        position</td>
                                 </tr>
                             </tbody>
                         </table>
-                        
-                        <h2>Unimplemented Feature Extensions (Reference Map Data Only)</h2>
+
+                        <h2>Unimplemented Feature Extensions (documentation Map Data Only)</h2>
                         <table>
                             <thead>
                                 <tr>
@@ -1650,7 +1691,8 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Shift-Alt-F</code></td>
                                     <td><code>Shift-Option-F</code></td>
                                     <td>beautify</td>
-                                    <td>Prettify layout formatting parameters rules cleanly on document array text metrics</td>
+                                    <td>Prettify layout formatting parameters rules cleanly on document array text
+                                        metrics</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-F</code></td>
@@ -1662,7 +1704,8 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Ctrl-K Ctrl-C</code></td>
                                     <td><code>Command-K Command-C</code></td>
                                     <td>addCommentLine</td>
-                                    <td>Prepend comment characters directly on current text row position tracking index lines</td>
+                                    <td>Prepend comment characters directly on current text row position tracking index
+                                        lines</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-U</code></td>
@@ -1674,94 +1717,109 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Ctrl-K Ctrl-/</code></td>
                                     <td><code>Command-K Command-/</code></td>
                                     <td>foldAllBlockComments</td>
-                                    <td>Collapse block formatting script comments systematically out of window workspace panel sight lines</td>
+                                    <td>Collapse block formatting script comments systematically out of window workspace
+                                        panel sight lines</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-2</code></td>
                                     <td><code>Command-K Command-2</code></td>
                                     <td>foldLevel2</td>
-                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 2</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep
+                                        tier 2</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-3</code></td>
                                     <td><code>Command-K Command-3</code></td>
                                     <td>foldLevel3</td>
-                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 3</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep
+                                        tier 3</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-4</code></td>
                                     <td><code>Command-K Command-4</code></td>
                                     <td>foldLevel4</td>
-                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 4</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep
+                                        tier 4</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-5</code></td>
                                     <td><code>Command-K Command-5</code></td>
                                     <td>foldLevel5</td>
-                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 5</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep
+                                        tier 5</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-6</code></td>
                                     <td><code>Command-K Command-6</code></td>
                                     <td>foldLevel6</td>
-                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 6</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep
+                                        tier 6</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-7</code></td>
                                     <td><code>Command-K Command-7</code></td>
                                     <td>foldLevel7</td>
-                                    <td>Collapse code layout component targets matching layer element hierarchy deep tier 7</td>
+                                    <td>Collapse code layout component targets matching layer element hierarchy deep
+                                        tier 7</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-[</code></td>
                                     <td><code>Command-K Command-[</code></td>
                                     <td>foldRecursively</td>
-                                    <td>Recursively collapse selected code blocks inward down through children branches</td>
+                                    <td>Recursively collapse selected code blocks inward down through children branches
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-8</code></td>
                                     <td><code>Command-K Command-8</code></td>
                                     <td>foldAllMarkerRegions</td>
-                                    <td>Locate and collapse all custom region metadata wrapper parameters within document module boundaries</td>
+                                    <td>Locate and collapse all custom region metadata wrapper parameters within
+                                        document module boundaries</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-9</code></td>
                                     <td><code>Command-K Command-9</code></td>
                                     <td>unfoldAllMarkerRegions</td>
-                                    <td>Unfurl layout views across total region markers embedded anywhere deep inside current module document
+                                    <td>Unfurl layout views across total region markers embedded anywhere deep inside
+                                        current module document
                                         scope</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-]</code></td>
                                     <td><code>Command-K Command-]</code></td>
                                     <td>unfoldRecursively</td>
-                                    <td>Recursively open nested tree nodes down through child structural objects entirely</td>
+                                    <td>Recursively open nested tree nodes down through child structural objects
+                                        entirely</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-T</code></td>
                                     <td><code>Command-K Command-T</code></td>
                                     <td>selectTheme</td>
-                                    <td>Initialize selector interface panel options workflow for color application presentation layer styles
+                                    <td>Initialize selector interface panel options workflow for color application
+                                        presentation layer styles
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-M</code></td>
                                     <td><code>Command-K Command-M</code></td>
                                     <td>selectKeymap</td>
-                                    <td>Initialize active configuration mapping switcher console channel utilities preferences module</td>
+                                    <td>Initialize active configuration mapping switcher console channel utilities
+                                        pdocumentations module</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-U</code></td>
                                     <td><code>Command-U</code></td>
                                     <td>cursorUndo</td>
-                                    <td>Revert focus array changes backwards one transaction segment without modifying underlying structural
+                                    <td>Revert focus array changes backwards one transaction segment without modifying
+                                        underlying structural
                                         content buffers</td>
                                 </tr>
                             </tbody>
                         </table>
                     </section>
 
-                    <section id="scr-keybindings-sublime" class="playground-ref__screen" data-title="Sublime Text Keybindings">
+                    <section id="scr-keybindings-sublime" class="documentation__screen"
+                        data-title="Sublime Text Keybindings">
                         <table>
                             <thead>
                                 <tr>
@@ -1771,7 +1829,7 @@ export multiply a, b = { return a * b }</code></pre>
                                     <th>Description</th>
                                 </tr>
                             </thead>
-                            <tbody> 
+                            <tbody>
                                 <tr>
                                     <td><code>Ctrl-Shift-Backspace</code> / <code>Ctrl-K Ctrl-Backspace</code></td>
                                     <td><code>Command-K Command-Backspace</code> / <code>Command-Backspace</code></td>
@@ -1780,7 +1838,9 @@ export multiply a, b = { return a * b }</code></pre>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-Delete</code> / <code>Ctrl-K Ctrl-K</code></td>
-                                    <td><code>Command-K Command-K</code> / <code>Command-Delete</code> / <code>Ctrl-K</code></td>
+                                    <td><code>Command-K Command-K</code> / <code>Command-Delete</code> /
+                                        <code>Ctrl-K</code>
+                                    </td>
                                     <td>removetolineendhard</td>
                                     <td>Remove all characters forward to the hard end of line</td>
                                 </tr>
@@ -1790,7 +1850,7 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td>removeline</td>
                                     <td>Instantly delete the active text row array line entirely</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-Shift-D</code></td>
                                     <td><code>Command-Shift-D</code></td>
@@ -1801,7 +1861,8 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Ctrl-L</code></td>
                                     <td><code>Command-L</code></td>
                                     <td>expandtoline</td>
-                                    <td>Extend explicit highlight selection metric tracks to fill total line constraints</td>
+                                    <td>Extend explicit highlight selection metric tracks to fill total line constraints
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-A</code></td>
@@ -1831,9 +1892,10 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Ctrl-Shift-L</code></td>
                                     <td><code>Command-Shift-L</code></td>
                                     <td>splitSelectionIntoLines</td>
-                                    <td>Spawn isolated operational cursors across lines of a multiline highlight block</td>
+                                    <td>Spawn isolated operational cursors across lines of a multiline highlight block
+                                    </td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Alt-F3</code></td>
                                     <td><code>Ctrl-Command-G</code></td>
@@ -1844,39 +1906,45 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Ctrl-F3</code></td>
                                     <td><code>Alt-Command-G</code></td>
                                     <td>find_under</td>
-                                    <td>Find next matching target string segment located directly under active position</td>
+                                    <td>Find next matching target string segment located directly under active position
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-F3</code></td>
                                     <td><code>Shift-Alt-Command-G</code></td>
                                     <td>find_under_prev</td>
-                                    <td>Find previous matching target string segment located directly under active position</td>
+                                    <td>Find previous matching target string segment located directly under active
+                                        position</td>
                                 </tr>
                                 <tr>
                                     <td><code>F3</code></td>
                                     <td><code>Command-G</code></td>
                                     <td>findnext</td>
-                                    <td>Advance tracking query path to next find index location matching target rules</td>
+                                    <td>Advance tracking query path to next find index location matching target rules
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Shift-F3</code></td>
                                     <td><code>Shift-Command-G</code></td>
                                     <td>findprevious</td>
-                                    <td>Reverse tracking query path to previous find index location matching target rules</td>
+                                    <td>Reverse tracking query path to previous find index location matching target
+                                        rules</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-D</code></td>
                                     <td><code>Command-D</code></td>
                                     <td>find_under_expand</td>
-                                    <td>Add next occurrence of text match selection string context explicitly into active tracks</td>
+                                    <td>Add next occurrence of text match selection string context explicitly into
+                                        active tracks</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-D</code></td>
                                     <td><code>Command-K Command-D</code></td>
                                     <td>find_under_expand_skip</td>
-                                    <td>Skip context segment forward directly onto next distinct query trace location</td>
+                                    <td>Skip context segment forward directly onto next distinct query trace location
+                                    </td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-Shift-[</code></td>
                                     <td><code>Command-Alt-[</code></td>
@@ -1887,76 +1955,88 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Ctrl-Shift-]</code></td>
                                     <td><code>Command-Alt-]</code></td>
                                     <td>unfold</td>
-                                    <td>Expand targeted hidden fold widgets structures seamlessly back to viewport space</td>
+                                    <td>Expand targeted hidden fold widgets structures seamlessly back to viewport space
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-0</code> / <code>Ctrl-K Ctrl-J</code></td>
                                     <td><code>Command-K Command-0</code> / <code>Command-K Command-J</code></td>
                                     <td>unfoldall</td>
-                                    <td>Unfurl absolute nested structural code nodes throughout overall active open files</td>
+                                    <td>Unfurl absolute nested structural code nodes throughout overall active open
+                                        files</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-1</code></td>
                                     <td><code>Command-K Command-1</code></td>
                                     <td>foldOther</td>
-                                    <td><code>{level: 1}</code> (Collapse peripheral blocks outside current level tier)</td>
+                                    <td><code>{level: 1}</code> (Collapse peripheral blocks outside current level tier)
+                                    </td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-Left</code></td>
                                     <td><code>Alt-Left</code></td>
                                     <td>moveToWordStartLeft</td>
-                                    <td>Snap workspace pointer coordinates leftward directly onto line word start edges</td>
+                                    <td>Snap workspace pointer coordinates leftward directly onto line word start edges
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Right</code></td>
                                     <td><code>Alt-Right</code></td>
                                     <td>moveToWordEndRight</td>
-                                    <td>Snap workspace pointer coordinates rightward directly onto line word terminal edges</td>
+                                    <td>Snap workspace pointer coordinates rightward directly onto line word terminal
+                                        edges</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-Left</code></td>
                                     <td><code>Alt-Shift-Left</code></td>
                                     <td>selectToWordStartLeft</td>
-                                    <td>Extend current highlight selection markers to target starting point of word leftwards</td>
+                                    <td>Extend current highlight selection markers to target starting point of word
+                                        leftwards</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-Right</code></td>
                                     <td><code>Alt-Shift-Right</code></td>
                                     <td>selectToWordEndRight</td>
-                                    <td>Extend current highlight selection markers to target ending point of word rightwards</td>
+                                    <td>Extend current highlight selection markers to target ending point of word
+                                        rightwards</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Alt-Shift-Right</code></td>
                                     <td><code>Ctrl-Alt-Shift-Right</code> / <code>Ctrl-Shift-Right</code></td>
                                     <td>selectSubWordRight</td>
-                                    <td>Extend text selection boundary to the next internal CamelCase subword component right</td>
+                                    <td>Extend text selection boundary to the next internal CamelCase subword component
+                                        right</td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-Shift-Left</code></td>
                                     <td><code>Ctrl-Alt-Shift-Left</code> / <code>Ctrl-Shift-Left</code></td>
                                     <td>selectSubWordLeft</td>
-                                    <td>Extend text selection boundary to the previous internal CamelCase subword component left</td>
+                                    <td>Extend text selection boundary to the previous internal CamelCase subword
+                                        component left</td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-Right</code></td>
                                     <td><code>Ctrl-Alt-Right</code> / <code>Ctrl-Right</code></td>
                                     <td>moveSubWordRight</td>
-                                    <td>Advance navigation cursor to the next internal CamelCase subword component right</td>
+                                    <td>Advance navigation cursor to the next internal CamelCase subword component right
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-Left</code></td>
                                     <td><code>Ctrl-Alt-Left</code> / <code>Ctrl-Left</code></td>
                                     <td>moveSubWordLeft</td>
-                                    <td>Advance navigation cursor to the previous internal CamelCase subword component left</td>
+                                    <td>Advance navigation cursor to the previous internal CamelCase subword component
+                                        left</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-M</code></td>
                                     <td><code>Ctrl-M</code></td>
                                     <td>jumptomatching</td>
-                                    <td><code>{to: "brackets"}</code> (Snap to matched opposite block wrapper parameter)</td>
+                                    <td><code>{to: "brackets"}</code> (Snap to matched opposite block wrapper parameter)
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-F6</code></td>
@@ -1974,190 +2054,219 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td><code>Alt--</code></td>
                                     <td><code>Ctrl--</code></td>
                                     <td>jumpBack</td>
-                                    <td>Snap structural file path coordinate trace indices backward down history tracker</td>
+                                    <td>Snap structural file path coordinate trace indices backward down history tracker
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-Shift--</code></td>
                                     <td><code>Ctrl-Shift--</code></td>
                                     <td>jumpForward</td>
-                                    <td>Snap structural file path coordinate trace indices forward up history tracker</td>
+                                    <td>Snap structural file path coordinate trace indices forward up history tracker
+                                    </td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-O</code></td>
                                     <td><code>Ctrl-O</code></td>
                                     <td>splitline</td>
-                                    <td>Inject separate programmatic tracking space components directly onto lines array</td>
+                                    <td>Inject separate programmatic tracking space components directly onto lines array
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-Shift-W</code></td>
                                     <td><code>Ctrl-Shift-W</code></td>
                                     <td>surrowndWithTag</td>
-                                    <td>Wrap active targeted strings explicitly into HTML markup element nodes tag structures</td>
+                                    <td>Wrap active targeted strings explicitly into HTML markup element nodes tag
+                                        structures</td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-.</code></td>
                                     <td><code>Command-Alt-.</code></td>
                                     <td>close_tag</td>
-                                    <td>Evaluate document arrays context structure up line indices and balance terminal tag strings</td>
+                                    <td>Evaluate document arrays context structure up line indices and balance terminal
+                                        tag strings</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-J</code></td>
                                     <td><code>Command-J</code></td>
                                     <td>joinlines</td>
-                                    <td>Truncate spacing limits and stitch neighboring rows text structures cleanly into single lines</td>
+                                    <td>Truncate spacing limits and stitch neighboring rows text structures cleanly into
+                                        single lines</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-L</code></td>
                                     <td><code>Command-K Command-L</code></td>
                                     <td>tolowercase</td>
-                                    <td>Transform highlighted range data characters into lowercase typography array metrics</td>
+                                    <td>Transform highlighted range data characters into lowercase typography array
+                                        metrics</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-U</code></td>
                                     <td><code>Command-K Command-U</code></td>
                                     <td>touppercase</td>
-                                    <td>Transform highlighted range data characters into uppercase typography array metrics</td>
+                                    <td>Transform highlighted range data characters into uppercase typography array
+                                        metrics</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-Shift-V</code></td>
                                     <td><code>Command-Shift-V</code></td>
                                     <td>paste_and_indent</td>
-                                    <td>Output system clipboard buffer payload and structure layout tab index indentation</td>
+                                    <td>Output system clipboard buffer payload and structure layout tab index
+                                        indentation</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-V</code></td>
                                     <td><code>Command-K Command-V</code> / <code>Command-Alt-V</code></td>
                                     <td>paste_from_history</td>
-                                    <td>Initialize historical text buffers tracking loop stack interface arrays output utilities</td>
+                                    <td>Initialize historical text buffers tracking loop stack interface arrays output
+                                        utilities</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-Shift-Enter</code></td>
                                     <td><code>Command-Shift-Enter</code></td>
                                     <td>addLineBefore</td>
-                                    <td>Generate clean blank structural track line space rows immediately above active bounds</td>
+                                    <td>Generate clean blank structural track line space rows immediately above active
+                                        bounds</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Enter</code></td>
                                     <td><code>Command-Enter</code></td>
                                     <td>addLineAfter</td>
-                                    <td>Generate clean blank structural track line space rows immediately below active bounds</td>
+                                    <td>Generate clean blank structural track line space rows immediately below active
+                                        bounds</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Up</code></td>
                                     <td><code>Ctrl-Alt-Up</code></td>
                                     <td>scrollup</td>
-                                    <td>Shift editor scroll offset viewport upward line metrics tracks indices boundaries</td>
+                                    <td>Shift editor scroll offset viewport upward line metrics tracks indices
+                                        boundaries</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Down</code></td>
                                     <td><code>Ctrl-Alt-Down</code></td>
                                     <td>scrolldown</td>
-                                    <td>Shift editor scroll offset viewport downward line metrics tracks indices boundaries</td>
+                                    <td>Shift editor scroll offset viewport downward line metrics tracks indices
+                                        boundaries</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-A</code></td>
                                     <td><code>Command-A</code></td>
                                     <td>selectall</td>
-                                    <td>Cast text selection matrices endpoints across the entire active file session canvas boundaries</td>
+                                    <td>Cast text selection matrices endpoints across the entire active file session
+                                        canvas boundaries</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-Alt-Down</code> <br><em>Linux:</em> <code>Alt-Shift-Down</code></td>
                                     <td><code>Ctrl-Shift-Down</code></td>
                                     <td>addCursorBelow</td>
-                                    <td>Instantiate parallel workflow tracking multicursor directly on adjacent lower line indices</td>
+                                    <td>Instantiate parallel workflow tracking multicursor directly on adjacent lower
+                                        line indices</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Alt-Up</code> <br><em>Linux:</em> <code>Alt-Shift-Up</code></td>
                                     <td><code>Ctrl-Shift-Up</code></td>
                                     <td>addCursorAbove</td>
-                                    <td>Instantiate parallel workflow tracking multicursor directly on adjacent upper line indices</td>
+                                    <td>Instantiate parallel workflow tracking multicursor directly on adjacent upper
+                                        line indices</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-K Ctrl-C</code></td>
                                     <td><code>Command-K Command-C</code> / <code>Ctrl-L</code></td>
                                     <td>centerselection</td>
-                                    <td>Adjust workspace renderer container alignment focal scopes center paths onto text pointers</td>
+                                    <td>Adjust workspace renderer container alignment focal scopes center paths onto
+                                        text pointers</td>
                                 </tr>
                                 <tr>
                                     <td><code>F9</code></td>
                                     <td><code>F5</code></td>
                                     <td>sortlines</td>
-                                    <td>Reorder text tracking blocks by line string structures contents indexes alpha arrays</td>
+                                    <td>Reorder text tracking blocks by line string structures contents indexes alpha
+                                        arrays</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-F9</code></td>
                                     <td><code>Ctrl-F5</code></td>
                                     <td>sortlines</td>
-                                    <td><code>{caseSensitive: true}</code> (Reorder lines enforcing absolute string byte rules)</td>
+                                    <td><code>{caseSensitive: true}</code> (Reorder lines enforcing absolute string byte
+                                        rules)</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-Down</code></td>
                                     <td><code>Ctrl-Command-Down</code></td>
                                     <td>movelinesdown</td>
-                                    <td>Shift targeted structural code row nodes position indicators downward matching line layout indices</td>
+                                    <td>Shift targeted structural code row nodes position indicators downward matching
+                                        line layout indices</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-Up</code></td>
                                     <td><code>Ctrl-Command-Up</code></td>
                                     <td>movelinesup</td>
-                                    <td>Shift targeted structural code row nodes position indicators upward matching line layout indices</td>
+                                    <td>Shift targeted structural code row nodes position indicators upward matching
+                                        line layout indices</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Alt-Down</code></td>
                                     <td><code>Alt-Down</code></td>
                                     <td>modifyNumberDown</td>
-                                    <td>Parse line index points metrics location targets and decrease active numerical digits data</td>
+                                    <td>Parse line index points metrics location targets and decrease active numerical
+                                        digits data</td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-Up</code></td>
                                     <td><code>Alt-Up</code></td>
                                     <td>modifyNumberUp</td>
-                                    <td>Parse line index points metrics location targets and increase active numerical digits data</td>
+                                    <td>Parse line index points metrics location targets and increase active numerical
+                                        digits data</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-/</code></td>
                                     <td><code>Command-/</code></td>
                                     <td>togglecomment</td>
-                                    <td>Prefix inline code comment parameters sequences straight onto current active layout entries</td>
+                                    <td>Prefix inline code comment parameters sequences straight onto current active
+                                        layout entries</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-/</code></td>
                                     <td><code>Command-Alt-/</code></td>
                                     <td>toggleBlockComment</td>
-                                    <td>Wrap designated highlighted parameters arrays targets in multiline block comments</td>
+                                    <td>Wrap designated highlighted parameters arrays targets in multiline block
+                                        comments</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-Q</code> <br><em>Linux:</em> <code>Ctrl-Alt-Q</code></td>
                                     <td><code>Ctrl-Q</code></td>
                                     <td>togglerecording</td>
-                                    <td>Toggle sequential runtime command history keystrokes collection tracker logging</td>
+                                    <td>Toggle sequential runtime command history keystrokes collection tracker logging
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Shift-Q</code> <br><em>Linux:</em> <code>Ctrl-Alt-Shift-Q</code></td>
                                     <td><code>Ctrl-Shift-Q</code></td>
                                     <td>replaymacro</td>
-                                    <td>Execute and run structural stored programmatic input command streams array transactions</td>
+                                    <td>Execute and run structural stored programmatic input command streams array
+                                        transactions</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-T</code></td>
                                     <td><code>Ctrl-T</code></td>
                                     <td>transpose</td>
-                                    <td>Swap spatial values matching adjacent letter markers coordinates loops tracks</td>
+                                    <td>Swap spatial values matching adjacent letter markers coordinates loops tracks
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </section>
 
-                    <section id="scr-keybindings-vim" class="playground-ref__screen" data-title="Vim Keybindings">
+                    <section id="scr-keybindings-vim" class="documentation__screen" data-title="Vim Keybindings">
                         <h2>Vim Mode</h2>
                         <table>
                             <thead>
@@ -2183,7 +2292,7 @@ export multiply a, b = { return a * b }</code></pre>
                         </table>
                     </section>
 
-                    <section id="scr-keybindings-emacs" class="playground-ref__screen" data-title="Emacs Keybindings">
+                    <section id="scr-keybindings-emacs" class="documentation__screen" data-title="Emacs Keybindings">
                         <table>
                             <thead>
                                 <tr>
@@ -2243,7 +2352,7 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td>goorselect [gotoend, selecttoend]</td>
                                     <td>Go to end of document or select to end of document</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Shift-Up</code> / <code>Shift-Ctrl-P</code></td>
                                     <td>selectup</td>
@@ -2294,11 +2403,12 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td>selecttoend</td>
                                     <td>Select running text downward to the absolute end of the text canvas</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-L</code></td>
                                     <td>recenterTopBottom</td>
-                                    <td>Cycle editor screen rendering views to center or position active cursor selection line</td>
+                                    <td>Cycle editor screen rendering views to center or position active cursor
+                                        selection line</td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-S</code></td>
@@ -2345,7 +2455,7 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td>selectpageup</td>
                                     <td>Extend explicit active selection bounds upward a full frame window unit</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-S</code></td>
                                     <td>iSearch</td>
@@ -2371,7 +2481,7 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td>replace</td>
                                     <td>Trigger document string values replacement wizard</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Backspace</code></td>
                                     <td>backspace</td>
@@ -2385,44 +2495,54 @@ export multiply a, b = { return a * b }</code></pre>
                                 <tr>
                                     <td><code>Return</code> / <code>Ctrl-M</code></td>
                                     <td>insertstring [\n]</td>
-                                    <td>Insert standard explicit line break feed character string break into workspace rows</td>
+                                    <td>Insert standard explicit line break feed character string break into workspace
+                                        rows</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-O</code></td>
                                     <td>splitline</td>
-                                    <td>Split active working text index line cleanly at targeted point mapping location</td>
+                                    <td>Split active working text index line cleanly at targeted point mapping location
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-D</code> / <code>Ctrl-Delete</code></td>
                                     <td>killWord [right]</td>
-                                    <td>Kill text content string matching towards right word boundary and push to kill ring</td>
+                                    <td>Kill text content string matching towards right word boundary and push to kill
+                                        ring</td>
                                 </tr>
                                 <tr>
-                                    <td><code>Ctrl-Backspace</code> / <code>Alt-Backspace</code> / <code>Alt-Delete</code></td>
+                                    <td><code>Ctrl-Backspace</code> / <code>Alt-Backspace</code> /
+                                        <code>Alt-Delete</code>
+                                    </td>
                                     <td>killWord [left]</td>
-                                    <td>Kill text content string matching towards left word boundary and push to kill ring</td>
+                                    <td>Kill text content string matching towards left word boundary and push to kill
+                                        ring</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-K</code></td>
                                     <td>killLine</td>
-                                    <td>Slice trailing row workspace data entirely off lines past active cursor point positions</td>
+                                    <td>Slice trailing row workspace data entirely off lines past active cursor point
+                                        positions</td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-Y</code> / <code>Shift-Delete</code></td>
                                     <td>yank</td>
-                                    <td>Insert string storage buffer payload contents fetched directly from current kill ring cache location
+                                    <td>Insert string storage buffer payload contents fetched directly from current kill
+                                        ring cache location
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-Y</code></td>
                                     <td>yankRotate</td>
-                                    <td>Cycle and replace previous yank target down through the available ring history cache index array</td>
+                                    <td>Cycle and replace previous yank target down through the available ring history
+                                        cache index array</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-G</code></td>
                                     <td>keyboardQuit</td>
-                                    <td>Abort active workflow execution scopes, selection matrices, and baseline counts loops</td>
+                                    <td>Abort active workflow execution scopes, selection matrices, and baseline counts
+                                        loops</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-W</code> / <code>Ctrl-Shift-W</code></td>
@@ -2432,21 +2552,24 @@ export multiply a, b = { return a * b }</code></pre>
                                 <tr>
                                     <td><code>Alt-W</code></td>
                                     <td>killRingSave</td>
-                                    <td>Copy context range highlights into storage container blocks without modifying baseline source code text
+                                    <td>Copy context range highlights into storage container blocks without modifying
+                                        baseline source code text
                                         layers</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-Space</code></td>
                                     <td>setMark</td>
-                                    <td>Drop explicit marking coordinate pins directly at workspace tracking anchor positions</td>
+                                    <td>Drop explicit marking coordinate pins directly at workspace tracking anchor
+                                        positions</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-X Ctrl-X</code></td>
                                     <td>exchangePointAndMark</td>
-                                    <td>Invert point selections or alternate cursor positioning vectors with previous marked reference nodes
+                                    <td>Invert point selections or alternate cursor positioning vectors with previous
+                                        marked documentation nodes
                                     </td>
                                 </tr>
-                        
+
                                 <tr>
                                     <td><code>Ctrl-T</code></td>
                                     <td>transposeletters</td>
@@ -2455,7 +2578,8 @@ export multiply a, b = { return a * b }</code></pre>
                                 <tr>
                                     <td><code>Alt-U</code></td>
                                     <td>touppercase</td>
-                                    <td>Cast text parameters to uppercase characters (Unimplemented note: flagged natively as non-functional)
+                                    <td>Cast text parameters to uppercase characters (Unimplemented note: flagged
+                                        natively as non-functional)
                                     </td>
                                 </tr>
                                 <tr>
@@ -2466,13 +2590,15 @@ export multiply a, b = { return a * b }</code></pre>
                                 <tr>
                                     <td><code>Alt-/</code></td>
                                     <td>autocomplete</td>
-                                    <td>Trigger automated word completion menu parameters (Unimplemented note: flagged natively as
+                                    <td>Trigger automated word completion menu parameters (Unimplemented note: flagged
+                                        natively as
                                         non-functional)</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-U</code></td>
                                     <td>universalArgument</td>
-                                    <td>Configure numerical repetition factor loops overrides directly against pending keystroke commands</td>
+                                    <td>Configure numerical repetition factor loops overrides directly against pending
+                                        keystroke commands</td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-;</code></td>
@@ -2480,20 +2606,26 @@ export multiply a, b = { return a * b }</code></pre>
                                     <td>Toggle line parsing comment syntax tags across selected rows arrays targets</td>
                                 </tr>
                                 <tr>
-                                    <td><code>Ctrl-/</code> / <code>Ctrl-X U</code> / <code>Shift-Ctrl--</code> / <code>Ctrl-Z</code></td>
+                                    <td><code>Ctrl-/</code> / <code>Ctrl-X U</code> / <code>Shift-Ctrl--</code> /
+                                        <code>Ctrl-Z</code>
+                                    </td>
                                     <td>undo</td>
-                                    <td>Revert changes state index structures backward sequentially down history stack indices</td>
+                                    <td>Revert changes state index structures backward sequentially down history stack
+                                        indices</td>
                                 </tr>
                                 <tr>
                                     <td><code>Shift-Ctrl-/</code> / <code>Shift-Ctrl-X U</code> / <code>Ctrl--</code> /
-                                        <code>Shift-Ctrl-Z</code></td>
+                                        <code>Shift-Ctrl-Z</code>
+                                    </td>
                                     <td>redo</td>
-                                    <td>Advance active operational canvas metrics forward tracking along the redo array vectors</td>
+                                    <td>Advance active operational canvas metrics forward tracking along the redo array
+                                        vectors</td>
                                 </tr>
                                 <tr>
                                     <td><code>Ctrl-X R</code></td>
                                     <td>selectRectangularRegion</td>
-                                    <td>Toggle multi-select configuration modes over to standard block rectangular selection layers</td>
+                                    <td>Toggle multi-select configuration modes over to standard block rectangular
+                                        selection layers</td>
                                 </tr>
                                 <tr>
                                     <td><code>Alt-X</code></td>
@@ -2503,7 +2635,7 @@ export multiply a, b = { return a * b }</code></pre>
                             </tbody>
                         </table>
                     </section>
-        
+
                 </div>
             </div>
         </div>
@@ -2669,7 +2801,7 @@ export multiply a, b = { return a * b }</code></pre>
 
 
 
-    <template data-template-reference>
+    <template data-template-documentation>
 
     </template>
 
