@@ -20,12 +20,14 @@
     <link rel="stylesheet" href="./website/styles/style.css">
     <link rel="stylesheet" href="./website/styles/ace.css">
     <link rel="stylesheet" href="./website/styles/markdown.css">
+    <link rel="stylesheet" href="./website/styles/prism.css">
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.min.js"></script>
-    <script src="./website/scripts/mode-utkrisht.js" defer></script>
-    <script src="./website/scripts/script.js" defer type="module"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.min.js"></script>
+    <script defer src="./website/scripts/prism.js" defer></script>
+    <script defer src="./website/scripts/mode-utkrisht.js" defer></script>
+    <script defer src="./website/scripts/script.js" defer type="module"></script>
 
 </head>
 
@@ -123,19 +125,12 @@
 
     <div class="right" data-right>
 
-
-
-
-
-
-
-
         <div class="screen">
-            <div class="display"></div>
+            <div class="display">
+                
+            </div>
 
             <div class="panes">
-
-
                 <button class="pane">
                     <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px"
                         fill="#e3e3e3">
@@ -169,40 +164,6 @@
 
                         <circle cx="18" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="1.6" />
                     </svg>
-                    <!-- <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 8L6.5 15Z" fill="white" />
-                        <path d="M10 8L6.5 15" stroke="white" stroke-width="1.53333" stroke-linecap="round" />
-                        <path d="M13 8L16.5 15Z" fill="white" />
-                        <path d="M13 8L16.5 15" stroke="white" stroke-width="1.53333" stroke-linecap="round" />
-                        <path
-                            d="M11.5 8.625C13.0878 8.625 14.375 7.33782 14.375 5.75C14.375 4.16218 13.0878 2.875 11.5 2.875C9.91218 2.875 8.625 4.16218 8.625 5.75C8.625 7.33782 9.91218 8.625 11.5 8.625Z"
-                            fill="white" />
-                        <path
-                            d="M5.75 20.125C7.33782 20.125 8.625 18.8378 8.625 17.25C8.625 15.6622 7.33782 14.375 5.75 14.375C4.16218 14.375 2.875 15.6622 2.875 17.25C2.875 18.8378 4.16218 20.125 5.75 20.125Z"
-                            fill="white" />
-                        <path
-                            d="M17.25 20.125C18.8378 20.125 20.125 18.8378 20.125 17.25C20.125 15.6622 18.8378 14.375 17.25 14.375C15.6622 14.375 14.375 15.6622 14.375 17.25C14.375 18.8378 15.6622 20.125 17.25 20.125Z"
-                            fill="white" />
-                    </svg> -->
-                    <!-- <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9.58333 8.625L7.1875 13.8958Z" fill="white" />
-                        <path d="M9.58333 8.625L7.1875 13.8958" stroke="white" stroke-width="1.53333" stroke-linecap="round" />
-                        <path d="M13.4167 8.625L15.8125 13.8958Z" fill="white" />
-                        <path d="M13.4167 8.625L15.8125 13.8958" stroke="white" stroke-width="1.53333" stroke-linecap="round" />
-                        <path
-                            d="M11.5 8.625C13.0878 8.625 14.375 7.33782 14.375 5.75C14.375 4.16218 13.0878 2.875 11.5 2.875C9.91218 2.875 8.625 4.16218 8.625 5.75C8.625 7.33782 9.91218 8.625 11.5 8.625Z"
-                            fill="white" stroke="white" stroke-width="1.53333" />
-                        <path
-                            d="M5.75 20.125C7.33782 20.125 8.625 18.8378 8.625 17.25C8.625 15.6622 7.33782 14.375 5.75 14.375C4.16218 14.375 2.875 15.6622 2.875 17.25C2.875 18.8378 4.16218 20.125 5.75 20.125Z"
-                            fill="white" stroke="white" stroke-width="1.53333" />
-                        <path
-                            d="M17.25 20.125C18.8378 20.125 20.125 18.8378 20.125 17.25C20.125 15.6622 18.8378 14.375 17.25 14.375C15.6622 14.375 14.375 15.6622 14.375 17.25C14.375 18.8378 15.6622 20.125 17.25 20.125Z"
-                            fill="white" stroke="white" stroke-width="1.53333" />
-                    </svg> -->
-
-
-
-
                 </button>
 
                 <button class="pane">
@@ -210,10 +171,6 @@
                 </button>
             </div>
         </div>
-
-
-
-
 
 
         <div class="documentation">
@@ -236,7 +193,7 @@
                     </div>
                 </div>
 
-                <!-- STANDARD TREE DIRECTORY (Hidden automatically during search execution) -->
+                <!-- Topics, hidden automatically during search execution -->
                 <ul class="topics" data-topics>
                     <li class="topic open" data-topic>
                         <div class="topic-name" data-topic-name>Language</div>
@@ -341,7 +298,7 @@
                     </li>
                 </ul>
 
-                <!-- LIVE SNIPPET HUD VIEW -->
+                <!-- Search results -->
                 <div class="search-results" data-documentation-search-results style="display: none;"></div>
             </div>
 
@@ -482,29 +439,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script> -->
 </body>
 
 </html>

@@ -266,6 +266,9 @@ export async function setupDocumentation() {
 
                 // Default standard blockquote return rule fallback
                 return `<blockquote>${body}</blockquote>`;
+            },
+            code(token) {
+                return `<pre><code class="language-utkrisht">${token.text}</code></pre>`;
             }
         } 
     });
@@ -316,6 +319,8 @@ export async function setupDocumentation() {
         if (!fileKey || !fileContentCache[fileKey]) return;
         elements.documentationContent.innerHTML = fileContentCache[fileKey];
         elements.documentationContent.scrollTop = 0;
+
+        Prism.highlightAll();
     }
 
     // Trigger the global preload sequence immediately

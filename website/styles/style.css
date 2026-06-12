@@ -129,6 +129,7 @@ body > .right {
         background-color: #44475a;
         display: flex;
         gap: 2px;
+        overflow: hidden;
 
         .display {
             flex-grow: 1;
@@ -191,7 +192,6 @@ body > .right {
             /* border-right: 2px solid var(--utk-border); */
             display: flex;
             flex-direction: column;
-            transition: width 0.2s ease;
             overflow: hidden;
             flex-shrink: 0;
             position: relative;
@@ -387,6 +387,21 @@ body > .right {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -812,21 +827,32 @@ body > .right {
 
 
 
-
+/* Laptops / Small Desktops down */
+@media (max-width: 1200px) {
+    body > .right {
+        .documentation {
+            
+            .sidebar {
+                width: 160px;
+            }
+        }
+    }
+}
 
 
 @media all and (max-width: 768px) {
     body {
         grid-template-columns: 1fr;
+
+        .right {
+            display: none;
+        }
+    
+        .left .ribbon {
+            border: none;
+        }
     }
 
-    .right {
-        display: none;
-    }
-
-    .left .ribbon {
-        border: none;
-    }
 }
 
 @media all and (max-width: 360px) {
@@ -838,3 +864,4 @@ body > .right {
         }
     }
 }
+

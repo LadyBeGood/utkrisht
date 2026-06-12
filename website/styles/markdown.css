@@ -13,17 +13,16 @@
     margin-top: 32px;
 }
 
-
-.markdown > p {
+.markdown p {
     line-height: 1.5;
     font-size: 16px;
+    color: #ffffffcc;
+}
+
+.markdown > p {
     margin-bottom: 12px;
 }
 
-.markdown p+ul,
-.markdown p+ol {
-    margin-top: -8px;
-}
 
 .markdown ul,
 .markdown ol {
@@ -33,6 +32,16 @@
 
 .markdown li {
     list-style: initial;
+    color: #ffffffcc;
+}
+
+.markdown li::marker {
+    color: white;
+}
+
+.markdown strong,
+.markdown em {
+    color: white;
 }
 
 .markdown code {
@@ -72,6 +81,7 @@
 .markdown blockquote :last-child {
     margin-bottom: 0;
 }
+
 
 .markdown blockquote.note .title,
 .markdown blockquote.warning .title,
