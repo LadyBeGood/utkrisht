@@ -42,7 +42,7 @@
                 },
                 {
                     "name": "constant.language",
-                    "match": "(?<!-|\\w|\\d)(yes|no|nan|infinity|-infinity)(?!-|\\w|\\d)"
+                    "match": "(?<!-|\\w|\\d)(true|false|nan|infinity|-infinity)(?!-|\\w|\\d)"
                 }
             ]
         },
@@ -100,9 +100,33 @@
             ]
         },
         "comment": {
-            "name": "comment",
-            "begin": "# ",
-            "end": "\\n"
+            "patterns": [
+                {
+                    "name": "comment",
+                    "begin": "# ",
+                    "end": "\\n"
+                },
+                {
+                    "name": "comment.block",
+                    "begin": "(#{2,})",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.comment.begin"
+                        }
+                    },
+                    "end": "\\1",
+                    "endCaptures": {
+                        "0": {
+                            "name": "punctuation.definition.comment.end"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#comment"
+                        }
+                    ]
+                }
+            ]
         },
         "number": {
             "patterns": [
@@ -116,15 +140,15 @@
             "patterns": [
                 {
                     "name": "entity.name.function",
-                    "match": "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= -\\d| +\\d|\\*| [a-z0-9A-Z\"\\[\\(])(?! with)"
+                    "match": "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= -\\d| +\\d|\\*|\\(\\)|\\.\\.\\.|\\?|\\!| [a-z0-9A-Z\"\\[\\(])(?! with)"
                 },
                 {
                     "name": "entity.name.function",
-                    "match": "(?<=^\\s*)[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]? = *(\\{)"
+                    "match": "(?<=^\\s*)[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= *= *\\{)"
                 },
                 {
                     "name": "entity.name.function",
-                    "match": "(?:webapp|shape|text|media|tag)"
+                    "match": "(?:webapp|shape|text|media)"
                 }
             ]
         },

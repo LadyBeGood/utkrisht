@@ -48,7 +48,7 @@ Prism.languages.utkrisht = {
         greedy: true
     },
     'operator': /\/|>=|<=|=|\.\.|\.\.\.|\.|~|\+|-|\*|<|>|!|\||!=|&/,
-    'punctuation': /[{}[\]();.,:]/
+    'punctuation': /[\{\}\[\]\(\);\.,:]/
 };
 
 Prism.languages.webmanifest = Prism.languages.utkrisht;
