@@ -285,7 +285,7 @@ export async function setupDocumentation() {
     async function preloadAllFiles() {
         const fetchPromises = Array.from(elements.documentationSubTopicCollection).map(async (button) => {
             const fileKey = button.dataset.fileName;
-            const filePath = `./documentations/${fileKey}.md`;
+            const filePath = `./documentation/${fileKey}.md`;
 
             try {
                 const response = await fetch(filePath);
