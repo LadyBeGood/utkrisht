@@ -48,10 +48,6 @@ For the best development experience, install the official **Utkrisht VS Code Ext
 ### Comments
 Comments are non-executable tokens used to annotate code.
 
-They are commonly used to explain implementation details, document declarations, or temporarily disable code during development.
-
-Comments do not need to follow indentation rules.
-
 #### Regular Comments
 Regular comments begin with `#` followed by whitespace and continue until the end of the line. 
 
@@ -60,7 +56,7 @@ Regular comments begin with `#` followed by whitespace and continue until the en
 ```
 
 #### Block Comments
-Block comments begin and end with matching groups of `#` characters. The opening delimiter must be followed by a whitespace, and the closing delimiter must be preceded by a whitespace.
+Block comments begin and end with matching sequences of two or more `#` characters. The opening delimiter must be followed by whitespace, and the closing delimiter must be preceded by whitespace.
 
 ```
 ## This is a block comment.
@@ -70,8 +66,7 @@ name = ## They can also be used inline ## "Utkrisht"
 ```
 
 
-Using different number of `#` characters is useful when nesting comments.
-
+Different delimiter lengths allow block comments to be nested.
 ```
 #### 
 The comment starts here
