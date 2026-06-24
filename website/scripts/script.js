@@ -352,7 +352,7 @@ export async function setupDocumentation() {
     });
 
     // ==========================================
-    // ZERO-REGEX STRING SEARCH ENGINE
+    // ZERO-REGEX STRING SEARCH ENGINE 
     // ==========================================
     function executeSearch() {
         const rawQuery = elements.documentationSearchField.value.trim();
