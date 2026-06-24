@@ -7,14 +7,15 @@
 ![Repo Size](https://img.shields.io/github/repo-size/ladybegood/utkrisht?color=3b82f6)
 ![Last Commit](https://img.shields.io/github/last-commit/ladybegood/utkrisht?color=8b5cf6)
 
-*Statically typed. Dynamically written.*
+<!-- *Statically typed. Dynamically written.* -->
+*profound tagline goes here*
 
 </div>
 
 ## Introduction
-Utkrisht (uki) is a procedural language with static type checking that requires zero type annotations.
+Utkrisht (uki) is a clean, indentation-based procedural language that compiles to JavaScript, designed for simplicity and visual clarity.
 
-Its type system, Enigma, infers types entirely from how values are used, aiming to provide the safety of static analysis without the verbosity of traditional type systems.
+
 
 ## Getting Started
 
@@ -41,17 +42,29 @@ For the best development experience, install the official **Utkrisht VS Code Ext
 3. Search for **Utkrisht** by **LadyBeGood**
 4. Click Install.
 
+
 ## Reference
 
 ### Comments
+Comments are used to describe what the code does and why
 
-#### Regular Comments
+
+#### Single line Comments
 Used for notes. They can be placed anywhere.
 ```
 # This is a regular comment
 when 10 > 5  
 # This is also a comment
     write "Condition is correct" # This is also a valid comment
+```
+
+#### Multiline Comments
+Can be used for commenting out multiple lines
+```
+##
+This is a multiline comment.
+It can span multiple lines
+##
 ```
 
 #### Documentation Comments
@@ -302,7 +315,7 @@ write "😼".1           # \ud83d
 
 write count "é"        # 1 (é)
 write count "é"        # 2 (e and "́")
-write "é" = "é"        # no (no normalization)
+write "é" = "é"        # false (no normalization)
 
 write count "👨‍👩‍👧‍👦"       # 11
 ```
@@ -336,27 +349,27 @@ infinity - infinity   # nan
 ```
 
 ```
-(123 = 123.0)             # yes
+(123 = 123.0)             # true
 
-(0 = 0)                   # yes
-(-0 = -0)                 # yes
-(0 = -0)                  # yes
+(0 = 0)                   # true
+(-0 = -0)                 # true
+(0 = -0)                  # true
 
-(infinity = infinity)     # yes
-(infinity = -infinity)    # no
-(-infinity = -infinity)   # yes
+(infinity = infinity)     # true
+(infinity = -infinity)    # false
+(-infinity = -infinity)   # true
 
-(nan = nan)               # no (This is not a typo)
-(nan != nan)              # yes (This is also not a typo)
+(nan = nan)               # false (This is not a typo)
+(nan != nan)              # true (This is also not a typo)
 
-is-finite 123             # yes
-is-finite infinity        # no
-is-finite -infinity       # no
-is-nan nan                # yes
+is-finite 123             # true
+is-finite infinity        # false
+is-finite -infinity       # false
+is-nan nan                # true
 ```
 
 ```
-write 0.1 + 0.2 = 0.3         # no
+write 0.1 + 0.2 = 0.3         # false
 write 0.1 + 0.2               # 0.30000000000000004
 
 write 0.1 * 10                # 1
@@ -367,7 +380,7 @@ write 9999999999999999        # 10000000000000000
 ```
 
 #### Boolean
-Boolean literals are represented by the keywords `yes` and `no`. There are no *truthy* or *falsy* values.
+Boolean literals are represented by the keywords `true` and `false`. There are no *truthy* or *falsy* values.
 
 #### Procedure
 Procedures are callable units of code. A procedure body is delimited by `{` ... `}`.
@@ -441,7 +454,7 @@ fruits = ["apple", "banana", "mango"]
 user = [
     id = 101,
     name = "Alex",
-    is-admin = yes
+    is-admin = true
 ]
 
 # A mixed structure containing both positional values and named properties
@@ -457,7 +470,7 @@ write user.name       # Alex
 write fruits.1        # apple
 
 # Modifying elements
-user.is-admin = no
+user.is-admin = false
 fruits.2 = "orange"
 ```
 
@@ -523,13 +536,13 @@ status = when (age < 13) "child" else (age > 19) "adult" else "teen"
 user = [
     when age < 13 
         role = "child"
-        restricted = yes
+        restricted = true
     else age > 19
         role = "adult"
-        restricted = no
+        restricted = false
     else
         role = "teen"
-        restricted = yes
+        restricted = true
 ]
 ```
 
@@ -551,9 +564,9 @@ loop
     # ...
 ```
 
-Loop keyword followed by a boolean loops infinitely if `yes`, doesn't loop if `no`:
+Loop keyword followed by a boolean loops infinitely if `true`, doesn't loop if `false`:
 ```
-loop yes
+loop true
     write "hello"
     
     # loops infinitely
@@ -564,7 +577,7 @@ loop yes
     # ...
 
 
-loop no
+loop false
     write "hello"
 
     # does not loop
