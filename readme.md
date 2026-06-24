@@ -46,32 +46,55 @@ For the best development experience, install the official **Utkrisht VS Code Ext
 ## Reference
 
 ### Comments
-Comments are used to describe what the code does and why
+Comments are non-executable tokens used to annotate code.
 
+They are commonly used to explain implementation details, document declarations, or temporarily disable code during development.
 
-#### Single line Comments
-Used for notes. They can be placed anywhere.
+Comments do not need to follow indentation rules.
+
+#### Regular Comments
+Regular comments begin with `#` followed by whitespace and continue until the end of the line. 
+
 ```
 # This is a regular comment
-when 10 > 5  
-# This is also a comment
-    write "Condition is correct" # This is also a valid comment
 ```
 
-#### Multiline Comments
-Can be used for commenting out multiple lines
+#### Block Comments
+Block comments begin and end with matching groups of `#` characters. The opening delimiter must be followed by a whitespace, and the closing delimiter must be preceded by a whitespace.
+
 ```
-##
-This is a multiline comment.
-It can span multiple lines
-##
+## This is a block comment.
+   It can span multiple lines. ##
+
+name = ## They can also be used inline ## "Utkrisht"
 ```
+
+
+Using different number of `#` characters is useful when nesting comments.
+
+```
+#### 
+The comment starts here
+
+## contains a nested comment ##
+
+and ends here. 
+####
+```
+
+
 
 #### Documentation Comments
-Placed directly above declarations to describe variables. They use standard text and Markdown without any special tag syntax.
+Documentation comments are used to document variables.
+
+They are written using regular single-line comments placed directly above the declaration. Their contents are treated as plain text and do not require any special syntax.
+
+> [!TIP]
+> You can use Markdown, XML, or any other format supported by your IDE or documentation tool inside documentation comments.
 
 ```
-# The unique identifier for the active user session.
+# A unique identifier for the current user session that is
+# used by the server to track session state.
 session-id = "usr_9x82j1"
 
 
