@@ -184,16 +184,30 @@ function setupResponsiveness() {
     const mobileQuery = window.matchMedia("(max-width: 480px)");
 
     function handleTabletChange(event) {
-        let fontSize = 16;
-        let tabSize = 4;
+        let fontSize;
+        let tabSize;
 
         if (event.matches) {
             fontSize = 14;
             tabSize = 2;
+
+            // we are setting `isVisible` to be "false" because
+            // `toggleShortcutButtonsVisibility` function will 
+            // invert the visibility to "true"
+            elements.shortcutButtons.dataset.isVisible = "false";
+        } else {
+            fontSize = 16;
+            tabSize = 4;
+
+            // we are setting `isVisible` to be "true" because
+            // `toggleShortcutButtonsVisibility` function will 
+            // invert the visibility to "false"
+            elements.shortcutButtons.dataset.isVisible = "true";
         }
 
         elements.settingsFontSize.value = fontSize;
         elements.settingsTabSize.value = tabSize;
+        toggleShortcutButtonsVisibility();
 
         const changeEvent = new Event('change', { bubbles: true });
         elements.settingsFontSize.dispatchEvent(changeEvent);
@@ -204,30 +218,31 @@ function setupResponsiveness() {
     handleTabletChange(mobileQuery);
 }
 
-function setupShortcutButtonsToggle() {
-    function handleClick() {
-        console.log(elements.shortcutButtons.dataset.isVisible)
-        if (elements.shortcutButtons.dataset.isVisible === "no") {
-            elements.shortcutButtons.style.transform = "translateY(100%)";
-            elements.shortcutButtons.dataset.isVisible = "yes";
-            elements.left.style.paddingBottom = "0";
-            elements.shortcutButtonsToggler.querySelector("img").style.transform = "rotate(180deg)";
-        } else {
-            elements.shortcutButtons.style.transform = "translateY(0%)"
-            elements.shortcutButtons.dataset.isVisible = "no";
-            elements.left.style.paddingBottom = "72px";
-            elements.shortcutButtonsToggler.querySelector("img").style.transform = "rotate(0deg)";
-        }
 
-        // Prevents engine from batching this styling
-        setTimeout(() => elements.left.style.setProperty("--transition-duration", "0.25s"));
+
+function toggleShortcutButtonsVisibility() {
+    console.log("here")
+    console.log(Boolean(elements.shortcutButtons.dataset.isVisible))
+    if (elements.shortcutButtons.dataset.isVisible === "true") {
+        elements.shortcutButtons.style.transform = "translateY(100%)";
+        elements.left.style.paddingBottom = "0";
+        elements.shortcutButtonsToggler.querySelector("img").style.transform = "rotate(180deg)";
+    } else {
+        elements.shortcutButtons.style.transform = "translateY(0%)"
+        elements.left.style.paddingBottom = "72px";
+        elements.shortcutButtonsToggler.querySelector("img").style.transform = "rotate(0deg)";
     }
+    
+    elements.shortcutButtons.dataset.isVisible = elements.shortcutButtons.dataset.isVisible === "true" ? "false" : "false";
+    
+    // Prevents engine from batching this styling
+    setTimeout(() => elements.left.style.setProperty("--transition-duration", "0.25s"));
+}
 
+function setupShortcutButtonsToggle() {
     elements.shortcutButtonsToggler.addEventListener("click", function () {
-        handleClick();
+        toggleShortcutButtonsVisibility();
     })
-
-    handleClick()
 }
 
 

@@ -66,6 +66,7 @@ body > .left {
 
     .shortcut-buttons {
         display: grid;
+        justify-content: center;
         grid-template-rows: 1fr 1fr;
         align-items: center;
         font-size: 12px;
@@ -78,6 +79,7 @@ body > .left {
         transition-property: transform;
         background-color: #17191a;
         /* border-top: 2px solid #161a23; */
+        
 
         .shortcut-toggle {
             position: absolute;
@@ -97,21 +99,24 @@ body > .left {
             }
         }
 
-        div {
+        .up,
+        .down {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-            height: 100%;
-
+            width: min(100vw, 440px);
+            
             button {
                 height: 100%;
                 display: grid;
+                height: 36px;
                 place-items: center;
-
+    
                 &:hover {
                     background-color: #ffffff20;
                 }
             }
         }
+        
     }
 }
 
