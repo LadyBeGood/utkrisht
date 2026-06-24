@@ -221,8 +221,7 @@ function setupResponsiveness() {
 
 
 function toggleShortcutButtonsVisibility() {
-    console.log("here")
-    console.log(Boolean(elements.shortcutButtons.dataset.isVisible))
+    console.log(elements.shortcutButtons.dataset.isVisible)
     if (elements.shortcutButtons.dataset.isVisible === "true") {
         elements.shortcutButtons.style.transform = "translateY(100%)";
         elements.left.style.paddingBottom = "0";
@@ -233,7 +232,7 @@ function toggleShortcutButtonsVisibility() {
         elements.shortcutButtonsToggler.querySelector("img").style.transform = "rotate(0deg)";
     }
     
-    elements.shortcutButtons.dataset.isVisible = elements.shortcutButtons.dataset.isVisible === "true" ? "false" : "false";
+    elements.shortcutButtons.dataset.isVisible = elements.shortcutButtons.dataset.isVisible === "true" ? "false" : "true";
     
     // Prevents engine from batching this styling
     setTimeout(() => elements.left.style.setProperty("--transition-duration", "0.25s"));
@@ -243,6 +242,13 @@ function setupShortcutButtonsToggle() {
     elements.shortcutButtonsToggler.addEventListener("click", function () {
         toggleShortcutButtonsVisibility();
     })
+}
+
+function setupShortcutButtons() {
+    setupShortcutButtonsToggle();
+
+    
+
 }
 
 
@@ -542,7 +548,7 @@ function main() {
     const editor = ace.edit("editor");
     setupResponsiveness(editor);
     setupAceEditor(editor);
-    setupShortcutButtonsToggle();
+    setupShortcutButtons();
     setupDocumentation();
 }
 

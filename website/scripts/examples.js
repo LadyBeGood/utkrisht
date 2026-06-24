@@ -4,13 +4,13 @@ export const examples = {
 # Checks if a number is prime
 is-prime number = {
     when number < 2
-        return no
+        return false
 
     loop 2..<number with i
         when remainder number, i = 0
-            return no
+            return false
 
-    return yes
+    return true
 }
 
 write is-prime 117

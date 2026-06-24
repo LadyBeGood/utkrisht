@@ -22,15 +22,24 @@ export const elements = {
 
     shortcutButtons: $("[data-shortcut-buttons]"),
     shortcutButtonsToggler: $("[data-shortcut-buttons-toggler]"),
-
+    shortcutButtonTab: $("[data-shortcut-button-tab]"),
+    shortcutButtonUndo: $("[data-shortcut-button-undo]"),
+    shortcutButtonRedo: $("[data-shortcut-button-redo]"),
+    shortcutButtonSearch: $("[data-shortcut-button-search]"),
+    shortcutButtonUp: $("[data-shortcut-button-up]"),
+    shortcutButtonMore: $("[data-shortcut-button-more]"),
+    shortcutButtonControl: $("[data-shortcut-button-control]"),
+    shortcutButtonShift: $("[data-shortcut-button-shift]"),
+    shortcutButtonAlt: $("[data-shortcut-button-alt]"),
+    shortcutButtonLeft: $("[data-shortcut-button-left]"),
+    shortcutButtonDown: $("[data-shortcut-button-down]"),
+    shortcutButtonRight: $("[data-shortcut-button-right]"),
 
     documentationSidebar: $("[data-documentation-sidebar]"),
     documentationContent: $("[data-documentation-content]"),
-
     documentationTopics: $("[data-topics]"),
     documentationTopicNameCollection: $$("[data-topic-name]"),
     documentationSubTopicCollection: $$("[data-sub-topic]"),
-
     documentationSearchPreviousButton: $("[data-documentation-search-previous-button]"),
     documentationSearchNextButton: $("[data-documentation-search-next-button]"),
     documentationSearchResultCount: $("[data-documentation-search-result-count]"),
