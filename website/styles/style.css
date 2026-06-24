@@ -111,8 +111,16 @@ body > .left {
                 height: 36px;
                 place-items: center;
     
-                &:hover {
-                    background-color: #ffffff20;
+                /* Only target devices with a fine pointer (mouse/trackpad) and real hover capability,
+                 * prevent the style from being triggered by taps on phones and tablets. */
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        background-color: #ffffff20;
+                    }
+                }
+
+                img {
+                    pointer-events: none;
                 }
             }
         }

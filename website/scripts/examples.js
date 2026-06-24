@@ -32,10 +32,10 @@ merge-sort array = {
     # Merges two already sorted arrays into a single sorted array.
     merge left, right = {
         result = []
-
+     
         i = 1  # Pointer for left array
         j = 1  # Pointer for right array
-
+     
         loop i <= count left & j <= count right
             when left.(i) < right.(j)
                 insert result, left.(i)
@@ -43,7 +43,7 @@ merge-sort array = {
             else
                 insert result, right.(j)
                 j ~ j + 1
-
+     
         # Concatenate any leftover elements 
         # (one array might finish before the other)
         return [...result, ...(slice left, i), ...(slice right, j)]
