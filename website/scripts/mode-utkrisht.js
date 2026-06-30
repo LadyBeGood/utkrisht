@@ -72,7 +72,16 @@ ace.define("ace/mode/utkrisht_highlight_rules", ["require", "exports", "module",
             "start": [
                 {
                     token: "comment",
-                    regex: "#.*$"
+                    regex: /##(?=\s)/,
+                    push: "block_comment"
+                },
+                {
+                    token: "comment",
+                    regex: /# [^\n]*/
+                },
+                {
+                    token: "comment",
+                    regex: /#(?=\n|$)/
                 },
                 {
                     token: "punctuation.definition.string.begin",
@@ -162,6 +171,30 @@ ace.define("ace/mode/utkrisht_highlight_rules", ["require", "exports", "module",
                 },
                 {
                     defaultToken: "string"
+                }
+            ],
+            block_comment: [
+                // Nested ##
+                {
+                    token: "comment",
+                    regex: /##(?=\s)/,
+                    push: "block_comment"
+                },
+
+                // Closing ##
+                {
+                    token: "comment",
+                    regex: /\s##/,
+                    next: "pop"
+                },
+
+                {
+                    token: "comment",
+                    regex: /./
+                },
+                {
+                    token: "comment",
+                    regex: /$/
                 }
             ]
         };

@@ -45,7 +45,7 @@
                 },
                 {
                     "name": "constant.language",
-                    "match": "(?<!-|\\w|\\d)(true|false|nan|infinity|-infinity)(?!-|\\w|\\d)"
+                    "match": "(?<!-|\\w|\\d)(true|null|false|nan|infinity|-infinity)(?!-|\\w|\\d)"
                 }
             ]
         },
@@ -110,6 +110,10 @@
                     "end": "\\n"
                 },
                 {
+                    "name": "comment",
+                    "match": "#\n"
+                },
+                {
                     "name": "comment.block",
                     "begin": "(#{2,})",
                     "beginCaptures": {
@@ -143,15 +147,12 @@
             "patterns": [
                 {
                     "name": "entity.name.function",
-                    "match": "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= -\\d| +\\d|\\*|\\(\\)| \\.\\.\\.|\\?|\\!| [a-z0-9A-Z\"\\[\\(])(?! with)"
+                    "match": "[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= -\\d| +\\d|\\*|\\(\\)| \\.\\.\\.|-\\)|- |-\n| _|\\?|\\!| [a-z0-9A-Z\"\\[\\(])(?! with)"
                 },
                 {
                     "name": "entity.name.function",
-                    "match": "(?<=^\\s*)[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= *= *\\{)"
-                },
-                {
-                    "name": "entity.name.function",
-                    "match": "(?:webapp|shape|text|media)"
+                    "match": "(?<=^\\s*)[a-z](?:[a-z]|[0-9]|-(?!-))*[a-z0-9]?(?= *= *\\{)",
+                    "comment": ",{\"name\": \"entity.name.function\",\"match\": \"(?:webapp|shape|text|media)\"}"
                 }
             ]
         },

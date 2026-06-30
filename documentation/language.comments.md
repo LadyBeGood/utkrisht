@@ -30,7 +30,10 @@ The comment starts here
 and ends here. 
 ####
 ```
-
+> [!WARNING]
+> Nested comments and block comments using three or more `#` characters are 
+> not highlighted correctly in the playground due to technical limitations. 
+> The code itself works correctly.
 
 
 #### Documentation Comments
